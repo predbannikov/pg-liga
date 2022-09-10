@@ -1,0 +1,15 @@
+*.pro.user*
+
+*.autosave
+
+.qmake.stash
+.qtc_clangd/
+debug/
+release/
+ui_*.h
+Makefile*
+object_script*
+*.zip
+*.dll
+PG-TEST_resource.rc
+*.bak
