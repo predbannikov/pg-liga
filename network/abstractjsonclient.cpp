@@ -68,6 +68,7 @@ void AbstractJSONClient::onReadyRead()
                 }
                 break;
             case CLIENT:
+                clientLastError = "no_error";
                 statusConnection = true;
                 timerPing.stop();
                 timerPing.start();
@@ -119,12 +120,14 @@ void AbstractJSONClient::init()
         setTimerReconnect();
         setTimerPing();
         connectToHost();
+        timerReconnect.start();
     }
 }
 
 void AbstractJSONClient::onErrorOccurred(QAbstractSocket::SocketError error)
 {
     qDebug() << Q_FUNC_INFO << "error:" << error;
+    clientLastError = socket->errorString();
     switch (error) {
     case QAbstractSocket::ConnectionRefusedError:
         socket->close();
@@ -210,6 +213,7 @@ void AbstractJSONClient::disconnected()
         emit finished();
         break;
     case CLIENT:
+        emit disconnectClient();
         socket->abort();
         timerPing.stop();
         timerReconnect.start();
@@ -233,6 +237,7 @@ void AbstractJSONClient::bytesWritten(qint64 bytes)
 void AbstractJSONClient::ping()
 {
     if (!statusConnection) {
+        clientLastError = "Server did not respond to ping";
         socket->close();
     } else {
         statusConnection = false;

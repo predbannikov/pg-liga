@@ -31,8 +31,15 @@ void ServerWindow::on_readBtn()
     fflush(stderr);
 }
 
+void ServerWindow::onDisconnectClient()
+{
+    ui->textEditLogout->append("Client disconnected:\n" + clnt->clientLastError);
+    setEnableWidget(false);
+}
+
 void ServerWindow::clientConnected()
 {
+    ui->textEditLogout->append("Client connected:");
     qDebug() << Q_FUNC_INFO;
     on_updateClientExperiments_clicked();
     setEnableWidget(true);
@@ -99,11 +106,6 @@ void ServerWindow::onPollSensorsCurrentPage()
         jobj["address"] = srch.split(':')[1];
         clnt->sendReadyRequest(jobj);
     }
-}
-
-void ServerWindow::onDisconnectClient()
-{
-    setEnableWidget(false);
 }
 
 void ServerWindow::on_sendRequest(QJsonObject &jobj)

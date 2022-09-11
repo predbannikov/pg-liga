@@ -44,6 +44,7 @@ public:
     bool write(QJsonObject &jobj);
     virtual void readyRead(QJsonObject &jobj) = 0;
 
+    QString clientLastError;
 private:
 
 
