@@ -8,43 +8,32 @@
 #include <QDebug>
 #include <QTimer>
 
+#include "network/abstractjsonclient.h"
 
 
 
-class ClientExperiment : public QObject
+
+class ClientExperiment : public AbstractJSONClient
 {
     Q_OBJECT
 
-    QJsonObject jresponse;
 public:
-    const quint8 address;
+    quint8 address;
 
-    ClientExperiment(quint8 addr, QObject *parent = nullptr);
+    ClientExperiment(QString host_, QObject *parent = nullptr);
     ~ClientExperiment();
 
 signals:
 //    void error(QTcpSocket::SocketError socketerror);
-    void deleteClient(qint8);
     void sendReadyResponse(QJsonObject);
-    void connectClient();
 
 public slots:
 //    void onSendJson(const QJsonObject &jobj);
-    void connectToHost();
-    void onErrorOccurred(QAbstractSocket::SocketError error);
-    void readyRead();
-    void disconnected();
+    void readyRead(QJsonObject &jobj) override;
     void onSendReadyRequest(QJsonObject jobj);
-    void connected();
-    void bytesWritten(qint64 bytes);
-
 
 private:
-    QTcpSocket *socket;
-
-    qint64 secs;
     qint64 timeInterval(const QString &date, const QString &format);
-    QTimer timerReconnect;
 };
 
 #endif // CLIENTEXPERIMENT_H

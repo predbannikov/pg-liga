@@ -3,6 +3,7 @@ QT += network
 
 CONFIG += c++11 console
 CONFIG -= app_bundle
+
 TEMPLATE = app
 
 # You can make your code fail to compile if it uses deprecated APIs.
@@ -11,11 +12,7 @@ TEMPLATE = app
 
 SOURCES += \
         abstractunit.cpp \
-#        actions/abstractaction.cpp \
-#        actions/actiongetid.cpp \
-#        actions/actionstepperspeed.cpp \
-#        actions/actionstepperstop.cpp \
-#        actions/actiontest.cpp \
+		clientmanager.cpp \
         controller.cpp \
         device.cpp \
         experiment.cpp \
@@ -24,24 +21,14 @@ SOURCES += \
         sensors.cpp \
         sequenceexecutor.cpp \
         server.cpp  \
-        socketclientmanager.cpp \
         main.cpp \
         socketclientmodbus.cpp \
         stepper.cpp \
         storedata.cpp
 
-# Default rules for deployment.
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
-!isEmpty(target.path): INSTALLS += target
-
 HEADERS += \
     abstractunit.h \
-#    actions/abstractaction.h \
-#    actions/actiongetid.h \
-#    actions/actionstepperspeed.h \
-#    actions/actionstepperstop.h \
-#    actions/actiontest.h \
+	clientmanager.h \
     controller.h \
     device.h \
     experiment.h    \
@@ -52,7 +39,18 @@ HEADERS += \
     sequenceexecutor.h \
     measurements.h  \
     server.h    \
-    socketclientmanager.h \
     socketclientmodbus.h \
     stepper.h \
     storedata.h
+
+
+INCLUDEPATH += $$PWD/../
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../network/release/ -lnetwork
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../network/debug/ -lnetwork
+else:unix: LIBS += -L$$OUT_PWD/../network/ -lnetwork
+
+
+# Default rules for deployment.
+qnx: target.path = /tmp/$${TARGET}/bin
+else: unix:!android: target.path = /opt/$${TARGET}/bin
+!isEmpty(target.path): INSTALLS += target

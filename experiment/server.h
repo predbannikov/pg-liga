@@ -5,7 +5,7 @@
 #include <QThread>
 #include "experiment.h"
 #include "socketclientmodbus.h"
-#include "socketclientmanager.h"
+#include "clientmanager.h"
 
 #define ADDRESS_MODBUS  2
 
@@ -14,7 +14,8 @@ class Server : public QTcpServer
 {
     Q_OBJECT
 
-    QMap <quint64, SocketClientManager*> clients;
+    QSet <ClientManager*> clients;
+
     QThread *threadExperiment;
     ModbusClient *modbusClient;
 
@@ -34,7 +35,7 @@ private:
 
 
 public slots:
-    void removeClient(quint64 isock);
+    void onRemoveClientManager();
 
 signals:
     void sendRequest(QJsonObject);

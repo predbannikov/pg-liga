@@ -15,7 +15,8 @@ class Server : public QTcpServer
 {
     Q_OBJECT
 
-    QSet <ClientManager*> clientManagers;
+    QSet <ClientManager*> clients;
+    QSet <ClientExperiment*> experiments;
     QJsonObject jconfig;
     QJsonObject jmodbusconfig;
 public:
@@ -36,6 +37,7 @@ public slots:
     void handlePsCode(int exitCode, QProcess::ExitStatus exitStatus);
     void readCMD(QJsonObject &jobj);
     void onRemoveClientManager();
+    void onRemoveClientExperiment();
     int countClients();
 
 signals:

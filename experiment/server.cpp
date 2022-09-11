@@ -36,31 +36,44 @@ void Server::startServer()
 
 void Server::incomingConnection(qintptr socketDescriptor)
 {
-    QTcpSocket *socket = new QTcpSocket;
+    QTcpSocket *socket = new QTcpSocket(this);
     if (!socket->setSocketDescriptor(socketDescriptor))
     {
         qDebug() << socket->error();
         return;
     }
-    SocketClientManager *sockClientManager = new SocketClientManager(experiment, socket, this);
-    connect(sockClientManager, &SocketClientManager::disconnectClient, this, &Server::removeClient);
-//    connect()sendRequestToClient
-    clients.insert(reinterpret_cast<quint64>(socket), sockClientManager);
+    ClientManager *client = new ClientManager(experiment, socket, this);
+    connect(client, &ClientManager::finished, this, &Server::onRemoveClientManager, Qt::QueuedConnection);
+    clients.insert(client);
 
     qDebug() << socketDescriptor << " Connecting... clients.size =" << clients.size();
 
 }
 
-void Server::removeClient(quint64 isock)
+void Server::onRemoveClientManager()
 {
-    if (!clients.contains(isock)) {
-        qDebug() << "Error clients not contains this socket" << isock;
+    auto client = qobject_cast<ClientManager*>(sender());
+    auto it = clients.find(client);
+
+    if (it == clients.end()){
+        qDebug() << Q_FUNC_INFO << "Error clients not contains this set. set.size =" << clients.size();
         return;
     }
-    clients.value(isock)->deleteLater();
-    clients.remove(isock);
-    if (clients.size() == 0)
-        qDebug() << " #####################################  clients.size =" << clients.size();
-
+    (*it)->deleteLater();
+    clients.erase(it);
+    qDebug() << " #####################################  clientsManager.size =" << clients.size();
 }
+
+//void Server::removeClient(quint64 isock)
+//{
+//    if (!clients.contains(isock)) {
+//        qDebug() << "Error clients not contains this socket" << isock;
+//        return;
+//    }
+//    clients.value(isock)->deleteLater();
+//    clients.remove(isock);
+//    if (clients.size() == 0)
+//        qDebug() << " #####################################  clients.size =" << clients.size();
+
+//}
 

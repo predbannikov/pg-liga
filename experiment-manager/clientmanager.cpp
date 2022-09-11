@@ -2,12 +2,19 @@
 #include "server.h"
 #include <QCoreApplication>
 
-ClientManager::ClientManager(QTcpSocket *sock, QObject *parent) : AbstractJSONClient(sock, parent)
+ClientManager::ClientManager(QSet<ClientExperiment *> *experiments_, QTcpSocket *sock, QObject *parent) : AbstractJSONClient(sock, parent)
 {
-    ClientExperiment *clientExp = new ClientExperiment(2, this);
-    experiments.insert(2, clientExp);
-    connect(clientExp, &ClientExperiment::deleteClient, this, &ClientManager::onRemoveClientExperiment);
-    connect(clientExp, &ClientExperiment::sendReadyResponse, this, &ClientManager::procQueue);
+    experiments = experiments_;
+    for(auto &exp: qAsConst(*experiments)) {
+        connect(exp, &ClientExperiment::sendReadyResponse, this, &ClientManager::procQueue);
+    }
+
+//    const int address = 2;
+//    QString host = QString("127.0.0.1:%1").arg(50000 | address);
+//    ClientExperiment *clientExp = new ClientExperiment(host, this);
+//    experiments.insert(clientExp);
+//    connect(clientExp, &ClientExperiment::sendReadyResponse, this, &ClientManager::procQueue);
+//    connect(clientExp, &ClientExperiment::finished, this, &ClientManager::onRemoveClientExperiment);
 }
 
 ClientManager::~ClientManager()
@@ -29,26 +36,15 @@ void ClientManager::procQueue(const QJsonObject &jResponse)
     }
 }
 
-void ClientManager::onRemoveClientExperiment(qint8 addr)
-{
-    if (!experiments.contains(addr)) {
-        qDebug() << Q_FUNC_INFO << "Error clients not contains " << addr << "address";
-        return;
-    }
-    experiments.value(addr)->deleteLater();
-    experiments.remove(addr);
-    qDebug() << " #####################################" << Q_FUNC_INFO << "clientsExperiment.size =" << experiments.size();
-}
-
 void ClientManager::parserJSON(QJsonObject &jobj)
 {
     if (jobj["type"].toString() == "manager") {
         if (jobj.contains("get")) {
             if (jobj["get"].toString() == "clients") {
                 jobj["clients_size"] = QString(qobject_cast<Server*>(this->parent())->countClients());
-                jobj["clients_exp_size"] = QString::number(experiments.size());
+                jobj["clients_exp_size"] = QString::number(experiments->size());
                 QJsonArray jaddr;
-                for(auto &item: experiments)
+                for(auto &item: *experiments)
                     jaddr.append(QString::number(item->address));
                 jobj["clients_address"] = jaddr;
                 write(jobj);
@@ -65,7 +61,7 @@ void ClientManager::parserJSON(QJsonObject &jobj)
             qDebug() << "settings";
         }
         if (jobj.contains("CMD")) {
-            for(auto &exp: experiments)
+            for(auto &exp: *experiments)
                 if (jobj["address"].toString().toInt() == exp->address) {
                     exp->onSendReadyRequest(jobj);
                 }

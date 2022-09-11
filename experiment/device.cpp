@@ -306,7 +306,7 @@ RETCODE LoadFrame::criterionTime(StatusOperation &operation)
     case STATE_2:
         ret = statusSensors(operation);
         if (ret == COMPLATE) {
-            if (timeElapse.elapsed() > 1000) {
+            if (timeElapse.elapsed() > 10000) {
                 qDebug() << criterionElapseTime.elapsed() << "ms" << "  criterion=" << jcurStep["criterion_arg1"].toString().toLongLong() * 1000;
                 timeElapse.restart();
             }
@@ -346,7 +346,7 @@ RETCODE LoadFrame::criterionStabilization(StatusOperation &operation)
 //                qDebug() << criterionElapseTime.elapsed() << "ms" << "  criterion=" << jcurStep["criterion_arg1"].toString().toLongLong() * 1000;
 //                timeElapse.restart();
 //            }
-            if (timeElapse.elapsed() > 1000) {
+            if (timeElapse.elapsed() > 10000) {
                 qDebug() << criterionElapseTime.elapsed() <<"ms" << "  criterion=" << jcurStep["criterion_arg1"].toString().toLongLong() * 1000
                          << "\t\tdiff_criter =" << jcurStep["criterion_arg3"].toString().toDouble()
                          << "\t\tcur_difform =" << Length::fromMicrometres(deformSens.value).millimetres();

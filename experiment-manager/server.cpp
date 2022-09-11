@@ -22,6 +22,14 @@ Server::Server(QObject *parent) : QTcpServer(parent)
     }
     startModbus();
     file.close();
+
+
+    const int address = 2;
+    QString host = QString("127.0.0.1:%1").arg(50000 | address);
+    ClientExperiment *clientExp = new ClientExperiment(host, this);
+    experiments.insert(clientExp);
+
+
 }
 
 Server::~Server()
@@ -56,39 +64,52 @@ void Server::startModbus()
 
 int Server::countClients()
 {
-    return clientManagers.size();
+    return clients.size();
 }
 
 void Server::incomingConnection(qintptr socketDescriptor)
 {
-    QTcpSocket *sockClient = new QTcpSocket(this);
-    if (!sockClient->setSocketDescriptor(socketDescriptor))
+    QTcpSocket *socket = new QTcpSocket(this);
+    if (!socket->setSocketDescriptor(socketDescriptor))
     {
-        qDebug() << sockClient->error();
+        qDebug() << socket->error();
         return;
     }
-    ClientManager *client = new ClientManager(sockClient, this);
+    ClientManager *client = new ClientManager(&experiments, socket, this);
     connect(client, &ClientManager::finished, this, &Server::onRemoveClientManager, Qt::QueuedConnection);
     connect(client, &ClientManager::sendServerCMD, this, &Server::readCMD, Qt::QueuedConnection);
-    clientManagers.insert(client);
+    clients.insert(client);
 
-    qDebug() << socketDescriptor << " Connecting... clients.size =" << clientManagers.size();
+    qDebug() << socketDescriptor << " Connecting... clients.size =" << clients.size();
 
 }
 
 void Server::onRemoveClientManager()
 {
     auto client = qobject_cast<ClientManager*>(sender());
-    auto it = clientManagers.find(client);
+    auto it = clients.find(client);
 
-    if (it == clientManagers.end()){
-        qDebug() << Q_FUNC_INFO << "Error clients not contains this set. set.size =" << clientManagers.size();
+    if (it == clients.end()){
+        qDebug() << Q_FUNC_INFO << "Error clients not contains this set. set.size =" << clients.size();
         return;
     }
     (*it)->deleteLater();
-    clientManagers.erase(it);
-    qDebug() << " #####################################  clientsManager.size =" << clientManagers.size();
+    clients.erase(it);
+    qDebug() << " #####################################  clientsManager.size =" << clients.size();
+}
 
+void Server::onRemoveClientExperiment()
+{
+    auto client = qobject_cast<ClientExperiment*>(sender());
+    auto it = experiments.find(client);
+
+    if (it == experiments.end()){
+        qDebug() << Q_FUNC_INFO << "Error clients not contains this set. set.size =" << experiments.size();
+        return;
+    }
+    (*it)->deleteLater();
+    experiments.erase(it);
+    qDebug() << " #####################################  clientsExperiment.size =" << experiments.size();
 }
 
 qint64 Server::timeInterval(const QString& date, const QString& format)

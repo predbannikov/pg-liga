@@ -3,6 +3,7 @@
 
 #include <QQueue>
 #include <QTcpSocket>
+#include <QSet>
 #include <QDebug>
 #include <QDataStream>
 #include <QJsonObject>
@@ -18,7 +19,7 @@ class ClientManager : public AbstractJSONClient
 
     QQueue <QJsonObject> queueResponse;
 public:
-    ClientManager(QTcpSocket *sock, QObject *parent = nullptr);
+    ClientManager(QSet<ClientExperiment*> *experiments_, QTcpSocket *sock, QObject *parent = nullptr);
     ~ClientManager();
 
     void readyRead(QJsonObject &jobj) override;
@@ -33,11 +34,10 @@ public slots:
      * @param jResponse
      */
     void procQueue(const QJsonObject &jResponse);
-    void onRemoveClientExperiment(qint8 addr);
 
 private:
     void parserJSON(QJsonObject &jobj);
-    QMap<quint8, ClientExperiment*> experiments;
+    QSet<ClientExperiment*> *experiments;
 };
 
 #endif // CLIENTMANAGER_H

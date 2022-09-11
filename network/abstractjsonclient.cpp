@@ -22,7 +22,7 @@ AbstractJSONClient::~AbstractJSONClient()
 void AbstractJSONClient::connectToHost()
 {
     if (socket->state() == QAbstractSocket::UnconnectedState) {
-        qDebug() << Q_FUNC_INFO << "Connecting,..";
+        qDebug() << Q_FUNC_INFO << "Connecting,.." << QString("%1:%2").arg(host.toString()).arg(port);
         socket->connectToHost(host, port);
         if(!socket->waitForConnected(timeout))
         {
@@ -224,6 +224,7 @@ void AbstractJSONClient::disconnected()
 void AbstractJSONClient::connected()
 {
     qDebug() << Q_FUNC_INFO ;
+    statusConnection = true;
     timerReconnect.stop();
     timerPing.start();
     emit connectedClient();
