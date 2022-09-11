@@ -134,8 +134,8 @@ void ClientExperiment::connectToHost()
 {
     if (socket->state() == QAbstractSocket::UnconnectedState) {
         qDebug() << Q_FUNC_INFO << "Connecting,..";
-//        socket->connectToHost(QHostAddress::LocalHost, 50000 | address);
-        socket->connectToHost("192.168.1.102", 50000 | address);
+        socket->connectToHost(QHostAddress::LocalHost, 50000 | address);
+//        socket->connectToHost("192.168.1.102", 50000 | address);
         if(!socket->waitForConnected(5000))
         {
 //            qDebug() << "Error: " << socket->errorString();

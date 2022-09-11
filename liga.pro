@@ -1,6 +1,7 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
+ experiment \
  experiment-manager/experimentmanager.pro \
  modbus-server/modbusserver.pro \
  network/network.pro \

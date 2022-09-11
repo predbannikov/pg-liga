@@ -21,11 +21,12 @@ public:
     ClientManager(QTcpSocket *sock, QObject *parent = nullptr);
     ~ClientManager();
 
+    void readyRead(QJsonObject &jobj) override;
+
 signals:
     void sendServerCMD(QJsonObject &);
 
 public slots:
-    void readyRead(QJsonObject &jobj) override;
 
     /**
      * @brief procQueue     Принимает данные по сигналу из ExperimentClient::sendReadyResponse

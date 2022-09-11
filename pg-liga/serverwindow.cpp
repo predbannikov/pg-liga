@@ -11,12 +11,12 @@ ServerWindow::ServerWindow(QString host_, QWidget *parent) :
 
     qDebug() << host_;
     clnt = new ClientManager(host_, this);
-    connect(clnt, &ClientManager::connectedClient, this, &ServerWindow::clientConnected);
-    connect(clnt, &ClientManager::readyReadResponse, this, &ServerWindow::onReadyReadResponse);
+    connect(clnt, &ClientManager::connectedClient, this, &ServerWindow::clientConnected, Qt::QueuedConnection);
+    connect(clnt, &ClientManager::disconnectClient, this, &ServerWindow::onDisconnectClient, Qt::QueuedConnection);
+    connect(clnt, &ClientManager::readyReadResponse, this, &ServerWindow::onReadyReadResponse, Qt::QueuedConnection);
     timerPollSensors.setInterval(1000);
     connect(&timerPollSensors, &QTimer::timeout, this, &ServerWindow::onPollSensorsCurrentPage);
-    connect(clnt, &ClientManager::disconnectClient, this, &ServerWindow::onDisconnectClient);
-    QTimer::singleShot(300, clnt, &ClientManager::connectToHost);
+//    QTimer::singleShot(300, clnt, &ClientManager::connectToHost);
     setEnableWidget(false);
 }
 
@@ -29,13 +29,6 @@ void ServerWindow::on_readBtn()
 {
     qDebug() << "read";
     fflush(stderr);
-}
-
-void ServerWindow::onSlot()
-{
-    qDebug() << Q_FUNC_INFO;
-    fflush(stderr);
-
 }
 
 void ServerWindow::clientConnected()

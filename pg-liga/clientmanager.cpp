@@ -2,7 +2,6 @@
 
 ClientManager::ClientManager(QString host_, QObject *parent) : AbstractJSONClient(host_, parent)
 {
-
 }
 
 ClientManager::~ClientManager()

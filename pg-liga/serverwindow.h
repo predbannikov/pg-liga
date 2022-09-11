@@ -24,7 +24,6 @@ public:
 
 public slots:
     void on_readBtn();
-    void onSlot();
     void clientConnected();
     void onReadyReadResponse(const QJsonObject &jresponse);
     void clickBtnNumInstr();

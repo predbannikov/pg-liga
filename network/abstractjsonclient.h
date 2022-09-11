@@ -11,6 +11,10 @@
 #include <QHostAddress>
 #include <QTimer>
 
+#define TIMEOUT_CONNECTION  1000
+#define TIMER_RECONNECTION  1000
+#define TIMER_PING          3000
+
 class AbstractJSONClient : public QObject
 {
     Q_OBJECT
@@ -19,30 +23,39 @@ class AbstractJSONClient : public QObject
 
     QTcpSocket *socket;
     QTimer timerReconnect;
+    QTimer timerPing;
     QHostAddress host;
     int port;
-    int timeout = 1000;
+    int timeout = TIMEOUT_CONNECTION;
     bool transact = false;
+    /**
+     * @brief statusConnection  устанавливается в true после каждого приёма пакета
+     *                          устанавливается в false после отправки пакета ping
+     *                          перед отправкой ping проверяется этот статус, если он в false закрывается соединение
+     */
+    bool statusConnection = false;
 public:
-    explicit AbstractJSONClient(QString endPoint_, QObject *parent = nullptr);
+    explicit AbstractJSONClient(QString endPoint, QObject *parent = nullptr);
     AbstractJSONClient(QTcpSocket *socket_, QObject *parent = nullptr);
     virtual ~AbstractJSONClient();
-    void setTimeoutConnection(int ms = 1000);
-    void setTimerReconnect(int ms = 1000);
-    bool write(QJsonObject jobj);
+    void setTimeoutConnection(int ms = TIMEOUT_CONNECTION);
+    void setTimerReconnect(int ms = TIMER_RECONNECTION);
+    void setTimerPing(int ms = TIMER_PING);
+    bool write(QJsonObject &jobj);
     virtual void readyRead(QJsonObject &jobj) = 0;
 
 private:
 
-    void init();
 
 public slots:
+    void init();
     void connectToHost();
     void onErrorOccurred(QAbstractSocket::SocketError error);
     void onReadyRead();
     void disconnected();
     void connected();
     void bytesWritten(qint64 bytes);
+    void ping();
 
 signals:
     void connectedClient();

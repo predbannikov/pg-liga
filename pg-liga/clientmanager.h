@@ -18,17 +18,12 @@ class ClientManager : public AbstractJSONClient
 
     QJsonObject jrequest;
 public:
-//    const quint8 address;
-
     ClientManager(QString host_, QObject *parent = nullptr);
     ~ClientManager();
     void sendReadyRequest(QJsonObject jobj);
     void readyRead(QJsonObject &jobj) override;
 
 signals:
-    void disconnectClient(quint64);
-    void sendReqeust(QJsonObject);
-
     void readyReadResponse(const QJsonObject &jobj);
 
 private:

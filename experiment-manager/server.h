@@ -7,12 +7,9 @@
 #include <QJsonObject>
 #include <QFile>
 #include <QDir>
-#include <QPointer>
+#include <QThread>
 
 #include "clientmanager.h"
-
-#define FILE_CONFIG_JSON    "config.json"
-#define PATH_MODBUS_SERVER  "/home/user/projects/control_app_liga/modbus_server/modbusserver"
 
 class Server : public QTcpServer
 {
@@ -20,21 +17,23 @@ class Server : public QTcpServer
 
     QSet <ClientManager*> clientManagers;
     QJsonObject jconfig;
+    QJsonObject jmodbusconfig;
 public:
     explicit Server(QObject *parent = nullptr);
     ~Server();
 
     void startServer();
 
-    void startModbus();
 protected:
     void incomingConnection(qintptr socketDescriptor);
 
 private:
+    void startModbus();
     QProcess *modbus = nullptr;
     qint64 timeInterval(const QString &date, const QString &format);
 
 public slots:
+    void handlePsCode(int exitCode, QProcess::ExitStatus exitStatus);
     void readCMD(QJsonObject &jobj);
     void onRemoveClientManager();
     int countClients();

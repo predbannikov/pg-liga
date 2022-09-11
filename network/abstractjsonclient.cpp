@@ -1,19 +1,17 @@
 #include "abstractjsonclient.h"
 
-AbstractJSONClient::AbstractJSONClient(QString endPoint_, QObject *parent) : QObject(parent), host(endPoint_.split(':')[0]), port(endPoint_.split(':')[1].toInt())
+AbstractJSONClient::AbstractJSONClient(QString endPoint, QObject *parent) : QObject(parent), host(endPoint.split(':')[0]), port(endPoint.split(':')[1].toInt())
 {
-//    host.setAddress(endPoint_.split(':')[0]);
-//    port = endPoint_.split(':')[1].toInt();
     type = CLIENT;
     socket = new QTcpSocket(this);
-    init();
+    QMetaObject::invokeMethod(this, &AbstractJSONClient::init, Qt::QueuedConnection);
 }
 
 AbstractJSONClient::AbstractJSONClient(QTcpSocket *socket_, QObject *parent) : QObject(parent)
 {
     type = SERVER;
     socket = socket_;
-    init();
+    QMetaObject::invokeMethod(this, &AbstractJSONClient::init, Qt::QueuedConnection);
 }
 
 AbstractJSONClient::~AbstractJSONClient()
@@ -33,7 +31,7 @@ void AbstractJSONClient::connectToHost()
     }
 }
 
-bool AbstractJSONClient::write(QJsonObject jobj)
+bool AbstractJSONClient::write(QJsonObject &jobj)
 {
     QByteArray req = QJsonDocument(jobj).toJson();
     QByteArray buff;
@@ -60,7 +58,22 @@ void AbstractJSONClient::onReadyRead()
         transact = dss.commitTransaction();
         if (transact) {
             QJsonObject jobj = QJsonDocument::fromJson(arr).object();
-            readyRead(jobj);
+            switch (type) {
+            case SERVER:
+                if (jobj.contains("ping")) {
+                    jobj["pong"];
+                    write(jobj);
+                } else {
+                    readyRead(jobj);
+                }
+                break;
+            case CLIENT:
+                statusConnection = true;
+                timerPing.stop();
+                timerPing.start();
+                readyRead(jobj);
+                break;
+            }
         }
     } while(transact);
 }
@@ -72,21 +85,41 @@ void AbstractJSONClient::setTimeoutConnection(int ms)
 
 void AbstractJSONClient::setTimerReconnect(int ms)
 {
-    timerReconnect.stop();
-    timerReconnect.setInterval(ms);
-    timerReconnect.start();
+    if (timerReconnect.isActive()) {
+        timerReconnect.stop();
+        timerReconnect.setInterval(ms);
+        timerReconnect.start();
+    } else {
+        timerReconnect.setInterval(ms);
+    }
+}
+
+void AbstractJSONClient::setTimerPing(int ms)
+{
+    if (timerPing.isActive()) {
+        timerPing.stop();
+        timerPing.setInterval(ms);
+        timerPing.start();
+    } else {
+        timerPing.setInterval(ms);
+    }
 }
 
 void AbstractJSONClient::init()
 {
     connect(socket, &QTcpSocket::readyRead, this, &AbstractJSONClient::onReadyRead, Qt::DirectConnection);
     connect(socket, &QTcpSocket::disconnected, this, &AbstractJSONClient::disconnected, Qt::DirectConnection);
-    connect(socket, &QTcpSocket::connected, this, &AbstractJSONClient::connectedClient, Qt::DirectConnection);
+    connect(socket, &QTcpSocket::connected, this, &AbstractJSONClient::connected, Qt::DirectConnection);
     connect(socket, &QTcpSocket::bytesWritten, this, &AbstractJSONClient::bytesWritten, Qt::DirectConnection);
     connect(socket, &QTcpSocket::errorOccurred, this, &AbstractJSONClient::onErrorOccurred, Qt::DirectConnection);
 
-    setTimerReconnect();
-
+    if (type == CLIENT) {
+        connect(&timerReconnect, &QTimer::timeout, this, &AbstractJSONClient::connectToHost, Qt::DirectConnection);
+        connect(&timerPing, &QTimer::timeout, this, &AbstractJSONClient::ping, Qt::DirectConnection);
+        setTimerReconnect();
+        setTimerPing();
+        connectToHost();
+    }
 }
 
 void AbstractJSONClient::onErrorOccurred(QAbstractSocket::SocketError error)
@@ -178,6 +211,7 @@ void AbstractJSONClient::disconnected()
         break;
     case CLIENT:
         socket->abort();
+        timerPing.stop();
         timerReconnect.start();
         break;
     }
@@ -187,10 +221,23 @@ void AbstractJSONClient::connected()
 {
     qDebug() << Q_FUNC_INFO ;
     timerReconnect.stop();
+    timerPing.start();
     emit connectedClient();
 }
 
 void AbstractJSONClient::bytesWritten(qint64 bytes)
 {
     Q_UNUSED(bytes);
+}
+
+void AbstractJSONClient::ping()
+{
+    if (!statusConnection) {
+        socket->close();
+    } else {
+        statusConnection = false;
+        QJsonObject jobj;
+        jobj["ping"];
+        write(jobj);
+    }
 }
