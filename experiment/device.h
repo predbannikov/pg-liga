@@ -23,7 +23,10 @@ class LoadFrame
 
     enum STATE_PRESURE {STATE_PRESURE_1, STATE_PRESURE_2, STATE_PRESURE_3} statePresure = STATE_PRESURE_1;
 
-    enum STATE {STATE_IDLE, STATE_START, STATE_INIT, STATE_READ_NEXT_STEP, STATE_EXPERIMENT, STATE_COMPLATION, STATE_MOVE_FRAME, STATE_STOP_FRAME, STATE_FINISH} state = STATE_IDLE;
+    enum STATE {STATE_IDLE, STATE_START, STATE_INIT, STATE_READ_NEXT_STEP, STATE_EXPERIMENT, STATE_COMPLATION,
+                STATE_MOVE_FRAME, STATE_STOP_FRAME,
+                STATE_UNLOCK_PID,
+                STATE_FINISH} state = STATE_IDLE;
 
     enum READ_SENS {READ_SENS_1, READ_SENS_2, READ_SENS_3, READ_SENS_4, READ_SENS_5, READ_SENS_6} readSensState;
 
@@ -55,6 +58,7 @@ public:
     void readConfig();
     void startProcess();
     void moveFrame(QJsonObject &jobj);
+    void unlockPID();
     void stopFrame();
     void manualNextStep();
     void readSensors(QJsonObject &jobj);

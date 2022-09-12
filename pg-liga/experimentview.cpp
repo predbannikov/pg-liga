@@ -213,3 +213,11 @@ void ExperimentView::on_btnStopStepper_clicked()
     jobj["CMD"] = "stop_frame";
     emit sendRequest(jobj);
 }
+
+void ExperimentView::on_btnUnlockPid_clicked()
+{
+    QJsonObject jobj;
+    jobj["type"] = "client";
+    jobj["CMD"] = "unlock_PID";
+    emit sendRequest(jobj);
+}

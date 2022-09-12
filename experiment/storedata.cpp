@@ -11,6 +11,7 @@ StoreData::StoreData(quint8 addr, const QJsonObject &conf)
     createFileProtocol();
 
     elapseExperimentTimer.start();
+    elapseStepTimer.start();
 }
 
 StoreData::~StoreData()
@@ -127,7 +128,8 @@ void StoreData::sendProtocol(QJsonObject &jobj)
 void StoreData::setCurStep(const QJsonObject &jcurStep_)
 {
     stepTimeStart = elapseExperimentTimer.elapsed();
-    elapseStepTimer.start();
+    elapseStepTimer.restart();
+//    elapseStepTimer.start();
     jcurStep = jcurStep_;
     period.reset();
 }

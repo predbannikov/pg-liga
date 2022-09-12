@@ -61,9 +61,9 @@ bool LoadFrame::readNextStep()
         }
     }
     if (!check) {
-        qDebug() << "\n*****************************************";
+        qDebug() << "\n******************************************";
         qDebug() << "* No accessible steps or not load config *";
-        qDebug() << "*****************************************";
+        qDebug() << "******************************************";
     }
     return check;
 }
@@ -96,8 +96,10 @@ RETCODE LoadFrame::next(StatusOperation &operation)
             store->setCurStep(jcurStep);
             state = STATE_EXPERIMENT;
         }
-        else
+        else {
+            qDebug() << "Experiment complated\n";
             state = STATE_COMPLATION;
+        }
         break;
     case STATE_EXPERIMENT:
         if (jcurStep["exp_type"].toString() == "compression")
@@ -132,10 +134,13 @@ RETCODE LoadFrame::next(StatusOperation &operation)
             state = STATE_FINISH;
         }
         break;
+    case STATE_UNLOCK_PID:
+        state = STATE_COMPLATION;
+        break;
     case STATE_FINISH:
 //        delete store;
 //        store = nullptr;
-        qDebug() << "Experiment complated\n";
+        qDebug() << "\n#STATE_FINISH";
         cur_speed = 0;
         state = STATE_IDLE;
         jcurStep = QJsonObject();
@@ -307,7 +312,7 @@ RETCODE LoadFrame::criterionTime(StatusOperation &operation)
         ret = statusSensors(operation);
         if (ret == COMPLATE) {
             if (timeElapse.elapsed() > 10000) {
-                qDebug() << criterionElapseTime.elapsed() << "ms" << "  criterion=" << jcurStep["criterion_arg1"].toString().toLongLong() * 1000;
+                qDebug() << criterionElapseTime.elapsed() << "ms" << "  criterion=" << jcurStep["criterion_arg1"].toString().toLongLong() * 1000 << " curStep =" << jcurStep["step"].toString();
                 timeElapse.restart();
             }
             QThread::msleep(50);
@@ -349,7 +354,8 @@ RETCODE LoadFrame::criterionStabilization(StatusOperation &operation)
             if (timeElapse.elapsed() > 10000) {
                 qDebug() << criterionElapseTime.elapsed() <<"ms" << "  criterion=" << jcurStep["criterion_arg1"].toString().toLongLong() * 1000
                          << "\t\tdiff_criter =" << jcurStep["criterion_arg3"].toString().toDouble()
-                         << "\t\tcur_difform =" << Length::fromMicrometres(deformSens.value).millimetres();
+                         << "\t\tcur_difform =" << Length::fromMicrometres(deformSens.value).millimetres()
+                         << " curStep =" << jcurStep["step"].toString();
 
                 timeElapse.restart();
             }
@@ -423,6 +429,13 @@ void LoadFrame::moveFrame(QJsonObject &jobj)
 {
     cur_speed = jobj["speed"].toString().toInt();
     state = STATE_MOVE_FRAME;
+}
+
+void LoadFrame::unlockPID()
+{
+    if (state != STATE_IDLE)
+        qDebug() << "WARNING experiment reseting!!!";
+    state = STATE_UNLOCK_PID;
 }
 
 void LoadFrame::stopFrame()

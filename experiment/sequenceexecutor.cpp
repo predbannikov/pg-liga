@@ -49,6 +49,8 @@ void SequenceExecutor::execCMD(QJsonObject &jobj)
         loadFrame.moveFrame(jobj);
     } else if (jobj["CMD"].toString() == "stop_frame") {
         loadFrame.stopFrame();
+    } else if (jobj["CMD"].toString() == "unlock_PID") {
+        loadFrame.unlockPID();
     }
 }
 

@@ -25,12 +25,14 @@ public:
 
     float valueFromBack(qint64 step_time, qint64 time) {
         auto &arr = data[step_time];
-        QPair <qint64, float> last_value = arr.last();
+//        QPair <qint64, float> last_value = arr.last();
         for (int i = arr.size() - 1; i > 0; i--) {
-            if (last_value.first - arr[i].first >= time) {
+//            if (last_value.first - arr[i].first >= time) {
+            if (last.first - arr[i].first >= time) {
                 return arr[i].second;
             }
         }
+        qDebug() << Q_FUNC_INFO << "#WARNING: get first value stop";
         return arr.first().second;
     }
 
