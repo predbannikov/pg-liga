@@ -1,11 +1,7 @@
 #include "clientmanager.h"
 
 ClientManager::ClientManager(Experiment *exp, QTcpSocket *sock, QObject *parent) : AbstractJSONClient(sock, parent), experiment(exp)
-{
-//    connect(socket, &QTcpSocket::readyRead, this, &ClientManager::readyRead, Qt::DirectConnection);
-//    connect(socket, &QTcpSocket::disconnected, this, &ClientManager::disconnected, Qt::DirectConnection);
-//    connect(experiment, &Experiment::sendRequestToClient, this, &ClientManager::procQueue);
-}
+{}
 
 ClientManager::~ClientManager()
 {

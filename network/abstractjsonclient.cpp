@@ -4,6 +4,8 @@ AbstractJSONClient::AbstractJSONClient(QString endPoint, QObject *parent) : QObj
 {
     type = CLIENT;
     socket = new QTcpSocket(this);
+    //TODO Необходимо добавить проверку на успешное создание сокета
+
     QMetaObject::invokeMethod(this, &AbstractJSONClient::init, Qt::QueuedConnection);
 }
 

@@ -8,10 +8,12 @@
 #include <QJsonDocument>
 #include <QDebug>
 
+#include "network/abstractjsonclient.h"
+
 class Experiment;
 
 
-class ModbusClient : public QObject
+class ModbusClient : public AbstractJSONClient
 {
     Q_OBJECT
 
@@ -22,22 +24,15 @@ public:
 
 signals:
     void error(QTcpSocket::SocketError socketerror);
-    void disconnectClient();
-    void connectedClient();
     void onSendReqeust();
 
 public slots:
-    void connectToHost();
-    void readyRead();
-    void connected();
-    void disconnected();
-    void bytesWritten(qint64 bytes);
+    void readyRead(QJsonObject &jobj) override;
     void sendRequest(const QJsonObject &jobj);
     void procQueue();
 
 
 private:
-    QTcpSocket *socket;
     Experiment *experiment;
 };
 
