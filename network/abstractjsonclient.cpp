@@ -74,7 +74,8 @@ void AbstractJSONClient::onReadyRead()
                 statusConnection = true;
                 timerPing.stop();
                 timerPing.start();
-                readyRead(jobj);
+                if (!jobj.contains("pong"))
+                    readyRead(jobj);
                 break;
             }
         }
@@ -106,6 +107,11 @@ void AbstractJSONClient::setTimerPing(int ms)
     } else {
         timerPing.setInterval(ms);
     }
+}
+
+quint64 AbstractJSONClient::socketID()
+{
+    return reinterpret_cast<quint64>(socket);
 }
 
 void AbstractJSONClient::init()

@@ -41,6 +41,7 @@ public:
     void setTimeoutConnection(int ms = TIMEOUT_CONNECTION);
     void setTimerReconnect(int ms = TIMER_RECONNECTION);
     void setTimerPing(int ms = TIMER_PING);
+    quint64 socketID();
     bool write(QJsonObject &jobj);
     virtual void readyRead(QJsonObject &jobj) = 0;
 

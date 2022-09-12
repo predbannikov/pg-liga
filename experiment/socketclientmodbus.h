@@ -30,6 +30,7 @@ public slots:
     void readyRead(QJsonObject &jobj) override;
     void sendRequest(const QJsonObject &jobj);
     void procQueue();
+    void notifyExperiment();
 
 
 private:

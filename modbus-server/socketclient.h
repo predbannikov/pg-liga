@@ -11,9 +11,10 @@
 #include <mutex>
 
 #include "serialport.h"
+#include "network/abstractjsonclient.h"
 
 
-class ClientSocket : public QThread
+class ClientSocket : public AbstractJSONClient
 {
     Q_OBJECT
 
@@ -29,13 +30,12 @@ signals:
     void sendReqeust(QJsonObject);
 
 public slots:
-    void readyRead();
-    void disconnected();
-    void sendReadyRequest(QJsonObject jobj);
+    void readyRead(QJsonObject &jobj) override;
+//    void disconnected();
+    void sendReadyRequest(QJsonObject &jobj);
 
 
 private:
-    QTcpSocket *socket;
     SerialPort *serialport;
 };
 
