@@ -41,7 +41,7 @@
       <item>
        <widget class="QGroupBox" name="groupBox_4">
         <property name="title">
-         <string>GroupBox</string>
+         <string>Отправка команд</string>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
@@ -51,14 +51,14 @@
              <item>
               <widget class="QPushButton" name="btnSendConfig">
                <property name="text">
-                <string>send_config</string>
+                <string>отправить файл эксперимента</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QPushButton" name="btnReadConfig">
                <property name="text">
-                <string>read_config</string>
+                <string>прочитать файл устройству</string>
                </property>
               </widget>
              </item>
@@ -180,7 +180,7 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>489</width>
+                <width>500</width>
                 <height>102</height>
                </rect>
               </property>
@@ -232,7 +232,7 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>491</width>
+              <width>502</width>
               <height>204</height>
              </rect>
             </property>

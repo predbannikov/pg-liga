@@ -1,7 +1,9 @@
 #include "clientmanager.h"
 
 ClientManager::ClientManager(Experiment *exp, QTcpSocket *sock, QObject *parent) : AbstractJSONClient(sock, parent), experiment(exp)
-{}
+{
+    connect(exp, &Experiment::sendRequestToClient, this, &ClientManager::procQueue);
+}
 
 ClientManager::~ClientManager()
 {

@@ -34,7 +34,7 @@ public:
     virtual void execCMD(QJsonObject &jobj) = 0;
 signals:
     /// send to modbus
-    void sendRequest(const QJsonObject &);
+    void sendRequestToModbus(const QJsonObject &);
     void sendRequestToClient(const QJsonObject &);
 
 private:

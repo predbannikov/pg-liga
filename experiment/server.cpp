@@ -11,7 +11,7 @@ Server::Server(QObject *parent) : QTcpServer(parent)
     threadExperiment = new QThread;
     experiment->moveToThread(threadExperiment);
     QObject::connect(threadExperiment, &QThread::started, experiment, &Experiment::doWork, Qt::QueuedConnection);
-    QObject::connect(experiment, &Experiment::sendRequest, modbusClient, &ModbusClient::sendRequest, Qt::QueuedConnection);
+    QObject::connect(experiment, &Experiment::sendRequestToModbus, modbusClient, &ModbusClient::sendRequest, Qt::QueuedConnection);
     threadExperiment->start();
 
 

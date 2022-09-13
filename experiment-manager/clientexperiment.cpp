@@ -1,7 +1,7 @@
 #include "clientexperiment.h"
 #include <QHostAddress>
 
-ClientExperiment::ClientExperiment(QString host_, QObject *parent) : AbstractJSONClient(host_, parent), address(host_.split(':')[1].toInt()&0x000000FF)
+ClientExperiment::ClientExperiment(QString host_, QObject *parent) : AbstractJSONClient(host_, parent), address(host_.split(':')[1].toUInt()%100)
 {
 
 //    connect(socket, &QTcpSocket::readyRead, this, &ClientExperiment::readyRead, Qt::DirectConnection);

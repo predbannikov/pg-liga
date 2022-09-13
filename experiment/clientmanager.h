@@ -26,10 +26,10 @@ signals:
 //    void disconnectClient(quint64);
 //    void connectedClient();
 //    void sendReqeust(QJsonObject);
-//    void readyReadPDU(const QByteArray &pdu);
 
 public slots:
     void procQueue(const QJsonObject &jResponse);
+//    void readyReadPDU(const QJsonObject &jobj);
 
 //    void readyRead();
 //    void connected();
