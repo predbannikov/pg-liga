@@ -127,6 +127,7 @@ struct Requests {
     static QByteArray write(quint16 cmd, quint8 funcNum, quint16 addr) {
         QByteArray arr;
         QDataStream str(&arr, QIODevice::ReadWrite);
+        str.setVersion(QDataStream::Qt_5_11);
         str.setByteOrder(QDataStream::BigEndian);
         str << static_cast<quint8>(PDU_COMMAND_0x10);
         str << static_cast<quint16>(0x00);                  // TODO
@@ -139,6 +140,7 @@ struct Requests {
     static QByteArray read(quint16 addr_, quint16 countReg_) {
         QByteArray arr;
         QDataStream str(&arr, QIODevice::ReadWrite);
+        str.setVersion(QDataStream::Qt_5_11);
         str.setByteOrder(QDataStream::BigEndian);
         str << static_cast<quint8>(PDU_COMMAND_0x03);
         str << static_cast<quint16>(addr_);
@@ -149,6 +151,7 @@ struct Requests {
     static QByteArray write(quint16 addr, QVariant data) {
         QByteArray arr;
         QDataStream str(&arr, QIODevice::ReadWrite);
+        str.setVersion(QDataStream::Qt_5_11);
         str.setByteOrder(QDataStream::BigEndian);
         str << static_cast<quint8>(PDU_COMMAND_0x10);
         str << static_cast<quint16>(addr);

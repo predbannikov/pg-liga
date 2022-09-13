@@ -1,5 +1,4 @@
 #include "operations.h"
-#include <QDataStream>
 
 #define DEBUG 0
 

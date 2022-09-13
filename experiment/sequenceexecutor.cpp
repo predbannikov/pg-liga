@@ -1,20 +1,8 @@
 #include "sequenceexecutor.h"
-#include <QtEndian>
-#include <QDataStream>
-//#include "actions/actiongetid.h"
-//#include "actions/actiontest.h"
-//#include "actions/actionstepperspeed.h"
-//#include "actions/actionstepperstop.h"
 
 
 SequenceExecutor::SequenceExecutor(quint8 addr) : Operations(addr)
 {
-//    actions.push_back(new ActionGetID);
-//    actions.push_back(new ActionTest);
-//    actions.push_back(new ActionStepperSpeed(0xAAAB4512, 0x0A, 0x2));
-//    actions.push_back(new ActionStepperStop(0x2));
-//    actions.push_back(new ActionStepperSpeed(0xAAABC5A6, 0x0A, 0x2));
-//    actions.push_back(new ActionStepperStop(0x2));
     loadFrame.address = addr;
 }
 

@@ -2,7 +2,6 @@
 #define CLIENTMANAGER_H
 
 #include <QTcpSocket>
-#include <QDataStream>
 #include <QTimer>
 #include <QDebug>
 #include <QJsonObject>

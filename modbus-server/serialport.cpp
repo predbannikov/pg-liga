@@ -31,6 +31,7 @@ void SerialPort::parseReqest(QJsonObject &jobj)
         quint8 address = jobj["address"].toString().toInt();
         QByteArray modbuspack;
         QDataStream str(&modbuspack, QIODevice::WriteOnly);
+        str.setVersion(QDataStream::Qt_5_11);
         str << address;
         str.writeRawData(pdu.data(), pdu.size());
         str.setByteOrder(QDataStream::LittleEndian);
