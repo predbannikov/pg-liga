@@ -29,7 +29,7 @@ MainWindow::~MainWindow()
 void MainWindow::scanInstruments()
 {
     ui->actScan->setEnabled(false);
-    QUrl url(SettingsManager::instance()->getServers());
+//    QUrl url(SettingsManager::instance()->getServers());
 //    qDebug() << url.host();
 //    qDebug() << url.port();
     onScanFinished();

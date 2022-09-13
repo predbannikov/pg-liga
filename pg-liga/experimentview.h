@@ -7,6 +7,7 @@
 #include <QLabel>
 #include <QJsonDocument>
 #include <QJsonArray>
+#include <QDebug>
 
 namespace Ui {
 class ExperimentView;

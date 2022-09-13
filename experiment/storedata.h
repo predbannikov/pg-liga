@@ -10,6 +10,7 @@
 #include "sensors.h"
 #include <limits>
 #include <QList>
+#include <QElapsedTimer>
 #include <QMap>
 
 class Data

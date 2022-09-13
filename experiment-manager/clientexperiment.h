@@ -7,6 +7,7 @@
 #include <QJsonDocument>
 #include <QDebug>
 #include <QTimer>
+#include <QDate>
 
 #include "network/abstractjsonclient.h"
 

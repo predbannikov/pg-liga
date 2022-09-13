@@ -38,7 +38,7 @@ bool AbstractJSONClient::write(QJsonObject &jobj)
     QByteArray req = QJsonDocument(jobj).toJson();
     QByteArray buff;
     QDataStream ds(&buff, QIODevice::ReadWrite);
-    ds.setVersion(QDataStream::Qt_5_13);
+    ds.setVersion(QDataStream::Qt_5_11);
     ds.setByteOrder(QDataStream::BigEndian);
     ds << req;
     if (socket->isValid() && socket->state() == QAbstractSocket::ConnectedState) {
@@ -52,7 +52,7 @@ void AbstractJSONClient::onReadyRead()
 {
     QDataStream dss(socket);
     QByteArray arr;
-    dss.setVersion(QDataStream::Qt_5_13);
+    dss.setVersion(QDataStream::Qt_5_11);
     dss.setByteOrder(QDataStream::BigEndian);
     do {
         dss.startTransaction();
@@ -120,7 +120,7 @@ void AbstractJSONClient::init()
     connect(socket, &QTcpSocket::disconnected, this, &AbstractJSONClient::disconnected, Qt::DirectConnection);
     connect(socket, &QTcpSocket::connected, this, &AbstractJSONClient::connected, Qt::DirectConnection);
     connect(socket, &QTcpSocket::bytesWritten, this, &AbstractJSONClient::bytesWritten, Qt::DirectConnection);
-    connect(socket, &QTcpSocket::errorOccurred, this, &AbstractJSONClient::onErrorOccurred, Qt::DirectConnection);
+    connect(socket, QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::error), this, &AbstractJSONClient::onErrorOccurred, Qt::DirectConnection);
 
     if (type == CLIENT) {
         connect(&timerReconnect, &QTimer::timeout, this, &AbstractJSONClient::connectToHost, Qt::DirectConnection);
