@@ -39,6 +39,6 @@ void ModbusClient::notifyExperiment()
 {
     QJsonObject jobj;
     jobj["type"] = "modbus";
-    jobj["connection_error"] = "reconnect";
+    jobj["connection"] = "connected";
     experiment->put(jobj);
 }

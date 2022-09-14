@@ -7,7 +7,7 @@
 #include "socketclientmodbus.h"
 #include "clientmanager.h"
 
-#define ADDRESS_MODBUS  2
+#define ADDRESS_MODBUS  1
 
 
 class Server : public QTcpServer
