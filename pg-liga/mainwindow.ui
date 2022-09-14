@@ -90,7 +90,6 @@
     <property name="title">
      <string>Система</string>
     </property>
-    <addaction name="actScan"/>
     <addaction name="separator"/>
     <addaction name="actSettings"/>
    </widget>
