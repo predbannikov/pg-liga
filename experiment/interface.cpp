@@ -43,14 +43,16 @@ bool Interface::read(StatusOperation &statusOperation)
         if(jobjTaked["type"].toString() == "modbus") {
             if (jobjTaked.contains("connection")) {
                 qDebug() << Q_FUNC_INFO << "modbusserver client " << jobjTaked;
-                jobjTaked = QJsonObject();  // не позволяем выйти с цикла
+//                jobjTaked = QJsonObject();  // не позволяем выйти с цикла
             } else {
                 if (jobjTaked["modbus_error"].toString() == "crc_error") {
     //                qDebug() << jResponse["modbus_error"].toString();
                 }
                 if (jobjTaked["status"].toString() == "complate") {
-                    statusOperation.strError = jobjTaked["modbus_error"].toString();
-                    statusOperation.response = jobjTaked["PDU_response"].toVariant().toByteArray();
+                    if (statusOperation.request == jobjTaked["PDU_request"].toVariant().toByteArray()) {
+                        statusOperation.strError = jobjTaked["modbus_error"].toString();
+                        statusOperation.response = jobjTaked["PDU_response"].toVariant().toByteArray();
+                    }
                 }
             }
         } else if (jobjTaked["type"].toString() == "client") {

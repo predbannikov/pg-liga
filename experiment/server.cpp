@@ -1,6 +1,6 @@
 #include "server.h"
 
-Server::Server(QObject *parent) : QTcpServer(parent)
+Server::Server(quint8 addr_, QObject *parent) : QTcpServer(parent), address(addr_)
 {
 
 //    connect(modbusClient, &ModbusClient::readyReadPDU, this, &Experiment::readyReadPDU);
@@ -30,7 +30,7 @@ void Server::startServer()
     }
     else
     {
-        qDebug() << "Listening...";
+        qDebug() << "Listening..." << this->serverAddress() << this->serverPort();
     }
 }
 

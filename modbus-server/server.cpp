@@ -24,7 +24,7 @@ void Server::startServer()
     }
     else
     {
-        qDebug() << "Listening...";
+        qDebug() << "Listening..." << this->serverAddress() << this->serverPort();
     }
 }
 

@@ -24,7 +24,7 @@ Server::Server(QObject *parent) : QTcpServer(parent)
     file.close();
 
 
-    const int address = 2;
+    const int address = 1;
     QString host = QString("127.0.0.1:%1").arg(50000 | address);
     ClientExperiment *clientExp = new ClientExperiment(host, this);
     experiments.insert(clientExp);

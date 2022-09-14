@@ -5,7 +5,7 @@
 
 ModbusClient::ModbusClient(Experiment *exp, QObject *parent) : AbstractJSONClient("127.0.0.1:1234", parent), experiment(exp)
 {
-    connect(this,  &AbstractJSONClient::connectedClient, this, &ModbusClient::procQueue, Qt::QueuedConnection);
+//    connect(this,  &AbstractJSONClient::connectedClient, this, &ModbusClient::procQueue, Qt::QueuedConnection);
     connect(this,  &AbstractJSONClient::connectedClient, this, &ModbusClient::notifyExperiment, Qt::QueuedConnection);
     connect(this, &ModbusClient::onSendReqeust, this, &ModbusClient::procQueue, Qt::QueuedConnection);
 }
@@ -31,7 +31,9 @@ void ModbusClient::procQueue()
 {
     while(!queueRequests.isEmpty()) {
         QJsonObject jobj(queueRequests.takeFirst());
-        write(jobj);
+        if (!write(jobj)) {
+            experiment->put(jobj);
+        }
     }
 }
 

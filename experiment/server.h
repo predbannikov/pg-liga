@@ -7,9 +7,6 @@
 #include "socketclientmodbus.h"
 #include "clientmanager.h"
 
-#define ADDRESS_MODBUS  1
-
-
 class Server : public QTcpServer
 {
     Q_OBJECT
@@ -19,10 +16,10 @@ class Server : public QTcpServer
     QThread *threadExperiment;
     ModbusClient *modbusClient;
 
-    const quint8 address = ADDRESS_MODBUS;
+    const quint8 address;
 
 public:
-    explicit Server(QObject *parent = nullptr);
+    explicit Server(quint8 addr_, QObject *parent = nullptr);
     ~Server();
 
     void startServer();
