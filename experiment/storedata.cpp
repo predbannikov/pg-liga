@@ -22,7 +22,7 @@ StoreData::~StoreData()
 void StoreData::createFileProtocol()
 {
     QDir current_path = QDir::currentPath();
-    QDir protocol_folder = current_path.filePath("protocols/instr_%1").arg(address);
+    QDir protocol_folder = current_path.filePath("%1").arg(address);
     QString file_name = protocol_folder.filePath(QString("INSTR%1-%2-%3.csv")
                                                  .arg(QString::number(address),
                                                       jconfig["name_speciment"].toString(),

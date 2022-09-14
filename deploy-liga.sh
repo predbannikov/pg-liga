@@ -1,21 +1,59 @@
 #! /bin/bash
-CURRENT_PATH=$(realpath $0)
 
-TARGET=$(realpath $1)
+BUILD_DIR=/home/user/projects/control_app_liga/pg-liga/build-liga-Desktop-Release/
+QT_DEPLOY=$HOME/bin/linuxdeployqt
 
-echo "$CURRENT_PATH"
+BRANCH=$(git symbolic-ref --short -q HEAD)
+if [ "$BRANCH" == "stable" ]
+    REPOS_DIR=$HOME/bin/liga/deploy/release
+then                  
+    REPOS_DIR=$HOME/bin/liga/deploy/testing
+fi
 
-echo "Target=$TARGET"
+#current_date=$(date +%Y.%m.%d)
+#echo $current_date
+rev_list=$(git --git-dir="$PWD/.git" rev-list HEAD --count)
 
-current_date=$(date +%Y.%m.%d)
-current_revision=$(git --git-dir="$src_dir/.git" rev-list HEAD --count)
+DIRNAME="liga-msa-1.1.$rev_list"
+TARGET_DIR="$REPOS_DIR/$DIRNAME"
 
 
-if [ -d $TARGET ]; then
+if [ -d $TARGET_DIR ]; then
     echo "Path exist, success"
 else 
     echo "Not exist"
-    mkdir -p $TARGET
+    mkdir -p $TARGET_DIR
 fi
 
-echo $current_revision
+echo $REPOS_DIR
+echo $DIRNAME
+echo $TARGET_DIR
+
+
+echo 'Writing changelog...'
+changelog_file="changelog.txt"
+if [ ! -f $TARGET_DIR/$changelog ]; then
+    touch $TARGET_DIR/$changelog
+fi
+echo "$DIRNAME последние изменения (ревизия $rev_list)" > "$TARGET_DIR/$changelog_file"
+echo -e "\n" >> "$TARGET_DIR/$changelog_file"
+echo -e "$(git --git-dir="$PWD/.git" log | grep Author -v)" >> "$TARGET_DIR/$changelog_file"
+
+echo $PWD
+echo 'Copying experiment app...'
+cp -p "$BUILD_DIR/experiment/experiment" "$TARGET_DIR/."
+echo 'Copying modbus app...'
+cp -p "$BUILD_DIR/modbus-server/modbusserver" "$TARGET_DIR/."
+echo 'Copying experiment-manager app...'
+cp -p "$BUILD_DIR/experiment-manager/experimentmanager" "$TARGET_DIR/."
+
+cd $TARGET_DIR
+
+$QT_DEPLOY experiment
+$QT_DEPLOY modbusserver
+$QT_DEPLOY experimentmanager
+
+mkdir experiments
+mkdir protocols
+mkdir upgrades
+

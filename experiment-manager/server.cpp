@@ -2,27 +2,32 @@
 
 Server::Server(QObject *parent) : QTcpServer(parent)
 {
+    QDir cur_dir = QDir::current();
+    QStringList list = cur_dir.entryList(QDir::Files);
 
-    QFile file("config.json");
-    if (!file.open(QIODevice::ReadWrite | QIODevice::Text)) {
-        qDebug() << "file not open";
+    if (!list.contains("modbusserver")) {
+        qDebug() << "qtcreator version start";
     } else {
-        QJsonArray jprograms;
-        jconfig = QJsonDocument::fromJson(file.readAll()).object();
-        if (!jconfig.contains("programs")) {
-            qDebug() << "no settings path programs";
-            return;
-        }
-        jprograms = jconfig["programs"].toArray();
-        for (auto jobj: qAsConst(jprograms)) {
-            if (jobj.toObject()["name"].toString() == "modbusserver") {
-                jmodbusconfig = jobj.toObject();
+        QFile file("config.json");
+        if (!file.open(QIODevice::ReadWrite | QIODevice::Text)) {
+            qDebug() << "file not open";
+        } else {
+            QJsonArray jprograms;
+            jconfig = QJsonDocument::fromJson(file.readAll()).object();
+            if (!jconfig.contains("programs")) {
+                qDebug() << "no settings path programs";
+                return;
+            }
+            jprograms = jconfig["programs"].toArray();
+            for (auto jobj: qAsConst(jprograms)) {
+                if (jobj.toObject()["name"].toString() == "modbusserver") {
+                    jmodbusconfig = jobj.toObject();
+                }
             }
         }
+        startModbus();
+        file.close();
     }
-    startModbus();
-    file.close();
-
 
     const int address = 1;
     QString host = QString("127.0.0.1:%1").arg(50000 | address);
