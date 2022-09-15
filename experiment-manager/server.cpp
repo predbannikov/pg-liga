@@ -1,3 +1,5 @@
+#include <QCoreApplication>
+
 #include "server.h"
 
 Server::Server(QObject *parent) : QTcpServer(parent)
@@ -8,28 +10,33 @@ Server::Server(QObject *parent) : QTcpServer(parent)
     if (!list.contains("modbusserver")) {
         qDebug() << "qtcreator version start";
     } else {
-        QFile file("config.json");
-        if (!file.open(QIODevice::ReadWrite | QIODevice::Text)) {
-            qDebug() << "file not open";
+
+        if (!QFile::exists("./config.json")) {
+            qDebug() << "file config.json not exists";
         } else {
-            jconfig = QJsonDocument::fromJson(file.readAll()).object();
-            if (!jconfig.contains("programs")) {
-                qDebug() << "no settings path programs";
-                return;
-            }
-            jprograms = jconfig["programs"].toArray();
-            for (auto jobj: qAsConst(jprograms)) {
-                if (jobj.toObject()["name"].toString() == "modbusserver") {
-                    jmodbusconfig = jobj.toObject();
+
+            QFile file("config.json");
+            if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                qDebug() << "file not open";
+            } else {
+
+                jconfig = QJsonDocument::fromJson(file.readAll()).object();
+                if (!jconfig.contains("programs")) {
+                    qDebug() << "no settings path programs";
+                    return;
+                }
+                jprograms = jconfig["programs"].toArray();
+                for (auto jobj: qAsConst(jprograms)) {
+                    if (jobj.toObject()["name"].toString() == "modbusserver") {
+                        jmodbusconfig = jobj.toObject();
+                    }
                 }
             }
+            file.close();
         }
-//        startModbus();
-        file.close();
     }
     checkAndPrepFoldersPrograms();
     runPrograms();
-    const int address = 1;
 //    startExperiment(address);
 }
 
@@ -222,8 +229,33 @@ void Server::handlePsCodeExperiment(int exitCode, QProcess::ExitStatus exitStatu
     }
 }
 
-void Server::readCMD(QJsonObject &jobj)
+void Server::readCMD(QJsonObject jobj)
 {
-//    modbus->pid();
-    modbus->deleteLater();
+    if (jobj["CMD"].toString() == "stop_manager") {
+        qDebug() << jobj["CMD"].toString();
+        qApp->exit();
+    } else if (jobj["CMD"].toString() == "stop_modbus") {
+        qDebug() << jobj["CMD"].toString();
+        modbus->kill();
+    } else if (jobj["CMD"].toString() == "stop_experiemnt") {
+        qDebug() << jobj["CMD"].toString();
+        QString addr = jobj["addr_exp"].toString();
+        for (auto proc: qAsConst(procExperiments)) {
+            QString name = proc->program().split('/').last();
+            if (name.split('-')[1] == addr) {
+                proc->kill();
+                break;
+            }
+        }
+    } else if (jobj["CMD"].toString() == "update_config") {
+        QFile file_settings("./config.json");
+        if (!file_settings.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            qDebug() << Q_FUNC_INFO << file_settings.fileName() << "file no open";
+            return;
+        }
+        file_settings.write(QByteArray::fromBase64(jobj["settings"].toString().toUtf8()));
+        file_settings.close();
+        checkAndPrepFoldersPrograms();
+        runPrograms();
+    }
 }

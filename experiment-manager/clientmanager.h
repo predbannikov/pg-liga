@@ -25,7 +25,7 @@ public:
     void readyRead(QJsonObject &jobj) override;
 
 signals:
-    void sendServerCMD(QJsonObject &);
+    void sendServerCMD(QJsonObject jobj);
 
 public slots:
 

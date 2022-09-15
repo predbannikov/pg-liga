@@ -38,7 +38,7 @@ private:
 public slots:
     void handlePsCodeModbus(int exitCode, QProcess::ExitStatus exitStatus);
     void handlePsCodeExperiment(int exitCode, QProcess::ExitStatus exitStatus);
-    void readCMD(QJsonObject &jobj);
+    void readCMD(QJsonObject jobj);
     void onRemoveClientManager();
     int countClients();
 
