@@ -1,6 +1,7 @@
 #! /bin/bash
 
-BUILD_DIR=/home/user/projects/control_app_liga/pg-liga/build-liga-Desktop-Release/
+BUILD_DIR=/home/user/projects/control_app_liga/pg-liga/build-liga-Desktop-Release
+echo "BUILD_DIR=$BUILD_DIR"
 QT_DEPLOY=$HOME/bin/linuxdeployqt
 
 BRANCH=$(git symbolic-ref --short -q HEAD)
@@ -46,6 +47,8 @@ echo 'Copying modbus app...'
 cp -p "$BUILD_DIR/modbus-server/modbusserver" "$TARGET_DIR/."
 echo 'Copying experiment-manager app...'
 cp -p "$BUILD_DIR/experiment-manager/experimentmanager" "$TARGET_DIR/."
+echo 'Copying default config.json ...'
+cp -p "$PWD/config.json" "$TARGET_DIR/."
 
 cd $TARGET_DIR
 

@@ -19,7 +19,6 @@ class Server : public QTcpServer
     QSet <ClientExperiment*> experiments;
     QSet <QProcess*> procExperiments;
     QJsonObject jconfig;
-    QJsonObject jmodbusconfig;
     QJsonArray jprograms;
 public:
     explicit Server(QObject *parent = nullptr);
@@ -31,7 +30,9 @@ protected:
     void incomingConnection(qintptr socketDescriptor);
 
 private:
-    void startModbus();
+    void startExperiment(QString fileName);
+    void startProccess(QProcess *procExp);
+    void startModbus(QString fileName);
     QProcess *modbus = nullptr;
     qint64 timeInterval(const QString &date, const QString &format);
 
@@ -42,8 +43,6 @@ public slots:
     void onRemoveClientManager();
     int countClients();
 
-    void startExperiment(QString fileName);
-    void startExperiment(QProcess *procExp);
     void onRemoveClientExperiment();
 
     void checkAndPrepFoldersPrograms();

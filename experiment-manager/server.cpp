@@ -26,18 +26,12 @@ Server::Server(QObject *parent) : QTcpServer(parent)
                     return;
                 }
                 jprograms = jconfig["programs"].toArray();
-                for (auto jobj: qAsConst(jprograms)) {
-                    if (jobj.toObject()["name"].toString() == "modbusserver") {
-                        jmodbusconfig = jobj.toObject();
-                    }
-                }
             }
             file.close();
         }
     }
     checkAndPrepFoldersPrograms();
     runPrograms();
-//    startExperiment(address);
 }
 
 Server::~Server()
@@ -50,22 +44,23 @@ void Server::startServer()
 {
     if(!this->listen(QHostAddress::Any,55123))
     {
-        qDebug() << "Could not start server";
+        qDebug() << Q_FUNC_INFO << "Could not start server" << this->serverAddress() << this->serverPort();
     }
     else
     {
-        qDebug() << "Listening...";
+        qDebug() << Q_FUNC_INFO << "Listening..." << this->serverAddress() << this->serverPort();
     }
 }
 
-void Server::startModbus()
+void Server::startModbus(QString fileName)
 {
     modbus = new QProcess(this);
-    modbus->setProgram(jmodbusconfig["app_path"].toString());
+    modbus->setProgram(fileName);
     connect(modbus, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, &Server::handlePsCodeModbus, Qt::QueuedConnection);
+    qDebug() << "start" << modbus->program();
     modbus->start();
     if (!modbus->waitForStarted(1000)) {
-        qDebug() << Q_FUNC_INFO << jmodbusconfig["app_path"].toString() << "not started";
+        qDebug() << Q_FUNC_INFO << fileName << "not started";
     }
 }
 
@@ -80,6 +75,7 @@ void Server::startExperiment(QString fileName)
     QProcess *procExp = new QProcess(this);
 //    procExp->setProcessChannelMode(QProcess::MergedChannels);
     connect(procExp, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, &Server::handlePsCodeExperiment, Qt::QueuedConnection);
+    qDebug() << "start" << procExp->program();
     procExp->start(fileName, QStringList(address));
     if (!procExp->waitForStarted(1000)) {
         qDebug() << Q_FUNC_INFO << procExp->program() << "not started";
@@ -87,8 +83,9 @@ void Server::startExperiment(QString fileName)
     procExperiments.insert(procExp);
 }
 
-void Server::startExperiment(QProcess *procExp)
+void Server::startProccess(QProcess *procExp)
 {
+    qDebug() << "start" << procExp->program();
     procExp->start();
     if (!procExp->waitForStarted(1000)) {
         qDebug() << Q_FUNC_INFO << procExp->program() << "not started";
@@ -166,10 +163,12 @@ void Server::checkAndPrepFoldersPrograms()
 void Server::runPrograms()
 {
     for (const auto &jobj: qAsConst(jprograms)) {
-        if (jobj["program"].toString() == "experiment"){
-            QDir app_path(QDir(jobj["path"].toString()).absolutePath());
-            QFile app_file(app_path.filePath(jobj["name"].toString()));
+        QDir app_path(QDir(jobj["path"].toString()).absolutePath());
+        QFile app_file(app_path.filePath(jobj["name"].toString()));
+        if (jobj["program"].toString() == "experiment") {
             startExperiment(app_file.fileName());
+        } else if (jobj["program"].toString() == "modbusserver") {
+            startModbus(app_file.fileName());
         }
     }
 }
@@ -195,7 +194,8 @@ void Server::handlePsCodeModbus(int exitCode, QProcess::ExitStatus exitStatus)
             p.start(QString("pkill"), QStringList("modbusserver"));
             p.waitForFinished();
             QThread::msleep(1000);
-            startModbus();
+            auto proc = qobject_cast<QProcess*>(sender());
+            startProccess(proc);
         }
         break;
     }
@@ -223,7 +223,7 @@ void Server::handlePsCodeExperiment(int exitCode, QProcess::ExitStatus exitStatu
             p.start(QString("pkill"), args);
             p.waitForFinished();
             QThread::msleep(1000);
-            startExperiment(proc);
+            startProccess(proc);
         }
         break;
     }
@@ -237,6 +237,14 @@ void Server::readCMD(QJsonObject jobj)
     } else if (jobj["CMD"].toString() == "stop_modbus") {
         qDebug() << jobj["CMD"].toString();
         modbus->kill();
+    } else if (jobj["CMD"].toString() == "start_modbus") {
+        for (const auto &jobj: qAsConst(jprograms)) {
+            QDir app_path(QDir(jobj["path"].toString()).absolutePath());
+            QFile app_file(app_path.filePath(jobj["name"].toString()));
+            if (jobj["program"].toString() == "modbusserver") {
+                startModbus(app_file.fileName());
+            }
+        }
     } else if (jobj["CMD"].toString() == "stop_experiemnt") {
         qDebug() << jobj["CMD"].toString();
         QString addr = jobj["addr_exp"].toString();

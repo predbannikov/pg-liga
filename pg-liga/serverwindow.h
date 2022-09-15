@@ -45,6 +45,8 @@ private slots:
 
     void on_pushButton_2_clicked();
 
+    void on_btnStartModbus_clicked();
+
 private:
 
     void setEnableWidget(bool enable);

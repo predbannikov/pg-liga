@@ -26,11 +26,11 @@ void Server::startServer()
 {
     if(!this->listen(QHostAddress::Any,50000 | address))
     {
-        qDebug() << "Could not start server";
+        qDebug() << Q_FUNC_INFO << "Could not start server" << this->serverAddress() << this->serverPort();;
     }
     else
     {
-        qDebug() << "Listening..." << this->serverAddress() << this->serverPort();
+        qDebug() << Q_FUNC_INFO << "Listening..." << this->serverAddress() << this->serverPort();
     }
 }
 

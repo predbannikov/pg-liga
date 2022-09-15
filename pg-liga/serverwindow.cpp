@@ -169,6 +169,14 @@ void ServerWindow::on_pushButton_2_clicked()
 {
     QJsonObject jobj;
     jobj["type"] = "manager";
-    jobj["stop"] = "modbus";
+    jobj["CMD"] = "stop_modbus";
+    clnt->sendReadyRequest(jobj);
+}
+
+void ServerWindow::on_btnStartModbus_clicked()
+{
+    QJsonObject jobj;
+    jobj["type"] = "manager";
+    jobj["CMD"] = "start_modbus";
     clnt->sendReadyRequest(jobj);
 }

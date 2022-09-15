@@ -64,42 +64,46 @@
            <number>0</number>
           </property>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
-            <property name="spacing">
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QPushButton" name="readBtn">
-              <property name="text">
-               <string>read</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="updateClientExperiments">
-              <property name="text">
-               <string>update clients expr</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="btnCloseServerWindow">
-              <property name="text">
-               <string>close</string>
-              </property>
-             </widget>
-            </item>
-            <item>
+           <layout class="QGridLayout" name="gridLayout">
+            <item row="0" column="3">
              <widget class="QPushButton" name="pushButton">
               <property name="text">
                <string>stop</string>
               </property>
              </widget>
             </item>
-            <item>
+            <item row="0" column="1">
+             <widget class="QPushButton" name="updateClientExperiments">
+              <property name="text">
+               <string>update clients expr</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QPushButton" name="readBtn">
+              <property name="text">
+               <string>read</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2">
+             <widget class="QPushButton" name="btnCloseServerWindow">
+              <property name="text">
+               <string>close</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
              <widget class="QPushButton" name="pushButton_2">
               <property name="text">
                <string>stopModbus</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QPushButton" name="btnStartModbus">
+              <property name="text">
+               <string>startModbus</string>
               </property>
              </widget>
             </item>
@@ -127,8 +131,8 @@
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>461</width>
-                  <height>381</height>
+                  <width>395</width>
+                  <height>341</height>
                  </rect>
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_6">
