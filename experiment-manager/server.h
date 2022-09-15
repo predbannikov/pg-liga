@@ -17,8 +17,10 @@ class Server : public QTcpServer
 
     QSet <ClientManager*> clients;
     QSet <ClientExperiment*> experiments;
+    QSet <QProcess*> procExperiments;
     QJsonObject jconfig;
     QJsonObject jmodbusconfig;
+    QJsonArray jprograms;
 public:
     explicit Server(QObject *parent = nullptr);
     ~Server();
@@ -34,12 +36,18 @@ private:
     qint64 timeInterval(const QString &date, const QString &format);
 
 public slots:
-    void handlePsCode(int exitCode, QProcess::ExitStatus exitStatus);
+    void handlePsCodeModbus(int exitCode, QProcess::ExitStatus exitStatus);
+    void handlePsCodeExperiment(int exitCode, QProcess::ExitStatus exitStatus);
     void readCMD(QJsonObject &jobj);
     void onRemoveClientManager();
-    void onRemoveClientExperiment();
     int countClients();
 
+    void startExperiment(QString fileName);
+    void startExperiment(QProcess *procExp);
+    void onRemoveClientExperiment();
+
+    void checkAndPrepFoldersPrograms();
+    void runPrograms();
 signals:
     void sendRequest(QJsonObject);
 

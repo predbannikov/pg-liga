@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
      * значит уже существует Lock File созданный другим процессом.
      * Следовательно, выбрасываем предупреждение и закрываем программу
      * */
-    if (!lockFile.tryLock(100))
+    if (!lockFile.tryLock(1000))
     {
         qDebug() << "ModbusServer already running, exit program.";
         return 1;

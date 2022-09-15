@@ -12,7 +12,6 @@ Server::Server(QObject *parent) : QTcpServer(parent)
         if (!file.open(QIODevice::ReadWrite | QIODevice::Text)) {
             qDebug() << "file not open";
         } else {
-            QJsonArray jprograms;
             jconfig = QJsonDocument::fromJson(file.readAll()).object();
             if (!jconfig.contains("programs")) {
                 qDebug() << "no settings path programs";
@@ -25,16 +24,13 @@ Server::Server(QObject *parent) : QTcpServer(parent)
                 }
             }
         }
-        startModbus();
+//        startModbus();
         file.close();
     }
-
+    checkAndPrepFoldersPrograms();
+    runPrograms();
     const int address = 1;
-    QString host = QString("127.0.0.1:%1").arg(50000 | address);
-    ClientExperiment *clientExp = new ClientExperiment(host, this);
-    experiments.insert(clientExp);
-
-
+//    startExperiment(address);
 }
 
 Server::~Server()
@@ -59,13 +55,38 @@ void Server::startModbus()
 {
     modbus = new QProcess(this);
     modbus->setProgram(jmodbusconfig["app_path"].toString());
-    connect(modbus, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, &Server::handlePsCode);
+    connect(modbus, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, &Server::handlePsCodeModbus, Qt::QueuedConnection);
     modbus->start();
     if (!modbus->waitForStarted(1000)) {
         qDebug() << Q_FUNC_INFO << jmodbusconfig["app_path"].toString() << "not started";
     }
 }
 
+void Server::startExperiment(QString fileName)
+{
+    QString name = fileName.split('/').last();
+    QString address = name.split('-')[1];
+    QString host = QString("127.0.0.1:%1").arg(50000 | address.toUInt());
+    ClientExperiment *clientExp = new ClientExperiment(host, this);
+    experiments.insert(clientExp);
+
+    QProcess *procExp = new QProcess(this);
+//    procExp->setProcessChannelMode(QProcess::MergedChannels);
+    connect(procExp, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, &Server::handlePsCodeExperiment, Qt::QueuedConnection);
+    procExp->start(fileName, QStringList(address));
+    if (!procExp->waitForStarted(1000)) {
+        qDebug() << Q_FUNC_INFO << procExp->program() << "not started";
+    }
+    procExperiments.insert(procExp);
+}
+
+void Server::startExperiment(QProcess *procExp)
+{
+    procExp->start();
+    if (!procExp->waitForStarted(1000)) {
+        qDebug() << Q_FUNC_INFO << procExp->program() << "not started";
+    }
+}
 
 int Server::countClients()
 {
@@ -107,14 +128,43 @@ void Server::onRemoveClientExperiment()
 {
     auto client = qobject_cast<ClientExperiment*>(sender());
     auto it = experiments.find(client);
-
     if (it == experiments.end()){
-        qDebug() << Q_FUNC_INFO << "Error clients not contains this set. set.size =" << experiments.size();
+        qDebug() << Q_FUNC_INFO << "Error clients not contains this set experiments. size =" << experiments.size();
         return;
     }
     (*it)->deleteLater();
     experiments.erase(it);
     qDebug() << " #####################################  clientsExperiment.size =" << experiments.size();
+}
+
+void Server::checkAndPrepFoldersPrograms()
+{
+    QDir cur_path = QDir::currentPath();
+    for (const auto &jobj: qAsConst(jprograms)) {
+        QDir app_path(QDir(jobj["path"].toString()).absolutePath());
+        if (!cur_path.mkpath(app_path.path())) {
+            qDebug() << app_path.path() << "folder not created";
+        }
+        QFile app_file(app_path.filePath(jobj["name"].toString()));
+        if (!app_file.exists()) {
+            qDebug() << app_file.fileName() << "copy";
+            QFile srcFile(cur_path.filePath(jobj["program"].toString()));
+            srcFile.copy(app_file.fileName());
+        } else {
+            qDebug() << app_file.fileName() << "file exist";
+        }
+    }
+}
+
+void Server::runPrograms()
+{
+    for (const auto &jobj: qAsConst(jprograms)) {
+        if (jobj["program"].toString() == "experiment"){
+            QDir app_path(QDir(jobj["path"].toString()).absolutePath());
+            QFile app_file(app_path.filePath(jobj["name"].toString()));
+            startExperiment(app_file.fileName());
+        }
+    }
 }
 
 qint64 Server::timeInterval(const QString& date, const QString& format)
@@ -125,7 +175,7 @@ qint64 Server::timeInterval(const QString& date, const QString& format)
     return interval.toSecsSinceEpoch();
 }
 
-void Server::handlePsCode(int exitCode, QProcess::ExitStatus exitStatus)
+void Server::handlePsCodeModbus(int exitCode, QProcess::ExitStatus exitStatus)
 {
     switch (exitStatus) {
     case QProcess::CrashExit:
@@ -133,12 +183,40 @@ void Server::handlePsCode(int exitCode, QProcess::ExitStatus exitStatus)
         break;
     case QProcess::NormalExit:
         if (exitCode == 1) {
-            qDebug() << Q_FUNC_INFO<< "handle when modbus run";
+            qDebug() << Q_FUNC_INFO<< "handle when modbus runing";
             QProcess p;
             p.start(QString("pkill"), QStringList("modbusserver"));
             p.waitForFinished();
-            QThread::msleep(300);
+            QThread::msleep(1000);
             startModbus();
+        }
+        break;
+    }
+}
+
+void Server::handlePsCodeExperiment(int exitCode, QProcess::ExitStatus exitStatus)
+{
+    switch (exitStatus) {
+    case QProcess::CrashExit:
+        qDebug() << Q_FUNC_INFO << "Warning: experiment crash exit";
+        break;
+    case QProcess::NormalExit:
+        if (exitCode == 1) {
+            qDebug() << Q_FUNC_INFO<< "handle when experiment runing";
+            auto proc = qobject_cast<QProcess*>(sender());
+            auto it = procExperiments.find(proc);
+            if (it == procExperiments.end()) {
+                qDebug() << Q_FUNC_INFO << "Error proccess not contains this set procExperiments. size =" << procExperiments.size();
+                return;
+            }
+            QProcess p;
+            QStringList args;
+            QString name = proc->program().split('/').last();
+            args.append(name);
+            p.start(QString("pkill"), args);
+            p.waitForFinished();
+            QThread::msleep(1000);
+            startExperiment(proc);
         }
         break;
     }
