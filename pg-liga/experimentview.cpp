@@ -221,3 +221,11 @@ void ExperimentView::on_btnUnlockPid_clicked()
     jobj["CMD"] = "unlock_PID";
     emit sendRequest(jobj);
 }
+
+void ExperimentView::on_btnCloseInstr_clicked()
+{
+    QJsonObject jobj;
+    jobj["type"] = "manager";
+    jobj["CMD"] = "close_instr";
+    emit sendRequest(jobj);
+}

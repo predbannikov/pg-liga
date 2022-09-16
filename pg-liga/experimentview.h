@@ -66,6 +66,8 @@ private slots:
 
     void on_btnUnlockPid_clicked();
 
+    void on_btnCloseInstr_clicked();
+
 signals:
     void sendRequest(QJsonObject &jobj);
 

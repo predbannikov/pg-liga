@@ -181,7 +181,7 @@
                 <x>0</x>
                 <y>0</y>
                 <width>500</width>
-                <height>102</height>
+                <height>83</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -233,7 +233,7 @@
               <x>0</x>
               <y>0</y>
               <width>502</width>
-              <height>204</height>
+              <height>183</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -250,10 +250,17 @@
          </item>
          <item>
           <layout class="QGridLayout" name="gridLayout">
-           <item row="0" column="4">
-            <widget class="QPushButton" name="btnMoveUp">
+           <item row="0" column="5">
+            <widget class="QPushButton" name="btnMoveDown">
              <property name="text">
-              <string>moveUp</string>
+              <string>moveDown</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <widget class="QPushButton" name="btnUnlockPid">
+             <property name="text">
+              <string>unlockPID</string>
              </property>
             </widget>
            </item>
@@ -264,24 +271,17 @@
              </property>
             </widget>
            </item>
-           <item row="0" column="6">
-            <widget class="QPushButton" name="btnStopStepper">
+           <item row="0" column="4">
+            <widget class="QPushButton" name="btnMoveUp">
              <property name="text">
-              <string>stop</string>
+              <string>moveUp</string>
              </property>
             </widget>
            </item>
-           <item row="0" column="5">
-            <widget class="QPushButton" name="btnMoveDown">
+           <item row="1" column="5">
+            <widget class="QPushButton" name="pushButton_2">
              <property name="text">
-              <string>moveDown</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QPushButton" name="btnClearLogOut">
-             <property name="text">
-              <string>clear</string>
+              <string>all request</string>
              </property>
             </widget>
            </item>
@@ -299,17 +299,24 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="5">
-            <widget class="QPushButton" name="pushButton_2">
+           <item row="1" column="0">
+            <widget class="QPushButton" name="btnClearLogOut">
              <property name="text">
-              <string>all request</string>
+              <string>clear</string>
              </property>
             </widget>
            </item>
-           <item row="0" column="2">
-            <widget class="QPushButton" name="btnUnlockPid">
+           <item row="0" column="6">
+            <widget class="QPushButton" name="btnStopStepper">
              <property name="text">
-              <string>unlockPID</string>
+              <string>stop</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QPushButton" name="btnCloseInstr">
+             <property name="text">
+              <string>closeInstr</string>
              </property>
             </widget>
            </item>

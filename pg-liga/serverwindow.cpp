@@ -53,11 +53,22 @@ void ServerWindow::onReadyReadResponse(const QJsonObject &jresponse)
             QJsonArray jarr;
             jarr = jresponse["clients_address"].toArray();
             QLayoutItem *item;
-            while ((item = ui->verticalLayout->takeAt(0)) != nullptr)
+            while ((item = ui->verticalLayout->takeAt(0)) != nullptr) {
+                qDebug() << "remove" << qobject_cast<QPushButton*>((*item).widget())->text();
+                ui->verticalLayout->removeItem(item);
+                item->widget()->deleteLater();
                 delete item;
+            }
+            ui->verticalLayout->update();
             for (const auto &item: qAsConst(jarr)) {
                 qDebug() << "addr " << item.toString();
                 QPushButton *btn = new QPushButton("INSTR:" + item.toString(), this);
+//                for (auto &item: ui->verticalLayout->children()) {
+//                    QPushButton *childBtn = qobject_cast<QPushButton *>(item);
+//                    if (childBtn != nullptr)
+//                        if (childBtn->text() == btn->text()
+
+//                }
                 ui->verticalLayout->addWidget(btn);
                 connect(btn, &QPushButton::clicked, this, &ServerWindow::clickBtnNumInstr);
             }

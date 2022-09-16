@@ -26,13 +26,16 @@ public:
 
     void startServer();
     QByteArray getConfigBase64();
+    QJsonObject readConfig();
 protected:
     void incomingConnection(qintptr socketDescriptor);
 
 private:
-    void startExperiment(QString fileName);
+    void startExperimentProccess(QString fileName);
     void startProccess(QProcess *procExp);
     void startModbus(QString fileName);
+    void stopExperiementProccess(QString addr);
+//    void stopExperiemnt
     QProcess *modbus = nullptr;
     qint64 timeInterval(const QString &date, const QString &format);
 

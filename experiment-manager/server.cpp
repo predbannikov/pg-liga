@@ -14,20 +14,12 @@ Server::Server(QObject *parent) : QTcpServer(parent)
         if (!QFile::exists("./config.json")) {
             qDebug() << "file config.json not exists";
         } else {
-
-            QFile file("config.json");
-            if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                qDebug() << "file not open";
-            } else {
-
-                jconfig = QJsonDocument::fromJson(file.readAll()).object();
-                if (!jconfig.contains("programs")) {
-                    qDebug() << "no settings path programs";
-                    return;
-                }
-                jprograms = jconfig["programs"].toArray();
+            jconfig = readConfig();
+            if (!jconfig.contains("programs")) {
+                qDebug() << "no settings path programs";
+                return;
             }
-            file.close();
+            jprograms = jconfig["programs"].toArray();
         }
     }
     checkAndPrepFoldersPrograms();
@@ -54,14 +46,20 @@ void Server::startServer()
 
 QByteArray Server::getConfigBase64()
 {
+    QByteArray configBase64 = QJsonDocument(readConfig()).toJson().toBase64();
+    return configBase64;
+}
+
+QJsonObject Server::readConfig()
+{
     QFile file_settings("./config.json");
     if (!file_settings.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qDebug() << Q_FUNC_INFO << file_settings.fileName() << "file no open";
-        return QByteArray();
+        return QJsonObject();
     }
-    QByteArray configBase64 = file_settings.readAll().toBase64();
+    QJsonObject jobj = QJsonDocument::fromJson(file_settings.readAll()).object();
     file_settings.close();
-    return configBase64;
+    return jobj;
 }
 
 void Server::startModbus(QString fileName)
@@ -76,7 +74,31 @@ void Server::startModbus(QString fileName)
     }
 }
 
-void Server::startExperiment(QString fileName)
+void Server::stopExperiementProccess(QString addr)
+{
+    {
+        for (auto it = experiments.begin(); it != experiments.end(); it++) {
+            if ((*it)->address == addr.toUInt()) {
+                (*it)->deleteLater();
+                experiments.erase(it);
+                break;
+            }
+        }
+    }
+    {
+        for (auto it = procExperiments.begin(); it != procExperiments.end(); it++) {
+            QString name = (*it)->program().split('/').last();
+            if (name.split('-')[1] == addr) {
+                (*it)->kill();
+                (*it)->deleteLater();
+                procExperiments.erase(it);
+                break;
+            }
+        }
+    }
+}
+
+void Server::startExperimentProccess(QString fileName)
 {
     QString name = fileName.split('/').last();
     QString address = name.split('-')[1];
@@ -178,7 +200,13 @@ void Server::runPrograms()
         QDir app_path(QDir(jobj["path"].toString()).absolutePath());
         QFile app_file(app_path.filePath(jobj["name"].toString()));
         if (jobj["program"].toString() == "experiment") {
-            startExperiment(app_file.fileName());
+            auto it = experiments.begin();
+            for (; it != experiments.end(); it++) {
+                QString name = app_file.fileName().split('/').last();
+                if ((*it)->address == name.split('-')[1].toUInt())
+                    return;
+            }
+            startExperimentProccess(app_file.fileName());
         } else if (jobj["program"].toString() == "modbusserver") {
             startModbus(app_file.fileName());
         }
@@ -246,6 +274,10 @@ void Server::readCMD(QJsonObject jobj)
     if (jobj["CMD"].toString() == "stop_manager") {
         qDebug() << jobj["CMD"].toString();
         qApp->exit();
+    } else if (jobj["CMD"].toString() == "close_instr") {
+
+        qDebug() << jobj["CMD"].toString();
+        modbus->kill();
     } else if (jobj["CMD"].toString() == "stop_modbus") {
         qDebug() << jobj["CMD"].toString();
         modbus->kill();
@@ -273,9 +305,17 @@ void Server::readCMD(QJsonObject jobj)
             qDebug() << Q_FUNC_INFO << file_settings.fileName() << "file no open";
             return;
         }
-        file_settings.write(QByteArray::fromBase64(jobj["settings"].toString().toUtf8()));
+        QByteArray jconfByteArray = QByteArray::fromBase64(jobj["settings"].toString().toUtf8());
+        file_settings.write(jconfByteArray);
         file_settings.close();
+
+
+
+        jconfig = QJsonDocument::fromJson(jconfByteArray).object();
         checkAndPrepFoldersPrograms();
         runPrograms();
+//        stopExperiementProccess();    // TODO!!!!!!!!
+
+
     }
 }
