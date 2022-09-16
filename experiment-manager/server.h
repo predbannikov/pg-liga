@@ -25,7 +25,7 @@ public:
     ~Server();
 
     void startServer();
-
+    QByteArray getConfigBase64();
 protected:
     void incomingConnection(qintptr socketDescriptor);
 

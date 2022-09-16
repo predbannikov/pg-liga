@@ -61,6 +61,8 @@ void ServerWindow::onReadyReadResponse(const QJsonObject &jresponse)
                 ui->verticalLayout->addWidget(btn);
                 connect(btn, &QPushButton::clicked, this, &ServerWindow::clickBtnNumInstr);
             }
+            jServerConfig = QJsonDocument::fromJson(QByteArray::fromBase64(jresponse["config"].toString().toUtf8())).object();
+            ui->textEditLogout->append(QJsonDocument(jServerConfig).toJson());
         }
     }
     else if (jresponse["type"].toString() == "client") {
@@ -120,17 +122,6 @@ void ServerWindow::on_sendRequest(QJsonObject &jobj)
     }
 }
 
-//void ServerWindow::on_readyResponse(QJsonObject &jobj)
-//{
-//    QString instr = "INSTR:" + jobj["address"].toString();
-//    auto *tab = openTabs.value(instr, nullptr);
-//    if (tab == nullptr) {
-//        qDebug() << Q_FUNC_INFO << "for incomming message, instr not found";
-//    } else {
-//        tab->onReadyResponse(jobj);
-//    }
-//}
-
 void ServerWindow::on_readBtn_clicked()
 {
     qDebug() << Q_FUNC_INFO;
@@ -140,7 +131,7 @@ void ServerWindow::on_updateClientExperiments_clicked()
 {
     QJsonObject jobj;
     jobj["type"] = "manager";
-    jobj["get"] = "clients";
+    jobj["get"] = "settings";
     clnt->sendReadyRequest(jobj);
 }
 
@@ -179,4 +170,50 @@ void ServerWindow::on_btnStartModbus_clicked()
     jobj["type"] = "manager";
     jobj["CMD"] = "start_modbus";
     clnt->sendReadyRequest(jobj);
+}
+
+void ServerWindow::on_btnAddInstr_clicked()
+{
+    QJsonObject jobj;
+    jobj["type"] = "manager";
+    jobj["CMD"] = "update_config";
+
+    int addr = ui->spinNumInstr->value();
+    QString prog_name = QString("experiment-%1").arg(addr);
+    QJsonArray jprograms = jServerConfig["programs"].toArray();
+    for (auto item: qAsConst(jprograms))
+        if (item.toObject()["name"].toString() == prog_name)
+            return;
+    QJsonObject jInstr;
+    jInstr["program"] = "experiment";
+    jInstr["name"] = prog_name;
+    jInstr["path"] = QString("./experiments/%1").arg(addr);
+    jprograms.append(jInstr);
+    jServerConfig["programs"] = jprograms;
+
+    jobj["settings"] = QString(QJsonDocument(jServerConfig).toJson().toBase64());
+    clnt->sendReadyRequest(jobj);
+    QTimer::singleShot(1000, this, &ServerWindow::on_updateClientExperiments_clicked);
+}
+
+void ServerWindow::on_btnRemoveInstr_clicked()
+{
+    QJsonObject jobj;
+    jobj["type"] = "manager";
+    jobj["CMD"] = "update_config";
+
+    int addr = ui->spinNumInstr->value();
+    QString prog_name = QString("experiment-%1").arg(addr);
+    QJsonArray jprograms = jServerConfig["programs"].toArray();
+    for (auto it = jprograms.begin(); it != jprograms.end(); it++) {
+        if ((*it).toObject()["name"].toString() == prog_name) {
+            jprograms.erase(it);
+            break;
+        }
+    }
+    jServerConfig["programs"] = jprograms;
+
+    jobj["settings"] = QString(QJsonDocument(jServerConfig).toJson().toBase64());
+    clnt->sendReadyRequest(jobj);
+    QTimer::singleShot(1000, this, &ServerWindow::on_updateClientExperiments_clicked);
 }

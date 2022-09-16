@@ -52,6 +52,18 @@ void Server::startServer()
     }
 }
 
+QByteArray Server::getConfigBase64()
+{
+    QFile file_settings("./config.json");
+    if (!file_settings.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << Q_FUNC_INFO << file_settings.fileName() << "file no open";
+        return QByteArray();
+    }
+    QByteArray configBase64 = file_settings.readAll().toBase64();
+    file_settings.close();
+    return configBase64;
+}
+
 void Server::startModbus(QString fileName)
 {
     modbus = new QProcess(this);

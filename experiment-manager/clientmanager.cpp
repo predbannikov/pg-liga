@@ -39,7 +39,8 @@ void ClientManager::parserJSON(QJsonObject &jobj)
 {
     if (jobj["type"].toString() == "manager") {
         if (jobj.contains("get")) {
-            if (jobj["get"].toString() == "clients") {
+            if (jobj["get"].toString() == "settings") {
+                jobj["config"] = QString(qobject_cast<Server*>(this->parent())->getConfigBase64());
                 jobj["clients_size"] = QString::number(qobject_cast<Server*>(this->parent())->countClients());
                 jobj["clients_exp_size"] = QString::number(experiments->size());
                 QJsonArray jaddr;

@@ -17,7 +17,7 @@ class ServerWindow;
 class ServerWindow : public QWidget
 {
     Q_OBJECT
-
+    QJsonObject jServerConfig;
 public:
     explicit ServerWindow(QString host_, QWidget *parent = nullptr);
     ~ServerWindow();
@@ -46,6 +46,10 @@ private slots:
     void on_pushButton_2_clicked();
 
     void on_btnStartModbus_clicked();
+
+    void on_btnAddInstr_clicked();
+
+    void on_btnRemoveInstr_clicked();
 
 private:
 

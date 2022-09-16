@@ -118,9 +118,43 @@
              </sizepolicy>
             </property>
             <property name="title">
-             <string>GroupBox</string>
+             <string>Settings instruments</string>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_5">
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_2">
+               <item>
+                <widget class="QSpinBox" name="spinNumInstr">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimum">
+                  <number>1</number>
+                 </property>
+                 <property name="maximum">
+                  <number>32</number>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="btnAddInstr">
+                 <property name="text">
+                  <string>add instr</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="btnRemoveInstr">
+                 <property name="text">
+                  <string>removeInstr</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
              <item>
               <widget class="QScrollArea" name="scrollArea">
                <property name="widgetResizable">
@@ -132,7 +166,7 @@
                   <x>0</x>
                   <y>0</y>
                   <width>395</width>
-                  <height>341</height>
+                  <height>299</height>
                  </rect>
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_6">
