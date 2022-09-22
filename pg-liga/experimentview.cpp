@@ -19,6 +19,59 @@ ExperimentView::~ExperimentView()
     delete ui;
 }
 
+void ExperimentView::setupPlots()
+{
+
+
+    /* First Experiment Plots */
+//    auto deformVsTime = new DecoratedPlot(this);
+    auto deformVsPressure = new DecoratedPlot(this);
+    deformVsPressure->addTrace(m_deformData["deform"], m_presureData["pressure"], tr("Относительная деформация, %1%2").arg(Strings::epsilon, QString::number(1)), tr("Вертикальное давление, кПа"));
+    ui->tabGraphics->addTab(deformVsPressure, tr("Вертикальная деформация (t)"));
+
+
+//    auto *relativeDeformChannel = m_experiment->logger()->dataChannel("VerticalDeformRelative");
+//    auto *pressureSummaryChannel = m_experiment->logger()->dataChannel("VerticalPressureSummary");
+//    auto *relativeDeformSummaryChannel = m_experiment->logger()->dataChannel("VerticalDeformRelativeSummary");
+
+//    auto *verticalLoadOperationFirst = qobject_cast<StaticLoadingOperation*>(m_experiment->mainOperations().
+//                                                                             at(CompressionDoubleExperiment::VerticalLoadingStatic));
+//#ifdef CONSOLIDATION_PLUGIN
+//    auto *processorFirst = new ConsolidationProcessor(m_experiment->specimen(), this);
+//    connect(verticalLoadOperationFirst, &StaticLoadingOperation::currentStepChanged, processorFirst, &ConsolidationProcessor::clearData);
+//#endif
+//    connect(m_experiment, &AbstractDoubleExperiment::started,
+//            [=](){
+//#ifdef CONSOLIDATION_PLUGIN
+//        processorFirst->setData(m_experiment->logger()->dataChannel("VerticalDeformRelative"));
+//#endif
+//        deformVsPressure->addTrace(m_deformData, m_presureData, tr("Относительная деформация, %1%2").arg(Strings::epsilon, QString::number(1)), tr("Вертикальное давление, кПа"));
+//        deformVsTime->addTrace(relativeDeformChannel, tr("Время, мин"),
+//                               tr("Относительная деформация, %1%2").arg(Strings::epsilon, QString::number(1)));
+//    });
+//    connect(m_experiment, &AbstractDoubleExperiment::finished,
+//            [=](){
+//#ifdef CONSOLIDATION_PLUGIN
+//        processorFirst->unsetData(m_experiment->logger()->dataChannel("VerticalDeformRelative"));
+//#endif
+//        deformVsPressure->removeTrace(relativeDeformSummaryChannel, pressureSummaryChannel);
+//        deformVsTime->removeTrace(relativeDeformChannel);
+//    });
+//#ifdef CONSOLIDATION_PLUGIN
+//    auto *processorFirstWidget = processorFirst->onlineWidget(this);
+//#endif
+
+//    ui->tabGraphics->addTab(deformVsTime, tr("Вертикальная деформация (t)"));
+////    ui->tabWidgetFirst->addTab(deformVsPressure, tr("Вертикальное давление (%1%2)").arg(Strings::epsilon, QString::number(1)));
+//#ifdef CONSOLIDATION_PLUGIN
+//    if (processorFirstWidget) {
+//        ui->tabWidgetFirst->addTab(processorFirstWidget, tr("Консолидация"));
+//    }
+//#endif
+
+
+}
+
 qint64 ExperimentView::timeInterval(const QString& date, const QString& format)
 {
     QDateTime sourceDate(QDate(1900, 1, 1), QTime(0, 0, 0));

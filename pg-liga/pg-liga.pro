@@ -3,8 +3,10 @@ QT       += core gui network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
+CONFIG += qwt
 
 QMAKE_CXXFLAGS += -Wextra
+
 
 TEMPLATE = app
 TARGET = liga
@@ -19,6 +21,13 @@ SOURCES += \
     Settings/settingsdialog.cpp     \
     clientmanager.cpp \
     experimentview.cpp \
+	decoratedplot.cpp \
+	experimentdata.cpp \
+	qwtchartzoom.cpp \
+	qwheelzoomsvc.cpp \
+	qaxiszoomsvc.cpp \
+	plotadapter.cpp \
+	plotxyadapter.cpp \
     main.cpp \
     mainwindow.cpp \
     serverwindow.cpp
@@ -34,6 +43,13 @@ HEADERS += \
     Physics/measurements.h \
     clientmanager.h \
     experimentview.h \
+	experimentdata.h \
+	decoratedplot.h \
+	qwtchartzoom.h \
+	qwheelzoomsvc.h \
+	qaxiszoomsvc.h \
+	plotadapter.h \
+	plotxyadapter.h \
     mainwindow.h \
     serverwindow.h
 

@@ -18,6 +18,9 @@ MainWindow::MainWindow(QWidget *parent)
     }
     connect(ui->actScan, &QAction::triggered, this, &MainWindow::scanInstruments);
 //    connect(ui->tabMain, &QTabWidget::tabCloseRequested, this, &MainWindow::onTabCloseRequested);
+//    this->resize(1280, 768);
+    this->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
+
     ui->serverCmbBox->addItem(SettingsManager::instance()->getServers());
 }
 
@@ -265,7 +268,7 @@ InstrumentGrid::InstrumentGrid(QWidget *parent):
 
 void InstrumentGrid::addInstrument(TYPE_INSTRUMENT type)
 {
-    auto *button = new InstrumentButton(type, this);
+    auto *button = new InstrumentButton("1", type, this);
     connect(button, &QPushButton::clicked, this, &InstrumentGrid::onInstrumentButtonClicked);
 
     m_layout->addWidget(button);
@@ -393,11 +396,12 @@ QSize FlowLayout::buildLayout(const QRect &r) const
  * 					INSTRUMENT_BUTTON
  * **********************************************/
 
-InstrumentButton::InstrumentButton(TYPE_INSTRUMENT type, QWidget *parent):
+InstrumentButton::InstrumentButton(QString addr, TYPE_INSTRUMENT type, QWidget *parent):
     QPushButton(parent),
     m_statusText(new QLabel(this))
 {
-    m_statusText->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    address = addr;
+    m_statusText->setAlignment(Qt::AlignLeft | Qt::AlignBottom);
 
     QString name;
     switch(type){
@@ -408,8 +412,8 @@ InstrumentButton::InstrumentButton(TYPE_INSTRUMENT type, QWidget *parent):
     }
 
 
-    auto *titleText = new QLabel(tr("Устройство ") + name, this);
-    titleText->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    auto *titleText = new QLabel(QString("INSTR:%1\t").arg(addr) + name, this);
+    titleText->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 
     auto *image = new QLabel(this);
     image->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
@@ -417,16 +421,26 @@ InstrumentButton::InstrumentButton(TYPE_INSTRUMENT type, QWidget *parent):
     QString iconPath = ":/icons/device_kl0_128.png";
 
     image->setPixmap(iconPath);
-
     auto *layout = new QVBoxLayout(this);
+
     layout->setContentsMargins(0, 0, 0, 0);
 
     layout->addWidget(titleText);
     layout->addWidget(image);
     layout->addWidget(m_statusText);
 
+//    this->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+//    titleText->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+//    image->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+//    m_statusText->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
 //    connect(m_instrument, &Instrument::stateChanged, this, &InstrumentButton::setStatus);
 //    setStatus(Instrument::Ready);
+//    image->resize(128, 128);
+//    titleText->resize(128, 30);
+//    m_statusText->resize(128, 30);
+    layout->setSizeConstraint(QLayout::SetMinimumSize);
+//    this->resize(150, 128);
 
 
 }
@@ -450,6 +464,11 @@ void InstrumentButton::setStatus(int status)
 //    } else {}
 
 
+}
+
+QString InstrumentButton::getAddress()
+{
+    return address;
 }
 
 //QString InstrumentButton::getIconName(int type)

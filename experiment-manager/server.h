@@ -27,6 +27,8 @@ public:
     void startServer();
     QByteArray getConfigBase64();
     QJsonObject readConfig();
+    bool isRuningExperiment(quint8 address);
+
 protected:
     void incomingConnection(qintptr socketDescriptor);
 
@@ -34,11 +36,11 @@ private:
     void startExperimentProccess(QString fileName);
     void startProccess(QProcess *procExp);
     void startModbus(QString fileName);
-    void stopExperiementProccess(QString addr);
+    void stopExperiementProccesses();
 //    void stopExperiemnt
     QProcess *modbus = nullptr;
     qint64 timeInterval(const QString &date, const QString &format);
-
+    bool configContainsInstr(quint8 addr);
 public slots:
     void handlePsCodeModbus(int exitCode, QProcess::ExitStatus exitStatus);
     void handlePsCodeExperiment(int exitCode, QProcess::ExitStatus exitStatus);

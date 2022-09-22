@@ -111,16 +111,18 @@ class InstrumentButton : public QPushButton
     Q_OBJECT
 
 public:
-    InstrumentButton(TYPE_INSTRUMENT type, QWidget *parent = nullptr);
+    InstrumentButton(QString addr, TYPE_INSTRUMENT type, QWidget *parent = nullptr);
     TYPE_INSTRUMENT instrument() const { return type_instr; }
 
 public slots:
     void setStatus(int status);
+    QString getAddress();
 
 private:
 //    QString getIconName(int type);
 
     TYPE_INSTRUMENT type_instr;
+    QString address;
     QLabel *m_statusText;
 };
 

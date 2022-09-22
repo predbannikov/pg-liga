@@ -14,12 +14,7 @@ Server::Server(QObject *parent) : QTcpServer(parent)
         if (!QFile::exists("./config.json")) {
             qDebug() << "file config.json not exists";
         } else {
-            jconfig = readConfig();
-            if (!jconfig.contains("programs")) {
-                qDebug() << "no settings path programs";
-                return;
-            }
-            jprograms = jconfig["programs"].toArray();
+            readConfig();
         }
     }
     checkAndPrepFoldersPrograms();
@@ -46,7 +41,7 @@ void Server::startServer()
 
 QByteArray Server::getConfigBase64()
 {
-    QByteArray configBase64 = QJsonDocument(readConfig()).toJson().toBase64();
+    QByteArray configBase64 = QJsonDocument(jconfig).toJson().toBase64();
     return configBase64;
 }
 
@@ -57,9 +52,14 @@ QJsonObject Server::readConfig()
         qDebug() << Q_FUNC_INFO << file_settings.fileName() << "file no open";
         return QJsonObject();
     }
-    QJsonObject jobj = QJsonDocument::fromJson(file_settings.readAll()).object();
+    jconfig = QJsonDocument::fromJson(file_settings.readAll()).object();
     file_settings.close();
-    return jobj;
+    if (!jconfig.contains("programs")) {
+        qDebug() << "no settings path programs";
+    } else {
+        jprograms = jconfig["programs"].toArray();
+    }
+    return jconfig;
 }
 
 void Server::startModbus(QString fileName)
@@ -74,26 +74,23 @@ void Server::startModbus(QString fileName)
     }
 }
 
-void Server::stopExperiementProccess(QString addr)
+void Server::stopExperiementProccesses()
 {
-    {
-        for (auto it = experiments.begin(); it != experiments.end(); it++) {
-            if ((*it)->address == addr.toUInt()) {
-                (*it)->deleteLater();
-                experiments.erase(it);
-                break;
-            }
+    for (auto it = experiments.begin(); it != experiments.end();) {
+        if (!configContainsInstr((*it)->address)) {
+            (*it)->deleteLater();
+            it = experiments.erase(it);
+        } else {
+            it++;
         }
     }
-    {
-        for (auto it = procExperiments.begin(); it != procExperiments.end(); it++) {
-            QString name = (*it)->program().split('/').last();
-            if (name.split('-')[1] == addr) {
-                (*it)->kill();
-                (*it)->deleteLater();
-                procExperiments.erase(it);
-                break;
-            }
+    for (auto it = procExperiments.begin(); it != procExperiments.end();) {
+        if (!configContainsInstr((*it)->program().split('/').last().split('-')[1].toUInt())) {
+            (*it)->kill();
+            (*it)->deleteLater();
+            it = procExperiments.erase(it);
+        } else {
+            it++;
         }
     }
 }
@@ -194,19 +191,24 @@ void Server::checkAndPrepFoldersPrograms()
     }
 }
 
+bool Server::isRuningExperiment(quint8 address)
+{
+    auto it = experiments.begin();
+    for (; it != experiments.end(); it++) {
+        if ((*it)->address == address)
+            return true;
+    }
+    return false;
+}
+
 void Server::runPrograms()
 {
     for (const auto &jobj: qAsConst(jprograms)) {
         QDir app_path(QDir(jobj["path"].toString()).absolutePath());
         QFile app_file(app_path.filePath(jobj["name"].toString()));
         if (jobj["program"].toString() == "experiment") {
-            auto it = experiments.begin();
-            for (; it != experiments.end(); it++) {
-                QString name = app_file.fileName().split('/').last();
-                if ((*it)->address == name.split('-')[1].toUInt())
-                    return;
-            }
-            startExperimentProccess(app_file.fileName());
+            if (!isRuningExperiment(app_file.fileName().split('/').last().split('-')[1].toUInt()))
+                startExperimentProccess(app_file.fileName());
         } else if (jobj["program"].toString() == "modbusserver") {
             startModbus(app_file.fileName());
         }
@@ -219,6 +221,15 @@ qint64 Server::timeInterval(const QString& date, const QString& format)
     QDateTime toDt = QDateTime::fromString(date, format);
     QDateTime interval = QDateTime::fromMSecsSinceEpoch(toDt.toMSecsSinceEpoch() - sourceDate.toMSecsSinceEpoch());
     return interval.toSecsSinceEpoch();
+}
+
+bool Server::configContainsInstr(quint8 addr)
+{
+    for (const auto &jobj: qAsConst(jprograms))
+        if (jobj["program"].toString() == "experiment")
+            if (jobj["name"].toString().split('-')[1].toUInt() == addr)
+                return true;
+    return false;
 }
 
 void Server::handlePsCodeModbus(int exitCode, QProcess::ExitStatus exitStatus)
@@ -308,13 +319,13 @@ void Server::readCMD(QJsonObject jobj)
         QByteArray jconfByteArray = QByteArray::fromBase64(jobj["settings"].toString().toUtf8());
         file_settings.write(jconfByteArray);
         file_settings.close();
-
+        readConfig();
 
 
         jconfig = QJsonDocument::fromJson(jconfByteArray).object();
         checkAndPrepFoldersPrograms();
         runPrograms();
-//        stopExperiementProccess();    // TODO!!!!!!!!
+        stopExperiementProccesses();
 
 
     }

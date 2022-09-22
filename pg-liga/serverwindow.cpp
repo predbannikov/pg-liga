@@ -1,6 +1,7 @@
 #include "serverwindow.h"
 #include "ui_serverwindow.h"
 #include <QDebug>
+#include "mainwindow.h"
 
 
 ServerWindow::ServerWindow(QString host_, QWidget *parent) :
@@ -16,8 +17,12 @@ ServerWindow::ServerWindow(QString host_, QWidget *parent) :
     connect(clnt, &ClientManager::readyReadResponse, this, &ServerWindow::onReadyReadResponse, Qt::QueuedConnection);
     timerPollSensors.setInterval(1000);
     connect(&timerPollSensors, &QTimer::timeout, this, &ServerWindow::onPollSensorsCurrentPage);
-//    QTimer::singleShot(300, clnt, &ClientManager::connectToHost);
+    this->resize(720, 1280);
+    ui->verticalLayout->setSizeConstraint(QLayout::SetNoConstraint);
     setEnableWidget(false);
+    QList<int> sizes;
+    sizes << 100 << 0;
+    ui->splitter->setSizes(sizes);
 }
 
 ServerWindow::~ServerWindow()
@@ -50,11 +55,13 @@ void ServerWindow::onReadyReadResponse(const QJsonObject &jresponse)
     if (jresponse["type"].toString() == "manager") {
         if (jresponse.contains("get")) {
             qDebug() << "count connected exeperiments =" << jresponse["clients_size"].toString();
+            jServerConfig = QJsonDocument::fromJson(QByteArray::fromBase64(jresponse["config"].toString().toUtf8())).object();
+            ui->textEditLogout->append(QJsonDocument(jServerConfig).toJson());
             QJsonArray jarr;
             jarr = jresponse["clients_address"].toArray();
             QLayoutItem *item;
             while ((item = ui->verticalLayout->takeAt(0)) != nullptr) {
-                qDebug() << "remove" << qobject_cast<QPushButton*>((*item).widget())->text();
+                qDebug() << "remove" << qobject_cast<InstrumentButton*>((*item).widget())->text();
                 ui->verticalLayout->removeItem(item);
                 item->widget()->deleteLater();
                 delete item;
@@ -62,18 +69,20 @@ void ServerWindow::onReadyReadResponse(const QJsonObject &jresponse)
             ui->verticalLayout->update();
             for (const auto &item: qAsConst(jarr)) {
                 qDebug() << "addr " << item.toString();
-                QPushButton *btn = new QPushButton("INSTR:" + item.toString(), this);
+                InstrumentButton *instrBtn = new InstrumentButton(item.toString(), TYPE_INSTR_COMPRESSION, this);
+                instrBtn->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+//                instrBtn->resize(150, 128);
+//                instrBtn->setText("INSTR:" + item.toString());
+//                QPushButton *btn = new QPushButton("INSTR:" + item.toString(), this);
 //                for (auto &item: ui->verticalLayout->children()) {
 //                    QPushButton *childBtn = qobject_cast<QPushButton *>(item);
 //                    if (childBtn != nullptr)
 //                        if (childBtn->text() == btn->text()
 
 //                }
-                ui->verticalLayout->addWidget(btn);
-                connect(btn, &QPushButton::clicked, this, &ServerWindow::clickBtnNumInstr);
+                ui->verticalLayout->addWidget(instrBtn);
+                connect(instrBtn, &InstrumentButton::clicked, this, &ServerWindow::clickBtnNumInstr);
             }
-            jServerConfig = QJsonDocument::fromJson(QByteArray::fromBase64(jresponse["config"].toString().toUtf8())).object();
-            ui->textEditLogout->append(QJsonDocument(jServerConfig).toJson());
         }
     }
     else if (jresponse["type"].toString() == "client") {
@@ -90,15 +99,16 @@ void ServerWindow::onReadyReadResponse(const QJsonObject &jresponse)
 
 void ServerWindow::clickBtnNumInstr()
 {
-    QPushButton *btn = qobject_cast<QPushButton*>(this->sender());
-    auto *tab = openTabs.value(btn->text(), nullptr);
+    InstrumentButton *btn = qobject_cast<InstrumentButton*>(this->sender());
+    QString instrName = "INSTR:" + btn->getAddress();
+    auto *tab = openTabs.value(instrName, nullptr);
     if (tab == nullptr) {
         if (openTabs.isEmpty())
             timerPollSensors.start();
         ExperimentView *expView =  new ExperimentView(this);
         connect(expView, &ExperimentView::sendRequest, this, &ServerWindow::on_sendRequest);
-        openTabs.insert(btn->text(), expView);
-        ui->tabWidget->addTab(expView, btn->text());
+        openTabs.insert(instrName, expView);
+        ui->tabWidget->addTab(expView, instrName);
         ui->tabWidget->setCurrentWidget(expView);
     } else {
         ui->tabWidget->setCurrentWidget(tab);
@@ -113,6 +123,10 @@ void ServerWindow::onPollSensorsCurrentPage()
 //        qDebug() << "current server page";
     } else {
         QString srch = openTabs.key(qobject_cast<ExperimentView *>(ui->tabWidget->currentWidget()), "");
+        if (srch == "") {
+            qDebug() << "text is empty";
+            return;
+        }
         QJsonObject jobj;
         jobj["type"] = "client";
         jobj["CMD"] = "read_sensors";
@@ -133,11 +147,6 @@ void ServerWindow::on_sendRequest(QJsonObject &jobj)
     }
 }
 
-void ServerWindow::on_readBtn_clicked()
-{
-    qDebug() << Q_FUNC_INFO;
-}
-
 void ServerWindow::on_updateClientExperiments_clicked()
 {
     QJsonObject jobj;
@@ -146,15 +155,9 @@ void ServerWindow::on_updateClientExperiments_clicked()
     clnt->sendReadyRequest(jobj);
 }
 
-void ServerWindow::on_btnCloseServerWindow_clicked()
-{
-    this->deleteLater();
-}
-
 void ServerWindow::setEnableWidget(bool enable)
 {
-    ui->groupBox_3->setEnabled(enable);
-    ui->groupBox->setEnabled(enable);
+    ui->scrollArea->setEnabled(enable);
     for (auto it: qAsConst(openTabs))
         it->setEnabled(enable);
 }
@@ -163,7 +166,7 @@ void ServerWindow::on_pushButton_clicked()
 {
     QJsonObject jobj;
     jobj["type"] = "manager";
-    jobj["stop"] = "manager";
+    jobj["CMD"] = "stop_manager";
     clnt->sendReadyRequest(jobj);
 }
 
@@ -216,15 +219,27 @@ void ServerWindow::on_btnRemoveInstr_clicked()
     int addr = ui->spinNumInstr->value();
     QString prog_name = QString("experiment-%1").arg(addr);
     QJsonArray jprograms = jServerConfig["programs"].toArray();
-    for (auto it = jprograms.begin(); it != jprograms.end(); it++) {
+    for (auto it = jprograms.begin(); it != jprograms.end();) {
         if ((*it).toObject()["name"].toString() == prog_name) {
-            jprograms.erase(it);
+            it = jprograms.erase(it);
             break;
-        }
+        } else
+             it++;
     }
     jServerConfig["programs"] = jprograms;
 
     jobj["settings"] = QString(QJsonDocument(jServerConfig).toJson().toBase64());
     clnt->sendReadyRequest(jobj);
     QTimer::singleShot(1000, this, &ServerWindow::on_updateClientExperiments_clicked);
+}
+
+
+void ServerWindow::on_tabWidget_tabCloseRequested(int index)
+{
+    this->deleteLater();
+}
+
+void ServerWindow::on_pushButton_3_clicked()
+{
+    ui->textEditLogout->clear();
 }

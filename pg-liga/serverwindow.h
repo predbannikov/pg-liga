@@ -35,11 +35,7 @@ private slots:
     void on_sendRequest(QJsonObject &jobj);
 //    void on_readyResponse(QJsonObject &jobj);
 
-    void on_readBtn_clicked();
-
     void on_updateClientExperiments_clicked();
-
-    void on_btnCloseServerWindow_clicked();
 
     void on_pushButton_clicked();
 
@@ -50,6 +46,10 @@ private slots:
     void on_btnAddInstr_clicked();
 
     void on_btnRemoveInstr_clicked();
+
+    void on_tabWidget_tabCloseRequested(int index);
+
+    void on_pushButton_3_clicked();
 
 private:
 
