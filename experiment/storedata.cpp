@@ -125,6 +125,21 @@ void StoreData::sendProtocol(QJsonObject &jobj)
     dataFileName.close();
 }
 
+void StoreData::sendStoreData(QJsonObject &jobj)
+{
+    QJsonObject jstoreData;
+    auto it = data.begin();
+    for (; it != data.end(); it++) {
+        QByteArray buff;
+        QDataStream ds(&buff, QIODevice::ReadWrite);
+        ds.setVersion(QDataStream::Qt_5_11);
+        ds.setByteOrder(QDataStream::BigEndian);
+        ds << it.value().data;
+        jstoreData[it.key()] = QString(buff.toBase64());
+    }
+    jobj["store_data"] = jstoreData;
+}
+
 void StoreData::setCurStep(const QJsonObject &jcurStep_)
 {
     stepTimeStart = elapseExperimentTimer.elapsed();

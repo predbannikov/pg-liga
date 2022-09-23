@@ -33,6 +33,9 @@ void SequenceExecutor::execCMD(QJsonObject &jobj)
     } else if (jobj["CMD"].toString() == "get_protocol") {
         loadFrame.sendProtocol(jobj);
         emit sendRequestToClient(jobj);
+    } else if (jobj["CMD"].toString() == "get_store_data") {
+        loadFrame.sendStoreData(jobj);
+        emit sendRequestToClient(jobj);
     } else if (jobj["CMD"].toString() == "move_frame") {
         loadFrame.moveFrame(jobj);
     } else if (jobj["CMD"].toString() == "stop_frame") {

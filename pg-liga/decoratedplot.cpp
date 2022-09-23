@@ -96,9 +96,7 @@ void DecoratedPlot::addTrace(ExperimentData *data, const QString &xlabel, const 
 
     connect(data, &ExperimentData::pointInserted, m_plot, &QwtPlot::replot);
 
-    m_plot->replot();
-
-    
+    m_plot->replot(); 
 }
 
 void DecoratedPlot::addTrace(ExperimentData *xdata, ExperimentData *ydata, const QString &xlabel, const QString &ylabel)

@@ -12,6 +12,11 @@ ExperimentView::ExperimentView(QWidget *parent) :
     font.setPointSize(42);
     font.setBold(true);
     ui->lblSensors->setFont(font);
+
+    QList<int> sizes;
+    sizes << 100 << 0;
+    ui->splitter->setSizes({90, 10});
+    setupPlots();
 }
 
 ExperimentView::~ExperimentView()
@@ -23,52 +28,19 @@ void ExperimentView::setupPlots()
 {
 
 
+
     /* First Experiment Plots */
 //    auto deformVsTime = new DecoratedPlot(this);
-    auto deformVsPressure = new DecoratedPlot(this);
-    deformVsPressure->addTrace(m_deformData["deform"], m_presureData["pressure"], tr("Относительная деформация, %1%2").arg(Strings::epsilon, QString::number(1)), tr("Вертикальное давление, кПа"));
+
+    data1 = new ExperimentData(this);
+    QDateTime time = QDateTime::currentDateTime();
+
+    data1->append(3, time.addMSecs(0));
+
+
+    deformVsPressure = new DecoratedPlot(this);
+    deformVsPressure->addTrace(data1, tr("Время (t, мин)"), tr("Деформация, %1").arg(Strings::mm));
     ui->tabGraphics->addTab(deformVsPressure, tr("Вертикальная деформация (t)"));
-
-
-//    auto *relativeDeformChannel = m_experiment->logger()->dataChannel("VerticalDeformRelative");
-//    auto *pressureSummaryChannel = m_experiment->logger()->dataChannel("VerticalPressureSummary");
-//    auto *relativeDeformSummaryChannel = m_experiment->logger()->dataChannel("VerticalDeformRelativeSummary");
-
-//    auto *verticalLoadOperationFirst = qobject_cast<StaticLoadingOperation*>(m_experiment->mainOperations().
-//                                                                             at(CompressionDoubleExperiment::VerticalLoadingStatic));
-//#ifdef CONSOLIDATION_PLUGIN
-//    auto *processorFirst = new ConsolidationProcessor(m_experiment->specimen(), this);
-//    connect(verticalLoadOperationFirst, &StaticLoadingOperation::currentStepChanged, processorFirst, &ConsolidationProcessor::clearData);
-//#endif
-//    connect(m_experiment, &AbstractDoubleExperiment::started,
-//            [=](){
-//#ifdef CONSOLIDATION_PLUGIN
-//        processorFirst->setData(m_experiment->logger()->dataChannel("VerticalDeformRelative"));
-//#endif
-//        deformVsPressure->addTrace(m_deformData, m_presureData, tr("Относительная деформация, %1%2").arg(Strings::epsilon, QString::number(1)), tr("Вертикальное давление, кПа"));
-//        deformVsTime->addTrace(relativeDeformChannel, tr("Время, мин"),
-//                               tr("Относительная деформация, %1%2").arg(Strings::epsilon, QString::number(1)));
-//    });
-//    connect(m_experiment, &AbstractDoubleExperiment::finished,
-//            [=](){
-//#ifdef CONSOLIDATION_PLUGIN
-//        processorFirst->unsetData(m_experiment->logger()->dataChannel("VerticalDeformRelative"));
-//#endif
-//        deformVsPressure->removeTrace(relativeDeformSummaryChannel, pressureSummaryChannel);
-//        deformVsTime->removeTrace(relativeDeformChannel);
-//    });
-//#ifdef CONSOLIDATION_PLUGIN
-//    auto *processorFirstWidget = processorFirst->onlineWidget(this);
-//#endif
-
-//    ui->tabGraphics->addTab(deformVsTime, tr("Вертикальная деформация (t)"));
-////    ui->tabWidgetFirst->addTab(deformVsPressure, tr("Вертикальное давление (%1%2)").arg(Strings::epsilon, QString::number(1)));
-//#ifdef CONSOLIDATION_PLUGIN
-//    if (processorFirstWidget) {
-//        ui->tabWidgetFirst->addTab(processorFirstWidget, tr("Консолидация"));
-//    }
-//#endif
-
 
 }
 
@@ -144,9 +116,10 @@ void ExperimentView::on_dateTimeEdit_timeChanged(const QTime &time)
 
 void ExperimentView::on_btnSendRequest_clicked()
 {
+//    setupPlots();
     QJsonObject jobj;
     jobj["type"] = "client";
-    jobj["CMD"] = "read_sensors";
+    jobj["CMD"] = "get_store_data";
     emit sendRequest(jobj);
 }
 
@@ -210,11 +183,28 @@ void ExperimentView::onReadyResponse(const QJsonObject &jobj)
         QJsonObject jsensors = jobj["sensors"].toObject();
         QString out_to_lbl;
         QStringList keys = jsensors.keys();
-        for (auto &key: keys)
+        for (auto &key: keys) {
             out_to_lbl.append(QString("%1:\t\t%2\n").arg(key).arg(jsensors[key].toString()));
+            if (key == "deform")
+                data1->append(jsensors[key].toString().toDouble(), QDateTime::currentDateTime());
+        }
         ui->lblSensors->setText(out_to_lbl);
     } else if (jobj["CMD"].toString() == "get_protocol") {
         ui->textEdit->append(QByteArray::fromBase64(jobj["protocol"].toString().toUtf8()));
+    } else if (jobj["CMD"].toString() == "get_store_data") {
+        QJsonObject jstoreData = jobj["store_data"].toObject();
+        QMap<QString, QMap<qint64, QList<QPair<qint64, float>>>> complate_data;
+        for (const auto &jkey: jstoreData.keys()) {
+            QMap <qint64, QList<QPair<qint64, float>>> data;
+            QByteArray buff = QByteArray::fromBase64(jstoreData[jkey].toString().toUtf8());
+            qDebug() << buff;
+            QDataStream ds(&buff, QIODevice::ReadOnly);
+            ds.setVersion(QDataStream::Qt_5_11);
+            ds.setByteOrder(QDataStream::BigEndian);
+            ds >> data;
+            complate_data.insert(jkey, data);
+        }
+
     }
 }
 
@@ -280,5 +270,20 @@ void ExperimentView::on_btnCloseInstr_clicked()
     QJsonObject jobj;
     jobj["type"] = "manager";
     jobj["CMD"] = "close_instr";
+    emit sendRequest(jobj);
+}
+
+void ExperimentView::on_btnSaveImage_clicked()
+{
+    deformVsPressure->m_plot->replot();
+    QPixmap pxmap = deformVsPressure->grab();
+    pxmap.save("test.png", "PNG");
+}
+
+void ExperimentView::on_btnSendTestRequest_clicked()
+{
+    QJsonObject jobj;
+    jobj["type"] = "client";
+    jobj["CMD"] = "get_store_data";
     emit sendRequest(jobj);
 }

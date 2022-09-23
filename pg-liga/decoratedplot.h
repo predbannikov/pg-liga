@@ -98,13 +98,13 @@ public:
         return false;
     }
 */
+    QwtPlot *m_plot;
 private slots:
     void onNewDataAvailable();
     void CycleActions ();
 private:
     void setupLabels(const QString &xlabel, const QString &ylabel);
 
-    QwtPlot *m_plot;
 
     // !!!ATT!!! - временное добавление 28.02.2022 г.
     QPushButton *m_TestButton;

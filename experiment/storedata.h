@@ -11,6 +11,7 @@
 #include <limits>
 #include <QList>
 #include <QElapsedTimer>
+#include <QDataStream>
 #include <QMap>
 
 class Data
@@ -144,6 +145,7 @@ public:
 
     void updateData();
     void sendProtocol(QJsonObject &jobj);
+    void sendStoreData(QJsonObject &jobj);
     void setCurStep(const QJsonObject &jcurStep_);
 
 //    void clearStore(const QString name);

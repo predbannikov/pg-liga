@@ -63,6 +63,7 @@ public:
     void manualNextStep();
     void readSensors(QJsonObject &jobj);
     void sendProtocol(QJsonObject &jobj);
+    void sendStoreData(QJsonObject &jobj);
 
 
     Measurements::Pressure targetPresure;

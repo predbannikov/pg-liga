@@ -5,15 +5,15 @@ using namespace Measurements;
 
 LoadFrame::LoadFrame() :
     /// первая рама
-//    forceSens(SensLoad0Addr, SensLoad0),
-//    deformSens(SensDeform0Addr, SensDef0),
-//    stepper(ActLoad0Addr, ActLoad0),
-//    controller(CtrlLoad0Addr, CtrlLoad0)
+    forceSens(SensLoad0Addr, SensLoad0),
+    deformSens(SensDeform0Addr, SensDef0),
+    stepper(ActLoad0Addr, ActLoad0),
+    controller(CtrlLoad0Addr, CtrlLoad0)
     /// вторая рама
-    forceSens(SensLoad1Addr, SensLoad1),
-    deformSens(SensDeform1Addr, SensDef1),
-    stepper(ActLoad1Addr, ActLoad1),
-    controller(CtrlLoad1Addr, CtrlLoad1)
+//    forceSens(SensLoad1Addr, SensLoad1),
+//    deformSens(SensDeform1Addr, SensDef1),
+//    stepper(ActLoad1Addr, ActLoad1),
+//    controller(CtrlLoad1Addr, CtrlLoad1)
 {
     targetPresure = Measurements::Pressure::fromKiloPascals(50.);
     area.setSiValue(0.004003928);
@@ -463,5 +463,14 @@ void LoadFrame::sendProtocol(QJsonObject &jobj)
         store->sendProtocol(jobj);
     } else {
         jobj["protocol"] = QString(QByteArray("no experiment has been launched yet").toBase64());
+    }
+}
+
+void LoadFrame::sendStoreData(QJsonObject &jobj)
+{
+    if (store != nullptr) {
+        store->sendProtocol(jobj);
+    } else {
+        jobj["store_data"] = QString(QByteArray("no experiment has been launched yet").toBase64());
     }
 }

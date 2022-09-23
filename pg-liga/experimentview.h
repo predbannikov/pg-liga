@@ -10,6 +10,7 @@
 #include <QDebug>
 
 #include "plotadapter.h"
+#include "experimentdata.h"
 #include "decoratedplot.h"
 
 namespace Strings {
@@ -98,6 +99,10 @@ private slots:
 
     void on_btnCloseInstr_clicked();
 
+    void on_btnSaveImage_clicked();
+
+    void on_btnSendTestRequest_clicked();
+
 signals:
     void sendRequest(QJsonObject &jobj);
 
@@ -106,6 +111,8 @@ private:
 
     QMap<QString, ExperimentData*> m_deformData;
     QMap<QString, ExperimentData*> m_presureData;
+    DecoratedPlot *deformVsPressure = nullptr;
+    ExperimentData *data1 = nullptr;
 
     QList <QLineEdit*> steps;
     QJsonObject jRequest;
