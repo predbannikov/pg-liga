@@ -177,7 +177,7 @@ bool SerialPort::isValidResponse(const QByteArray &data) {
 void SerialPort::process()
 {
     port = new QSerialPort(this);
-    port->setPortName("ttyUSB0");
+    port->setPortName("ttyUSB1");
     port->setFlowControl(QSerialPort::NoFlowControl);
     port->setBaudRate   (QSerialPort::Baud115200);
     port->setParity     (QSerialPort::EvenParity);

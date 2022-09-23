@@ -25,6 +25,8 @@ bool Operations::execut()
 //            qDebug() << "";
 //        }
 //    }
+    if (statusOperation.request.isEmpty())
+        return true;
 
     write(statusOperation);
     if (!read(statusOperation))

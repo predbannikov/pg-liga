@@ -185,6 +185,8 @@ RETCODE Controller::stopPID(StatusOperation &operation)
             if (ret == COMPLATE) {
                 qDebug() << "status (if 1 what that is?(atomic?)) " << status;
                 stateUnlock = STATE_UNLOCK_SET_VALUE;
+                if (status == 0)
+                    return COMPLATE;
             } else if (ret == ERROR){
                 stateUnlock = STATE_UNLOCK_SET_VALUE;
                 return ERROR;
