@@ -20,7 +20,7 @@ bool SerialPort::connectDevice ()
             return true;
         }
     }
-    qDebug() << Q_FUNC_INFO << port->portName() << "already OPEN";
+    qDebug() << Q_FUNC_INFO << port->portName() << port->errorString();
     return false;
 }
 
