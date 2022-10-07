@@ -7,6 +7,7 @@
 #include <QThread>
 #include <QDateTime>
 #include <QJsonObject>
+#include <QJsonArray>
 #include "sensors.h"
 #include <limits>
 #include <QList>

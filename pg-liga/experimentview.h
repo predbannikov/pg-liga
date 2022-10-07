@@ -56,11 +56,11 @@ public:
 
 public slots:
     void onReadyResponse(const QJsonObject &jobj);
+    void onReadDataStore();
 
 private slots:
     void onCreateJsonObject();
 
-    void onReadDataStore();
 
     void onReadSensors();
 

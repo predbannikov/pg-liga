@@ -22,6 +22,7 @@ public:
     ExperimentData(QObject *parent = nullptr);
 
     void append(double value, const QDateTime &dateTime = QDateTime::currentDateTime());
+    void append(QList<QPair<qint64, float>> &list);
 
     Point point(int idx) const { return m_data.at(idx); }
     Point pointLast() const { return m_data.last(); }

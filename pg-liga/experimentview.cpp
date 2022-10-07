@@ -92,19 +92,20 @@ void ExperimentView::onReadDataStore()
     QJsonObject jobj;
     jobj["type"] = "client";
     jobj["CMD"] = "get_store_data";
-    if (dataStore.isEmpty())
-        jobj["start_time"] = "0";
-    else {
+    QJsonObject jDataStore;
+    if (!dataStore.isEmpty()) {
         for (const auto &key: dataStore.keys()) {
-            if (key == "deform") {
-                DataStore &dStore = dataStore["deform"];
-                auto last_pair = dStore.data.last().last();
-                auto last_key = dStore.data.lastKey();
-                jobj["start_time"] = QString::number(last_key);
-                jobj["cur_time"] = QString::number(last_pair.first);
-            }
+            QJsonObject jData;
+            qint64 start_time = -1;
+            qint64 cur_time = -1;
+            auto &dStore = dataStore[key];
+            dStore.getLastStartAndCurTime(start_time, cur_time);
+            jData["start_time"] = QString::number(start_time);
+            jData["cur_time"] = QString::number(cur_time);
+            jDataStore[key] = jData;
         }
     }
+    jobj["store_data"] = jDataStore;
     emit sendRequest(jobj);
 }
 
@@ -218,30 +219,13 @@ void ExperimentView::onReadyResponse(const QJsonObject &jobj)
         ui->textEdit->append(QByteArray::fromBase64(jobj["protocol"].toString().toUtf8()));
     } else if (jobj["CMD"].toString() == "get_store_data") {
         QJsonObject jstoreData = jobj["store_data"].toObject();
-
-
         for (const auto &jkey: jstoreData.keys()) {
-            QJsonObject jData = jstoreData[jkey].toObject();
-            DataStore dStore;
-            for (const auto &jkeyTime: jData.keys()) {
-                QList<QPair<qint64, float>> list;
-                QByteArray buff = QByteArray::fromBase64(jData[jkeyTime].toString().toUtf8());
-                QDataStream ds(&buff, QIODevice::ReadOnly);
-                ds.setVersion(QDataStream::Qt_5_11);
-                ds.setByteOrder(QDataStream::BigEndian);
-                ds >> list;
-                dStore.data.insert(jkeyTime.toInt(), list);
+            if (!dataStore.contains(jkey)) {
+                dataStore.insert(jkey, DataStore());
             }
-            if (jkey == "deform") {
-                for (auto it_list = dStore.data.begin(); it_list != dStore.data.end(); it_list++) {
-                    for (auto it = it_list->begin(); it != it_list->end(); it++) {
-                        data1->append(it->second, QDateTime::fromSecsSinceEpoch(it->first));
-//                        data1->append(it->second, QDateTime::fromSecsSinceEpoch(it->first));
-                        qDebug() << it->second << it->first;
-                    }
-                }
-            }
-            dataStore.insert(jkey, dStore);
+            QList<QPair<qint64, float>> allList = dataStore[jkey].deSerializeData(jstoreData[jkey].toObject());
+            if (jkey == "deform")
+                data1->append(allList);
         }
         qDebug() << "stop";
 //        qDebug() << dataStore;

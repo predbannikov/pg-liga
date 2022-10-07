@@ -3,6 +3,9 @@
 
 #include <QMap>
 #include <QDebug>
+#include <QJsonObject>
+#include <QDataStream>
+#include <algorithm>
 
 class DataStore
 {
@@ -14,6 +17,55 @@ public:
     ~DataStore() {
 
     };
+    /**
+     * @brief serializeData         Мап хранит значения сенсоров на каждом шаге испытания. см. переменную data.
+     * @param jobj                  QJsonObject объект, в котором должно находиться:
+     *                              start_time - qint64 ключ для мап -> QMap<qint64, QList<QPair<qint64, float>>>
+     *                              cur_time - qint64 первое значение пары QPair<qint64, float>
+     */
+    void serializeData(QJsonObject &jobj) {
+        qint64 start_time = jobj["start_time"].toString().toInt();
+        qint64 cur_time = jobj["cur_time"].toString().toInt();
+        jobj = QJsonObject();
+
+        auto itStartTime = data.begin();
+        for (; itStartTime != data.end(); itStartTime++) {
+            QByteArray buff;
+            QDataStream ds(&buff, QIODevice::ReadWrite);
+            ds.setVersion(QDataStream::Qt_5_11);
+            ds.setByteOrder(QDataStream::BigEndian);
+            if (start_time == itStartTime.key()) {
+                auto &src_list = itStartTime.value();
+                int start_pos_list = 0;
+                while (src_list[start_pos_list++].first < cur_time);
+                auto prep_list = src_list.mid(start_pos_list);
+                ds << prep_list;
+                jobj[QString::number(itStartTime.key())] = QString(buff.toBase64());
+            } else if (start_time < itStartTime.key()) {
+                ds << itStartTime.value();
+                jobj[QString::number(itStartTime.key())] = QString(buff.toBase64());                   // list pairs
+            }
+        }
+    }
+
+    QList<QPair<qint64, float>> deSerializeData(QJsonObject jData) {
+        QList<QPair<qint64, float>> all_lists;
+        for (auto jkeyTime: jData.keys()) {
+            QByteArray buff = QByteArray::fromBase64(jData[jkeyTime].toString().toUtf8());
+            QDataStream ds(&buff, QIODevice::ReadOnly);
+            ds.setVersion(QDataStream::Qt_5_11);
+            ds.setByteOrder(QDataStream::BigEndian);
+            QList<QPair<qint64, float>> list;
+            ds >> list;
+            all_lists.append(list);
+            if (data.contains(jkeyTime.toInt())) {
+                data[jkeyTime.toInt()].append(list);
+            } else {
+                data.insert(jkeyTime.toInt(), list);
+            }
+        }
+        return all_lists;
+    }
 
     float valueFromBack(qint64 step_time, qint64 time) {
         auto &arr = data[step_time];
@@ -48,6 +100,14 @@ public:
         }
         return sz;
     }
+
+    void getLastStartAndCurTime(qint64 &start_time, qint64 &cur_time) {
+        auto keys = data.keys();
+        std::sort(keys.begin(), keys.end());
+        start_time = keys.last();
+        cur_time = data[start_time].last().first;
+    }
+
     QMap <qint64, QList<QPair<qint64, float>>> data;
 };
 

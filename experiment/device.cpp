@@ -468,7 +468,7 @@ void LoadFrame::sendProtocol(QJsonObject &jobj)
 
 void LoadFrame::sendStoreData(QJsonObject &jobj)
 {
-#define DEBUG_TEST_SERIALIZE_STORE_DATA
+//#define DEBUG_TEST_SERIALIZE_STORE_DATA
 #ifdef DEBUG_TEST_SERIALIZE_STORE_DATA
     static bool test_serialize_store_data = true;
     if (test_serialize_store_data) {

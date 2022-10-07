@@ -4,6 +4,9 @@
 #include "mainwindow.h"
 
 
+#define SENSORS_POLLING_INTERVAL    1000
+
+
 ServerWindow::ServerWindow(QString host_, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ServerWindow)
@@ -15,7 +18,7 @@ ServerWindow::ServerWindow(QString host_, QWidget *parent) :
     connect(clnt, &ClientManager::connectedClient, this, &ServerWindow::clientConnected, Qt::QueuedConnection);
     connect(clnt, &ClientManager::disconnectClient, this, &ServerWindow::onDisconnectClient, Qt::QueuedConnection);
     connect(clnt, &ClientManager::readyReadResponse, this, &ServerWindow::onReadyReadResponse, Qt::QueuedConnection);
-    timerPollSensors.setInterval(1000);
+    timerPollSensors.setInterval(SENSORS_POLLING_INTERVAL);
     connect(&timerPollSensors, &QTimer::timeout, this, &ServerWindow::onPollSensorsCurrentPage);
     this->resize(720, 1280);
     ui->verticalLayout->setSizeConstraint(QLayout::SetNoConstraint);
@@ -122,16 +125,19 @@ void ServerWindow::onPollSensorsCurrentPage()
     if (ui->tabWidget->currentIndex() == 0) {
 //        qDebug() << "current server page";
     } else {
-        QString srch = openTabs.key(qobject_cast<ExperimentView *>(ui->tabWidget->currentWidget()), "");
+        auto experView = qobject_cast<ExperimentView *>(ui->tabWidget->currentWidget());
+        QString srch = openTabs.key(experView, "");
         if (srch == "") {
             qDebug() << "text is empty";
             return;
         }
-        QJsonObject jobj;
-        jobj["type"] = "client";
-        jobj["CMD"] = "read_sensors";
-        jobj["address"] = srch.split(':')[1];
-        clnt->sendReadyRequest(jobj);
+        experView->onReadDataStore();
+
+//        QJsonObject jobj;
+//        jobj["type"] = "client";
+//        jobj["CMD"] = "read_sensors";
+//        jobj["address"] = srch.split(':')[1];
+//        clnt->sendReadyRequest(jobj);
     }
 }
 
