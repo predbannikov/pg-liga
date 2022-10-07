@@ -88,23 +88,37 @@ void StoreData::updateData()
             qDebug() << "pressure2" << sensors[i]->value;
             break;
         case SensLoad0:
-            qDebug() << "VerticalPressure_kPa" << sensors[i]->value;
+            if (type == LIGA_KL0S_1T) {
+                currentData.insert("VerticalPressure_kPa", sensors[i]->value);
+                data["VerticalPressure_kPa"].append(stepTimeStart, elapseStepTimer.elapsed(), sensors[i]->value / 1000.);
+            } else if (type == LIGA_KL0S_2Load_1T) {
+                currentData.insert("VerticalPressure_kPa", sensors[i]->value);
+                data["VerticalPressure_kPa"].append(stepTimeStart, elapseStepTimer.elapsed(), sensors[i]->value / 1000.);
+            }
             break;
         case SensLoad1:
-            if (type == LIGA_KL0S_1T)
-                currentData.insert("ShearPressure_kPa", sensors[i]->value);
-            else if (type == LIGA_KL0S_2Load_1T) {
+            if (type == LIGA_KL0S_1T) {
+                currentData.insert("VerticalPressure_kPa", sensors[i]->value);
+                data["VerticalPressure_kPa"].append(stepTimeStart, elapseStepTimer.elapsed(), sensors[i]->value / 1000.);
+            } else if (type == LIGA_KL0S_2Load_1T) {
                 currentData.insert("VerticalPressure_kPa", sensors[i]->value);
                 data["VerticalPressure_kPa"].append(stepTimeStart, elapseStepTimer.elapsed(), sensors[i]->value / 1000.);
             }
             break;
         case SensDef0:
-            qDebug() << "def0" << sensors[i]->value;
+            if (type == LIGA_KL0S_1T) {
+                currentData.insert("VerticalDeform_mm", sensors[i]->value);
+                data["VerticalDeform_mm"].append(stepTimeStart, elapseStepTimer.elapsed(), sensors[i]->value / 1000.);
+            } else if (type == LIGA_KL0S_2Load_1T) {
+                currentData.insert("VerticalDeform_mm", sensors[i]->value);
+                data["VerticalDeform_mm"].append(stepTimeStart, elapseStepTimer.elapsed(), sensors[i]->value / 1000.);
+            }
             break;
         case SensDef1:
-            if (type == LIGA_KL0S_1T)
-                currentData.insert("ShearDeform_mm", sensors[i]->value);
-            else if (type == LIGA_KL0S_2Load_1T) {
+            if (type == LIGA_KL0S_1T) {
+                currentData.insert("VerticalDeform_mm", sensors[i]->value);
+                data["VerticalDeform_mm"].append(stepTimeStart, elapseStepTimer.elapsed(), sensors[i]->value / 1000.);
+            } else if (type == LIGA_KL0S_2Load_1T) {
                 currentData.insert("VerticalDeform_mm", sensors[i]->value);
                 data["VerticalDeform_mm"].append(stepTimeStart, elapseStepTimer.elapsed(), sensors[i]->value / 1000.);
             }
