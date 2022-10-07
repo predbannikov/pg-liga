@@ -13,6 +13,8 @@
 #include "experimentdata.h"
 #include "decoratedplot.h"
 
+#include "DataStore/datastore.h"
+
 namespace Strings {
 
 static const auto calibrate = QObject::tr("Тарировать");
@@ -57,6 +59,9 @@ public slots:
 
 private slots:
     void onCreateJsonObject();
+
+    void onReadDataStore();
+
     void onReadSensors();
 
     void on_pushButton_clicked();
@@ -103,11 +108,16 @@ private slots:
 
     void on_btnSendTestRequest_clicked();
 
+    void on_btnGetStoreData_clicked();
+
 signals:
     void sendRequest(QJsonObject &jobj);
 
 private:
     void setupPlots();
+
+    QMap<QString, DataStore> dataStore;
+
 
     QMap<QString, ExperimentData*> m_deformData;
     QMap<QString, ExperimentData*> m_presureData;

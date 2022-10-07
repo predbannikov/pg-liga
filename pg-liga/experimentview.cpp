@@ -35,7 +35,7 @@ void ExperimentView::setupPlots()
     data1 = new ExperimentData(this);
     QDateTime time = QDateTime::currentDateTime();
 
-    data1->append(3, time.addMSecs(0));
+//    data1->append(3, time.addMSecs(0));
 
 
     deformVsPressure = new DecoratedPlot(this);
@@ -85,6 +85,27 @@ void ExperimentView::onCreateJsonObject()
     ui->textEdit->clear();
     ui->textEdit->append(QJsonDocument(jRequest).toJson());
 
+}
+
+void ExperimentView::onReadDataStore()
+{
+    QJsonObject jobj;
+    jobj["type"] = "client";
+    jobj["CMD"] = "get_store_data";
+    if (dataStore.isEmpty())
+        jobj["start_time"] = "0";
+    else {
+        for (const auto &key: dataStore.keys()) {
+            if (key == "deform") {
+                DataStore &dStore = dataStore["deform"];
+                auto last_pair = dStore.data.last().last();
+                auto last_key = dStore.data.lastKey();
+                jobj["start_time"] = QString::number(last_key);
+                jobj["cur_time"] = QString::number(last_pair.first);
+            }
+        }
+    }
+    emit sendRequest(jobj);
 }
 
 void ExperimentView::onReadSensors()
@@ -184,27 +205,46 @@ void ExperimentView::onReadyResponse(const QJsonObject &jobj)
         QString out_to_lbl;
         QStringList keys = jsensors.keys();
         for (auto &key: keys) {
-            out_to_lbl.append(QString("%1:\t\t%2\n").arg(key).arg(jsensors[key].toString()));
-            if (key == "deform")
-                data1->append(jsensors[key].toString().toDouble(), QDateTime::currentDateTime());
+            if (key == "deform") {
+                float deform = jsensors[key].toString().toDouble() / 1000.;
+                out_to_lbl.append(QString("%1:\t\t%2\n").arg(key).arg(deform));
+//                data1->append(deform, QDateTime::currentDateTime());
+            } else if (key == "force") {
+                out_to_lbl.append(QString("%1:\t\t%2\n").arg(key).arg(jsensors[key].toString()));
+            }
         }
         ui->lblSensors->setText(out_to_lbl);
     } else if (jobj["CMD"].toString() == "get_protocol") {
         ui->textEdit->append(QByteArray::fromBase64(jobj["protocol"].toString().toUtf8()));
     } else if (jobj["CMD"].toString() == "get_store_data") {
         QJsonObject jstoreData = jobj["store_data"].toObject();
-        QMap<QString, QMap<qint64, QList<QPair<qint64, float>>>> complate_data;
-        for (const auto &jkey: jstoreData.keys()) {
-            QMap <qint64, QList<QPair<qint64, float>>> data;
-            QByteArray buff = QByteArray::fromBase64(jstoreData[jkey].toString().toUtf8());
-            qDebug() << buff;
-            QDataStream ds(&buff, QIODevice::ReadOnly);
-            ds.setVersion(QDataStream::Qt_5_11);
-            ds.setByteOrder(QDataStream::BigEndian);
-            ds >> data;
-            complate_data.insert(jkey, data);
-        }
 
+
+        for (const auto &jkey: jstoreData.keys()) {
+            QJsonObject jData = jstoreData[jkey].toObject();
+            DataStore dStore;
+            for (const auto &jkeyTime: jData.keys()) {
+                QList<QPair<qint64, float>> list;
+                QByteArray buff = QByteArray::fromBase64(jData[jkeyTime].toString().toUtf8());
+                QDataStream ds(&buff, QIODevice::ReadOnly);
+                ds.setVersion(QDataStream::Qt_5_11);
+                ds.setByteOrder(QDataStream::BigEndian);
+                ds >> list;
+                dStore.data.insert(jkeyTime.toInt(), list);
+            }
+            if (jkey == "deform") {
+                for (auto it_list = dStore.data.begin(); it_list != dStore.data.end(); it_list++) {
+                    for (auto it = it_list->begin(); it != it_list->end(); it++) {
+                        data1->append(it->second, QDateTime::fromSecsSinceEpoch(it->first));
+//                        data1->append(it->second, QDateTime::fromSecsSinceEpoch(it->first));
+                        qDebug() << it->second << it->first;
+                    }
+                }
+            }
+            dataStore.insert(jkey, dStore);
+        }
+        qDebug() << "stop";
+//        qDebug() << dataStore;
     }
 }
 
@@ -286,4 +326,9 @@ void ExperimentView::on_btnSendTestRequest_clicked()
     jobj["type"] = "client";
     jobj["CMD"] = "get_store_data";
     emit sendRequest(jobj);
+}
+
+void ExperimentView::on_btnGetStoreData_clicked()
+{
+    onReadDataStore();
 }

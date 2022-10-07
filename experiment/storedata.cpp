@@ -130,12 +130,23 @@ void StoreData::sendStoreData(QJsonObject &jobj)
     QJsonObject jstoreData;
     auto it = data.begin();
     for (; it != data.end(); it++) {
-        QByteArray buff;
-        QDataStream ds(&buff, QIODevice::ReadWrite);
-        ds.setVersion(QDataStream::Qt_5_11);
-        ds.setByteOrder(QDataStream::BigEndian);
-        ds << it.value().data;
-        jstoreData[it.key()] = QString(buff.toBase64());
+        QJsonObject jData;
+
+//        ds << it.value().data;
+        auto itPairList = it.value().data.begin();  // type sensor {deform, forse}
+
+        for (; itPairList != it.value().data.end(); itPairList++) {
+//            auto first = itPairList.key();
+            QByteArray buff;
+            QDataStream ds(&buff, QIODevice::ReadWrite);
+            ds.setVersion(QDataStream::Qt_5_11);
+            ds.setByteOrder(QDataStream::BigEndian);
+//            jData["start_time"] = QString::number(itPairList.key());    // step time start
+            ds << itPairList.value();
+            jData[QString::number(itPairList.key())] = QString(buff.toBase64());                   // list pairs
+//            jData["start_time"] = QString::number(values.first());
+        }
+        jstoreData[it.key()] = jData;
     }
     jobj["store_data"] = jstoreData;
 }

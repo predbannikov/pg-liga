@@ -312,55 +312,20 @@
              </property>
              <layout class="QGridLayout" name="gridLayout_3">
               <item row="4" column="0">
-               <widget class="QPushButton" name="btnMoveUp">
-                <property name="text">
-                 <string>moveUp</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="0">
                <widget class="QPushButton" name="btnCreateGraph">
                 <property name="text">
                  <string>graph</string>
                 </property>
                </widget>
               </item>
-              <item row="4" column="3">
+              <item row="5" column="3">
                <widget class="QPushButton" name="btnStopStepper">
                 <property name="text">
                  <string>stop</string>
                 </property>
                </widget>
               </item>
-              <item row="8" column="0">
-               <widget class="QPushButton" name="btnCloseInstr">
-                <property name="text">
-                 <string>closeInstr</string>
-                </property>
-               </widget>
-              </item>
-              <item row="7" column="0">
-               <widget class="QPushButton" name="btnUnlockPid">
-                <property name="text">
-                 <string>unlockPID</string>
-                </property>
-               </widget>
-              </item>
-              <item row="8" column="2">
-               <widget class="QPushButton" name="btnCloseWindow">
-                <property name="text">
-                 <string>closeManager</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="2">
-               <widget class="QPushButton" name="btnSaveImage">
-                <property name="text">
-                 <string>save image</string>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="2">
+              <item row="5" column="2">
                <widget class="QPushButton" name="btnMoveDown">
                 <property name="text">
                  <string>moveDown</string>
@@ -381,10 +346,52 @@
                 </property>
                </widget>
               </item>
+              <item row="9" column="0">
+               <widget class="QPushButton" name="btnCloseInstr">
+                <property name="text">
+                 <string>closeInstr</string>
+                </property>
+               </widget>
+              </item>
               <item row="0" column="0">
                <widget class="QPushButton" name="btnSendTestRequest">
                 <property name="text">
                  <string>sendRequest</string>
+                </property>
+               </widget>
+              </item>
+              <item row="9" column="2">
+               <widget class="QPushButton" name="btnCloseWindow">
+                <property name="text">
+                 <string>closeManager</string>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="0">
+               <widget class="QPushButton" name="btnMoveUp">
+                <property name="text">
+                 <string>moveUp</string>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="0">
+               <widget class="QPushButton" name="btnUnlockPid">
+                <property name="text">
+                 <string>unlockPID</string>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="2">
+               <widget class="QPushButton" name="btnSaveImage">
+                <property name="text">
+                 <string>save image</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QPushButton" name="btnGetStoreData">
+                <property name="text">
+                 <string>getStoreData</string>
                 </property>
                </widget>
               </item>

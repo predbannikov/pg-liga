@@ -1,6 +1,7 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
+ DataStore \
  network/network.pro \
  experiment \
  experiment-manager/experimentmanager.pro \

@@ -468,8 +468,37 @@ void LoadFrame::sendProtocol(QJsonObject &jobj)
 
 void LoadFrame::sendStoreData(QJsonObject &jobj)
 {
+#define DEBUG_TEST_SERIALIZE_STORE_DATA
+#ifdef DEBUG_TEST_SERIALIZE_STORE_DATA
+    static bool test_serialize_store_data = true;
+    if (test_serialize_store_data) {
+        init();
+        test_serialize_store_data = false;
+    }
+    auto generData = [this]() {
+        static int counter = 0;
+        float test_float = 0.1;
+        DataStore dataStore;
+        for (int j = 0; j < 10; j++) {
+            QList<QPair<qint64, float> > list;
+            int tmp = counter;
+            for (int i = 1; i < 10; i++) {
+                list.append({counter++, test_float});
+                test_float += 0.05;
+            }
+            dataStore.data.insert(tmp, list);
+            test_float += 1.0;
+        }
+        store->data.insert("deform", dataStore);
+        store->data.insert("force", dataStore);
+    };
+    generData();
+
+#endif
+
+
     if (store != nullptr) {
-        store->sendProtocol(jobj);
+        store->sendStoreData(jobj);
     } else {
         jobj["store_data"] = QString(QByteArray("no experiment has been launched yet").toBase64());
     }
