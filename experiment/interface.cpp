@@ -35,15 +35,15 @@ bool Interface::read(StatusOperation &statusOperation)
 
         jobjTaked = QJsonObject(queueResponse.takeFirst());
 
-        if (jobjTaked["status"] == "" || abort) {
-            return false;
-            // TODO сделать завершение
-        }
+//        if (jobjTaked["status"] == "" || abort) {
+//            return false;
+//            // TODO сделать завершение
+//        }
 
         if(jobjTaked["type"].toString() == "modbus") {
             if (jobjTaked.contains("connection")) {
                 qDebug() << Q_FUNC_INFO << "modbusserver client " << jobjTaked;
-//                jobjTaked = QJsonObject();  // не позволяем выйти с цикла
+                jobjTaked = QJsonObject();  // не позволяем выйти с цикла
             } else {
                 if (jobjTaked["modbus_error"].toString() == "crc_error") {
     //                qDebug() << jResponse["modbus_error"].toString();
@@ -52,6 +52,11 @@ bool Interface::read(StatusOperation &statusOperation)
                     if (statusOperation.request == jobjTaked["PDU_request"].toVariant().toByteArray()) {
                         statusOperation.strError = jobjTaked["modbus_error"].toString();
                         statusOperation.response = jobjTaked["PDU_response"].toVariant().toByteArray();
+                    } else {
+                        qDebug() << "diff requests" << statusOperation.request
+                                 << "\n PDU_request" << jobjTaked["PDU_request"].toVariant().toByteArray()
+                                 << "\n PDU_response" << jobjTaked["PDU_response"].toVariant().toByteArray()
+                                 << "\n queueResponse.size" << queueResponse.size();
                     }
                 }
             }

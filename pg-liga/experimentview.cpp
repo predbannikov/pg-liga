@@ -224,7 +224,7 @@ void ExperimentView::onReadyResponse(const QJsonObject &jobj)
                 dataStore.insert(jkey, DataStore());
             }
             QList<QPair<qint64, float>> allList = dataStore[jkey].deSerializeData(jstoreData[jkey].toObject());
-            if (jkey == "deform")
+            if (jkey == "VerticalDeform_mm")
                 data1->append(allList);
         }
         qDebug() << "stop";

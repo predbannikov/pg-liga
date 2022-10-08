@@ -168,7 +168,7 @@ RETCODE LoadFrame::setPresure(StatusOperation &operation)
         }
         else if (ret == ERROR) {
             statePresure = STATE_PRESURE_1;
-            return ERROR;
+//            return ERROR;
         }
         break;
     case STATE_PRESURE_2:

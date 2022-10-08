@@ -28,10 +28,14 @@ bool Operations::execut()
     if (statusOperation.request.isEmpty())
         return true;
 
-    write(statusOperation);
-    if (!read(statusOperation))
-        return false;
 
+    write(statusOperation);
+//    qDebug() << "write" << statusOperation.request;
+    for (int i = 0; i < 3; i++)
+        if (read(statusOperation))
+            break;
+        else if (i == 2)
+            return true;
     next();
 
 //    qDebug() << statusOperation.request;
