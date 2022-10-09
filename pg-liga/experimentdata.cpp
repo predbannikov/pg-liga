@@ -22,7 +22,7 @@ void ExperimentData::append(double value, const QDateTime &dateTime)
 void ExperimentData::append(QList<QPair<qint64, float> > &list)
 {
     for (auto &pair: list) {
-        m_data.append({pair.second + m_offset, QDateTime::fromSecsSinceEpoch(pair.first)});
+        m_data.append({pair.second + m_offset, QDateTime::fromSecsSinceEpoch(pair.first / 1000)});
     }
     emit pointInserted();
 }

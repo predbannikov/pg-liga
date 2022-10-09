@@ -170,7 +170,7 @@ private:
 
     QElapsedTimer elapseExperimentTimer;
     qint64 stepTimeStart = 0;
-    QElapsedTimer elapseStepTimer;
+//    QElapsedTimer elapseStepTimer;
 
     TimePeriod period;
 };
