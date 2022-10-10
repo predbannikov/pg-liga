@@ -49,7 +49,7 @@ public:
     }
 
     QList<QPair<qint64, float>> deSerializeData(QJsonObject jData) {
-        QList<QPair<qint64, float>> all_lists;
+        QMap<qint64, QList<QPair<qint64, float>>> new_map;
         for (auto jkeyTime: jData.keys()) {
             QByteArray buff = QByteArray::fromBase64(jData[jkeyTime].toString().toUtf8());
             QDataStream ds(&buff, QIODevice::ReadOnly);
@@ -57,13 +57,18 @@ public:
             ds.setByteOrder(QDataStream::BigEndian);
             QList<QPair<qint64, float>> list;
             ds >> list;
-            all_lists.append(list);
+            new_map.insert(jkeyTime.toInt(), list);
             if (data.contains(jkeyTime.toInt())) {
                 data[jkeyTime.toInt()].append(list);
             } else {
                 data.insert(jkeyTime.toInt(), list);
             }
         }
+        QList <QPair <qint64, float>> all_lists;
+        QList <qint64> list_sort = new_map.keys();
+        std::sort(list_sort.begin(), list_sort.end());
+        for (qint64 idx: list_sort)
+            all_lists.append(new_map[idx]);
         return all_lists;
     }
 
