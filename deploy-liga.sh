@@ -44,17 +44,17 @@ echo $PWD
 echo 'Copying experiment app...'
 cp -p "$BUILD_DIR/experiment/experiment" "$TARGET_DIR/."
 echo 'Copying modbus app...'
-cp -p "$BUILD_DIR/modbus-server/modbusserver" "$TARGET_DIR/."
+cp -p "$BUILD_DIR/modbus-server/modbus-server" "$TARGET_DIR/."
 echo 'Copying experiment-manager app...'
-cp -p "$BUILD_DIR/experiment-manager/experimentmanager" "$TARGET_DIR/."
+cp -p "$BUILD_DIR/experiment-manager/experiment-manager" "$TARGET_DIR/."
 echo 'Copying default config.json ...'
 cp -p "$PWD/config.json" "$TARGET_DIR/."
 
 cd $TARGET_DIR
 
 $QT_DEPLOY experiment
-$QT_DEPLOY modbusserver
-$QT_DEPLOY experimentmanager
+$QT_DEPLOY modbus-server
+$QT_DEPLOY experiment-manager
 
 mkdir experiments
 mkdir protocols
