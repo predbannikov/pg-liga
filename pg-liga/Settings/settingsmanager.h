@@ -4,7 +4,7 @@
 #include <QMap>
 #include <QObject>
 
-#include "physics/measurements.h"
+#include "measurements/measurements.h"
 
 class SettingsManager : public QObject
 {

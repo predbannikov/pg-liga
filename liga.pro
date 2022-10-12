@@ -2,9 +2,13 @@ TEMPLATE = subdirs
 
 SUBDIRS += \
  DataStore \
- network/network.pro \
+ network \
  experiment \
- experiment-manager/experimentmanager.pro \
- modbus-server/modbusserver.pro \
- pg-liga/pg-liga.pro \
- physics/measurements.pro
+ experiment-manager \
+ modbus-server \
+ measurements
+
+enable-gui-client {
+  message(gui client enabled)
+  SUBDIRS += pg-liga
+}

@@ -18,10 +18,11 @@ public:
 
     };
     /**
-     * @brief serializeData         Мап хранит значения сенсоров на каждом шаге испытания. см. переменную data.
+     * @brief serializeData         Мап хранит значения сенсора на каждом шаге испытания. см. переменную data.
      * @param jobj                  QJsonObject объект, в котором должно находиться:
-     *                              start_time - qint64 ключ для мап -> QMap<qint64, QList<QPair<qint64, float>>>
-     *                              cur_time - qint64 первое значение пары QPair<qint64, float>
+     *                              start_time - qint64 ключ для доступа к листу -> QMap<qint64, QList<QPair<qint64, float>>>
+     *                                              лист хранит значения полученные на одном этапе (шаге) эксперимента
+     *                              cur_time -      значение пары листа QPair<qint64, float>
      */
     void serializeData(QJsonObject &jobj) {
         qint64 start_time = jobj["start_time"].toString().toInt();
