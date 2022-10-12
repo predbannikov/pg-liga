@@ -3,7 +3,7 @@
         {
             "program": "modbus-server",
             "name": "modbus-server",
-            "path": "./modbus-server"
+            "path": "./modbus"
         }
     ]
 }
