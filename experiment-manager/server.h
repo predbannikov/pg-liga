@@ -11,6 +11,8 @@
 
 #include "clientmanager.h"
 
+#define NAME_PROGRAM_MODBUS_SERVER  "modbus-server"
+
 class Server : public QTcpServer
 {
     Q_OBJECT

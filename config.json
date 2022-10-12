@@ -1,8 +1,8 @@
 {
     "programs": [
         {
-            "program": "modbusserver",
-            "name": "modbusserver",
+            "program": "modbus-server",
+            "name": "modbus-server",
             "path": "./modbus-server"
         }
     ]

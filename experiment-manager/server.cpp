@@ -7,7 +7,7 @@ Server::Server(QObject *parent) : QTcpServer(parent)
     QDir cur_dir = QDir::current();
     QStringList list = cur_dir.entryList(QDir::Files);
 
-    if (!list.contains("modbusserver")) {
+    if (!list.contains(NAME_PROGRAM_MODBUS_SERVER)) {
         qDebug() << "qtcreator version start";
     } else {
 
@@ -209,7 +209,7 @@ void Server::runPrograms()
         if (jobj["program"].toString() == "experiment") {
             if (!isRuningExperiment(app_file.fileName().split('/').last().split('-')[1].toUInt()))
                 startExperimentProccess(app_file.fileName());
-        } else if (jobj["program"].toString() == "modbusserver") {
+        } else if (jobj["program"].toString() == NAME_PROGRAM_MODBUS_SERVER) {
             startModbus(app_file.fileName());
         }
     }
@@ -242,7 +242,7 @@ void Server::handlePsCodeModbus(int exitCode, QProcess::ExitStatus exitStatus)
         if (exitCode == 1) {
             qDebug() << Q_FUNC_INFO<< "handle when modbus runing";
             QProcess p;
-            p.start(QString("pkill"), QStringList("modbusserver"));
+            p.start(QString("pkill"), QStringList(NAME_PROGRAM_MODBUS_SERVER));
             p.waitForFinished();
             QThread::msleep(1000);
             auto proc = qobject_cast<QProcess*>(sender());
@@ -296,7 +296,7 @@ void Server::readCMD(QJsonObject jobj)
         for (const auto &jobj: qAsConst(jprograms)) {
             QDir app_path(QDir(jobj["path"].toString()).absolutePath());
             QFile app_file(app_path.filePath(jobj["name"].toString()));
-            if (jobj["program"].toString() == "modbusserver") {
+            if (jobj["program"].toString() == NAME_PROGRAM_MODBUS_SERVER) {
                 startModbus(app_file.fileName());
             }
         }
