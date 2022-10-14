@@ -115,6 +115,7 @@ signals:
 
 private:
     void setupPlots();
+    void clearData();
 
     QMap<QString, DataStore> dataStore;
 

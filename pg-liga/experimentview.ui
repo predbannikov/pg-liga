@@ -23,35 +23,16 @@
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
         <widget class="QGroupBox" name="groupBox_4">
+         <property name="maximumSize">
+          <size>
+           <width>390</width>
+           <height>16777215</height>
+          </size>
+         </property>
          <property name="title">
           <string>Отправка команд</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_4">
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_6">
-            <item>
-             <widget class="QPushButton" name="btnSendConfig">
-              <property name="text">
-               <string>отправить файл эксперимента</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="btnReadConfig">
-              <property name="text">
-               <string>прочитать файл устройству</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="btnStart">
-              <property name="text">
-               <string>Start</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_4">
             <item>
@@ -214,8 +195,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>500</width>
-               <height>277</height>
+               <width>312</width>
+               <height>310</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -255,8 +236,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>500</width>
-               <height>277</height>
+               <width>312</width>
+               <height>310</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -392,6 +373,27 @@
                <widget class="QPushButton" name="btnGetStoreData">
                 <property name="text">
                  <string>getStoreData</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <widget class="QPushButton" name="btnSendConfig">
+                <property name="text">
+                 <string>send_file</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="2">
+               <widget class="QPushButton" name="btnReadConfig">
+                <property name="text">
+                 <string>read_file</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="3">
+               <widget class="QPushButton" name="btnStart">
+                <property name="text">
+                 <string>Start</string>
                 </property>
                </widget>
               </item>

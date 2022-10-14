@@ -44,6 +44,13 @@ void ExperimentView::setupPlots()
 
 }
 
+void ExperimentView::clearData()
+{
+    data1->clearData();
+    dataStore.clear();
+    deformVsPressure->m_plot->replot();
+}
+
 qint64 ExperimentView::timeInterval(const QString& date, const QString& format)
 {
     QDateTime sourceDate(QDate(1900, 1, 1), QTime(0, 0, 0));
@@ -195,6 +202,7 @@ void ExperimentView::on_btnStart_clicked()
     QJsonObject jobj;
     jobj["CMD"] = "start";
     jobj["type"] = "client";
+    clearData();
     emit sendRequest(jobj);
 }
 
