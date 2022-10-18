@@ -5,6 +5,8 @@ CONFIG += c++11 console
 CONFIG -= app_bundle
 
 TEMPLATE = app
+DESTDIR=$$DESTDIR_RELEASE
+
 #TARGET = experimentmanager
 #greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
