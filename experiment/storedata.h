@@ -15,7 +15,7 @@
 #include <QDataStream>
 #include <QMap>
 
-#include "DataStore/datastore.h"
+#include "datastore/datastore.h"
 
 //class Data
 //{
@@ -147,6 +147,7 @@ public:
     bool printFileHeader();
 
     void updateData();
+    void fixUpdateData();
     void sendProtocol(QJsonObject &jobj);
     void sendStoreData(QJsonObject &jobj);
     void setCurStep(const QJsonObject &jcurStep_);

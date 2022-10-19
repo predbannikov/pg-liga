@@ -31,7 +31,7 @@ HEADERS += \
 INCLUDEPATH += $$PWD/../
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../network/release/ -lnetwork
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../network/debug/ -lnetwork
-else:unix: LIBS += -L$$OUT_PWD/../network/ -lnetwork
+else:unix: LIBS += -L$$DESTDIR -lnetwork
 
 
 

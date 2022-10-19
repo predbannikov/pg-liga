@@ -129,6 +129,53 @@ void StoreData::updateData()
         writeToDataFile();
 }
 
+void StoreData::fixUpdateData()
+{
+    for (int i = 0; i < sensors.size(); i++) {
+        switch (sensors[i]->funCode) {
+        case SensPrs0:
+            qDebug() << "pressure0" << sensors[i]->value;
+            break;
+        case SensPrs1:
+            qDebug() << "pressure1" << sensors[i]->value;
+            break;
+        case SensPrs2:
+            qDebug() << "pressure2" << sensors[i]->value;
+            break;
+        case SensLoad0:
+        case SensLoad1:
+            if (type == LIGA_KL0S_1T) {
+                data["VerticalPressure_kPa"].fixAppend(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
+            } else if (type == LIGA_KL0S_2Load_1T) {
+                data["VerticalPressure_kPa"].fixAppend(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
+            }
+            break;
+//        case SensLoad1:
+//            if (type == LIGA_KL0S_1T) {
+//                data["VerticalPressure_kPa"].fixAppend(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
+//            } else if (type == LIGA_KL0S_2Load_1T) {
+//                data["VerticalPressure_kPa"].fixAppend(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
+//            }
+//            break;
+        case SensDef0:
+        case SensDef1:
+            if (type == LIGA_KL0S_1T) {
+                data["VerticalDeform_mm"].fixAppend(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
+            } else if (type == LIGA_KL0S_2Load_1T) {
+                data["VerticalDeform_mm"].fixAppend(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
+            }
+            break;
+//        case SensDef1:
+//            if (type == LIGA_KL0S_1T) {
+//                data["VerticalDeform_mm"].fixAppend(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
+//            } else if (type == LIGA_KL0S_2Load_1T) {
+//                data["VerticalDeform_mm"].fixAppend(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
+//            }
+//            break;
+        }
+    }
+}
+
 void StoreData::sendProtocol(QJsonObject &jobj)
 {
     while (!dataFileName.open(QIODevice::ReadOnly | QIODevice::Text)) {

@@ -118,7 +118,7 @@ RETCODE LoadFrame::next(StatusOperation &operation)
         if (ret == COMPLATE) {
             qDebug() << "PID stoped";
             state = STATE_FINISH;
-//            store->updateData();
+            store->fixUpdateData();
         }
         break;
     case STATE_MOVE_FRAME:

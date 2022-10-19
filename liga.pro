@@ -2,7 +2,7 @@ TEMPLATE = subdirs
 
 
 SUBDIRS += \
- DataStore \
+ datastore \
  network \
  experiment \
  experiment-manager \
