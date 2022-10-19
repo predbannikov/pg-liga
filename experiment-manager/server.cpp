@@ -62,31 +62,16 @@ void Server::startModbusProcess(QString fileName)
     modbus = new QProcess(this);
     modbus->setProgram(fileName);
     connect(modbus, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, &Server::handlePsCodeModbus, Qt::QueuedConnection);
+//    connect(modbus, &QProcess::readyReadStandardError, [this]() {
+//        qDebug() << modbus->program() << qPrintable(modbus->readAllStandardError());
+//    });
+//    connect(modbus, &QProcess::readyReadStandardOutput, [this]() {
+//        qDebug() << modbus->program() << qPrintable(modbus->readAllStandardOutput());
+//    });
     qDebug() << "start" << modbus->program();
     modbus->start();
     if (!modbus->waitForStarted(1000)) {
         qDebug() << Q_FUNC_INFO << fileName << "not started";
-    }
-}
-
-void Server::stopExperiementProccesses()
-{
-    for (auto it = experiments.begin(); it != experiments.end();) {
-        if (!configContainsInstr((*it)->address)) {
-            (*it)->deleteLater();
-            it = experiments.erase(it);
-        } else {
-            it++;
-        }
-    }
-    for (auto it = procExperiments.begin(); it != procExperiments.end();) {
-        if (!configContainsInstr((*it)->program().split('/').last().split('-')[1].toUInt())) {
-            (*it)->kill();
-            (*it)->deleteLater();
-            it = procExperiments.erase(it);
-        } else {
-            it++;
-        }
     }
 }
 
@@ -113,6 +98,27 @@ void Server::startExperimentProccess(QString fileName)
         qDebug() << Q_FUNC_INFO << procExp->program() << "not started";
     }
     procExperiments.insert(procExp);
+}
+
+void Server::stopExperiementProccesses()
+{
+    for (auto it = experiments.begin(); it != experiments.end();) {
+        if (!configContainsInstr((*it)->address)) {
+            (*it)->deleteLater();
+            it = experiments.erase(it);
+        } else {
+            it++;
+        }
+    }
+    for (auto it = procExperiments.begin(); it != procExperiments.end();) {
+        if (!configContainsInstr((*it)->program().split('/').last().split('-')[1].toUInt())) {
+            (*it)->kill();
+            (*it)->deleteLater();
+            it = procExperiments.erase(it);
+        } else {
+            it++;
+        }
+    }
 }
 
 void Server::startProccess(QProcess *procExp)

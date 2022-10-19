@@ -24,6 +24,7 @@ void SequenceExecutor::execCMD(QJsonObject &jobj)
         file.write(QJsonDocument(jobj["config"].toObject()).toJson());
         file.close();
     } else if (jobj["CMD"].toString() == "start") {
+        loadFrame.readConfig();
         loadFrame.startProcess();
     } else if (jobj["CMD"].toString() == "read_config") {
         loadFrame.readConfig();
@@ -35,6 +36,7 @@ void SequenceExecutor::execCMD(QJsonObject &jobj)
         emit sendRequestToClient(jobj);
     } else if (jobj["CMD"].toString() == "get_store_data") {
         loadFrame.sendStoreData(jobj);
+        loadFrame.readSensors(jobj);
         emit sendRequestToClient(jobj);
     } else if (jobj["CMD"].toString() == "move_frame") {
         loadFrame.moveFrame(jobj);

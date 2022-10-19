@@ -181,12 +181,15 @@ void ExperimentView::on_pushButton_2_clicked()
 
     ui->textEdit->clear();
     ui->textEdit->append(QJsonDocument(jobj).toJson());
+    emit sendRequest(jobj);
+
 }
 
 void ExperimentView::on_btnSendConfig_clicked()
 {
-    QJsonObject jobj = QJsonDocument::fromJson(ui->textEdit->toPlainText().toUtf8()).object();
-    emit sendRequest(jobj);
+    qDebug() << "IMPL. moved to old pushBtn all_request ";
+//    QJsonObject jobj = QJsonDocument::fromJson(ui->textEdit->toPlainText().toUtf8()).object();
+//    emit sendRequest(jobj);
 }
 
 void ExperimentView::on_btnReadConfig_clicked()
@@ -235,6 +238,19 @@ void ExperimentView::onReadyResponse(const QJsonObject &jobj)
             if (jkey == "VerticalDeform_mm")
                 data1->append(allList);
         }
+        QJsonObject jsensors = jobj["sensors"].toObject();
+        QString out_to_lbl;
+        QStringList keys = jsensors.keys();
+        for (auto &key: keys) {
+            if (key == "deform") {
+                float deform = jsensors[key].toString().toDouble() / 1000.;
+                out_to_lbl.append(QString("%1:\t\t%2\n").arg(key).arg(deform));
+//                data1->append(deform, QDateTime::currentDateTime());
+            } else if (key == "force") {
+                out_to_lbl.append(QString("%1:\t\t%2\n").arg(key).arg(jsensors[key].toString()));
+            }
+        }
+        ui->lblSensors->setText(out_to_lbl);
         qDebug() << "stop";
 //        qDebug() << dataStore;
     }

@@ -4,7 +4,7 @@
 #include "mainwindow.h"
 
 
-#define SENSORS_POLLING_INTERVAL    1000
+#define SENSORS_POLLING_INTERVAL    2500
 
 
 ServerWindow::ServerWindow(QString host_, QWidget *parent) :

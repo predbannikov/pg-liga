@@ -81,7 +81,7 @@ RETCODE LoadFrame::next(StatusOperation &operation)
                      << "\t\tstepper pos =" << stepper.position
                      << "\t\tcounter =" << counter;
             fflush(stderr);
-//            QThread::msleep(1000);
+            QThread::msleep(3000);
         }
         break;
     case STATE_START:
@@ -118,6 +118,7 @@ RETCODE LoadFrame::next(StatusOperation &operation)
         if (ret == COMPLATE) {
             qDebug() << "PID stoped";
             state = STATE_FINISH;
+//            store->updateData();
         }
         break;
     case STATE_MOVE_FRAME:
