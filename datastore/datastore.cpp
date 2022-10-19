@@ -101,8 +101,13 @@ qint64 DataStore::size() {
 }
 
 void DataStore::getLastStartAndCurTime(qint64 &start_time, qint64 &cur_time) {
-    auto keys = data.keys();
+    QList<qint64> keys = data.keys();
     std::sort(keys.begin(), keys.end());
     start_time = keys.last();
-    cur_time = data[start_time].last().first;
+    QList<QPair<qint64, float>> &lastList = data[start_time];
+    if (!lastList.empty()) {
+        cur_time = data[start_time].last().first;
+    } else {
+        cur_time = start_time;
+    }
 }

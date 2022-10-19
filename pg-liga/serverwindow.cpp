@@ -4,7 +4,7 @@
 #include "mainwindow.h"
 
 
-#define SENSORS_POLLING_INTERVAL    2500
+#define SENSORS_POLLING_INTERVAL_TIMEOUT    2500
 
 
 ServerWindow::ServerWindow(QString host_, QWidget *parent) :
@@ -18,7 +18,7 @@ ServerWindow::ServerWindow(QString host_, QWidget *parent) :
     connect(clnt, &ClientManager::connectedClient, this, &ServerWindow::clientConnected, Qt::QueuedConnection);
     connect(clnt, &ClientManager::disconnectClient, this, &ServerWindow::onDisconnectClient, Qt::QueuedConnection);
     connect(clnt, &ClientManager::readyReadResponse, this, &ServerWindow::onReadyReadResponse, Qt::QueuedConnection);
-    timerPollSensors.setInterval(SENSORS_POLLING_INTERVAL);
+    timerPollSensors.setInterval(SENSORS_POLLING_INTERVAL_TIMEOUT);
     connect(&timerPollSensors, &QTimer::timeout, this, &ServerWindow::onPollSensorsCurrentPage);
     this->resize(720, 1280);
     ui->verticalLayout->setSizeConstraint(QLayout::SetNoConstraint);
