@@ -205,9 +205,9 @@ void ServerWindow::on_btnAddInstr_clicked()
         if (item.toObject()["name"].toString() == prog_name)
             return;
     QJsonObject jInstr;
-    jInstr["program"] = "experiment";
-    jInstr["name"] = prog_name;
-    jInstr["path"] = QString("./experiments/%1").arg(addr);
+    jInstr["app_src_name"] = "experiment";
+    jInstr["app_name"] = prog_name;
+    jInstr["app_folder"] = QString("./experiments/%1").arg(addr);
     jprograms.append(jInstr);
     jServerConfig["programs"] = jprograms;
 
@@ -226,7 +226,7 @@ void ServerWindow::on_btnRemoveInstr_clicked()
     QString prog_name = QString("experiment-%1").arg(addr);
     QJsonArray jprograms = jServerConfig["programs"].toArray();
     for (auto it = jprograms.begin(); it != jprograms.end();) {
-        if ((*it).toObject()["name"].toString() == prog_name) {
+        if ((*it).toObject()["app_name"].toString() == prog_name) {
             it = jprograms.erase(it);
             break;
         } else

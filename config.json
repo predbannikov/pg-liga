@@ -1,9 +1,9 @@
 {
     "programs": [
         {
-            "program": "modbus-server",
-            "name": "modbus-server",
-            "path": "./modbus-server"
+            "app_src_name": "modbus-server",
+            "app_name": "modbus-server",
+            "app_folder": "./modbus"
         }
     ]
 }

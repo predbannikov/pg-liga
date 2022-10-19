@@ -9,6 +9,7 @@ QMAKE_CXXFLAGS += -Wextra
 
 
 TEMPLATE = app
+DESTDIR=$$DESTDIR_RELEASE
 TARGET = liga
 
 # You can make your code fail to compile if it uses deprecated APIs.
