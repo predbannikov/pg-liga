@@ -30,7 +30,6 @@ signals:
 
 public slots:
     void readyRead(QJsonObject &jobj) override;
-//    void disconnected();
     void sendReadyRequest(QJsonObject &jobj);
 
 

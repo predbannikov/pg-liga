@@ -11,7 +11,7 @@ Server::~Server()
 
 void Server::startServer()
 {
-    if(!this->listen(QHostAddress::Any,1234))
+    if(!this->listen(QHostAddress::Any,51234))
     {
         qDebug() << Q_FUNC_INFO << "Could not start server" << this->serverAddress() << this->serverPort();
     }
