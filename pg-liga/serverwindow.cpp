@@ -4,7 +4,7 @@
 #include "mainwindow.h"
 
 
-#define SENSORS_POLLING_INTERVAL_TIMEOUT    2500
+#define SENSORS_POLLING_INTERVAL_TIMEOUT    5000
 
 
 ServerWindow::ServerWindow(QString host_, QWidget *parent) :

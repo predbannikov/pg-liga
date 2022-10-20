@@ -25,11 +25,9 @@ public:
     ~ClientExperiment();
 
 signals:
-//    void error(QTcpSocket::SocketError socketerror);
     void sendReadyResponse(QJsonObject);
 
 public slots:
-//    void onSendJson(const QJsonObject &jobj);
     void readyRead(QJsonObject &jobj) override;
     void onSendReadyRequest(QJsonObject jobj);
 
