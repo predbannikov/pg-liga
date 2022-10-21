@@ -3,9 +3,11 @@ QT += network
 
 CONFIG += c++11 console staticlib
 TEMPLATE = lib
-DESTDIR=$$DESTDIR_RELEASE
-
+unix:{
+    DESTDIR=$$DESTDIR_RELEASE
+}
 SOURCES += \
-        abstractjsonclient.cpp
+    abstractjsonclient.cpp
+
 HEADERS += \
-        abstractjsonclient.h
+    abstractjsonclient.h

@@ -32,7 +32,7 @@ void Server::incomingConnection(qintptr socketDescriptor)
     ClientSocket *clientSock = new ClientSocket(socket, this);
     connect(clientSock, &ClientSocket::disconnectClient, this, &Server::removeClient);
 
-    clients.insert(reinterpret_cast<quint64>(socket), clientSock);
+    clients.insert(reinterpret_cast<qint64>(socket), clientSock);
 
     qDebug() << socketDescriptor << " Connecting... clients.size =" << clients.size();
 }
@@ -46,7 +46,7 @@ void Server::parserReadyRequest(QJsonObject jobj)
     }
 }
 
-void Server::removeClient(quint64 isock)
+void Server::removeClient(qint64 isock)
 {
     if (!clients.contains(isock)) {
         qDebug() << "Error clients not contains this socket" << isock;

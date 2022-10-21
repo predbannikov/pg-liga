@@ -1,8 +1,9 @@
 QT -= gui
 CONFIG += c++11 console staticlib
 TEMPLATE = lib
-DESTDIR=$$DESTDIR_RELEASE
-
+unix:{
+    DESTDIR=$$DESTDIR_RELEASE
+}
 
 SOURCES += \
 

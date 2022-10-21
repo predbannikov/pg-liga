@@ -7,10 +7,12 @@ CONFIG += qwt
 
 QMAKE_CXXFLAGS += -Wextra
 
-
 TEMPLATE = app
-DESTDIR=$$DESTDIR_RELEASE
+unix:{
+    DESTDIR=$$DESTDIR_RELEASE
+}
 TARGET = liga
+
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -70,13 +72,12 @@ RC_ICONS += \
     resources/icons/appicon.ico
 
 INCLUDEPATH += $$PWD/../
+
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../network/release/ -lnetwork
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../network/debug/ -lnetwork
-else:unix: {
-    LIBS += -L$$DESTDIR -lnetwork -ldatastore
-}
+else:unix: LIBS += -L$$DESTDIR -lnetwork
 
-# Default rules for deployment.
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
-!isEmpty(target.path): INSTALLS += target
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../datastore/release/ -ldatastore
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../datastore/debug/ -ldatastore
+else:unix: LIBS += -L$$DESTDIR -ldatastore
+

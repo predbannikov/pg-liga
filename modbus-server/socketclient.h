@@ -26,12 +26,10 @@ public:
 
 signals:
     void error(QTcpSocket::SocketError socketerror);
-    void disconnectClient(quint64);
     void sendReqeust(QJsonObject);
 
 public slots:
     void readyRead(QJsonObject &jobj) override;
-//    void disconnected();
     void sendReadyRequest(QJsonObject &jobj);
 
 

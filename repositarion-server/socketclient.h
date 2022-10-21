@@ -25,7 +25,6 @@ public:
 
 signals:
     void error(QTcpSocket::SocketError socketerror);
-    void disconnectClient(quint64);
     void sendReqeust(QJsonObject);
 
 public slots:

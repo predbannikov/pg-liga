@@ -10,7 +10,7 @@ class Server : public QTcpServer
 {
     Q_OBJECT
 
-    QMap <quint64, ClientSocket* > clients;
+    QMap <qint64, ClientSocket* > clients;
     QThread *serialPortThread;
 public:
     explicit Server(QObject *parent = nullptr);
@@ -26,7 +26,7 @@ private:
 
 public slots:
     void parserReadyRequest(QJsonObject jobj);
-    void removeClient(quint64 isock);
+    void removeClient(qint64 isock);
 
 signals:
     void sendRequest(QJsonObject);

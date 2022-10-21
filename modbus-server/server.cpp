@@ -55,7 +55,7 @@ void Server::parserReadyRequest(QJsonObject jobj)
     }
 }
 
-void Server::removeClient(quint64 isock)
+void Server::removeClient(qint64 isock)
 {
     if (!clients.contains(isock)) {
         qDebug() << "Error clients not contains this socket" << isock;
