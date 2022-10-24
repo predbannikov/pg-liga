@@ -221,7 +221,7 @@ void AbstractJSONClient::disconnected()
         emit finished();
         break;
     case CLIENT:
-        emit disconnectClient(reinterpret_cast<quint64>(socket));
+        emit disconnectClient(reinterpret_cast<qint64>(socket));
         socket->abort();
         timerPing.stop();
         timerReconnect.start();
