@@ -1,6 +1,7 @@
 #! /bin/bash
+BUILD_DIR=$HOME/liga-release
 
-BUILD_DIR=/home/user/projects/control_app_liga/pg-liga/build-liga-Desktop-Release
+#BUILD_DIR=/home/user/projects/control_app_liga/pg-liga/build-liga-Desktop-Release
 echo "BUILD_DIR=$BUILD_DIR"
 QT_DEPLOY=$HOME/bin/linuxdeployqt
 
@@ -42,11 +43,11 @@ echo -e "$(git --git-dir="$PWD/.git" log | grep Author -v)" >> "$TARGET_DIR/$cha
 
 echo $PWD
 echo 'Copying experiment app...'
-cp -p "$BUILD_DIR/experiment/experiment" "$TARGET_DIR/."
+cp -p "$BUILD_DIR/experiment" "$TARGET_DIR/."
 echo 'Copying modbus app...'
-cp -p "$BUILD_DIR/modbus-server/modbus-server" "$TARGET_DIR/."
+cp -p "$BUILD_DIR/modbus-server" "$TARGET_DIR/."
 echo 'Copying experiment-manager app...'
-cp -p "$BUILD_DIR/experiment-manager/experiment-manager" "$TARGET_DIR/."
+cp -p "$BUILD_DIR/experiment-manager" "$TARGET_DIR/."
 echo 'Copying default config.json ...'
 cp -p "$PWD/config.json" "$TARGET_DIR/."
 

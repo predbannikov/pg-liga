@@ -4,21 +4,16 @@
 
 Server::Server(QObject *parent) : QTcpServer(parent)
 {
-    QDir cur_dir = QDir::current();
-    QStringList list = cur_dir.entryList(QDir::Files);
+//    QDir cur_dir = QDir::current();
+//    QStringList list = cur_dir.entryList(QDir::Files);
 
-    if (!list.contains(NAME_PROGRAM_MODBUS_SERVER)) {
-        qDebug() << "qtcreator version start";
+    if (!QFile::exists("./config.json")) {
+        qDebug() << "file config.json not exists";
     } else {
-
-        if (!QFile::exists("./config.json")) {
-            qDebug() << "file config.json not exists";
-        } else {
-            readConfig();
-        }
+        readConfig();
+        checkAndPrepFoldersPrograms();
+        runPrograms();
     }
-    checkAndPrepFoldersPrograms();
-    runPrograms();
 }
 
 Server::~Server()
@@ -62,16 +57,47 @@ QJsonObject Server::readConfig()
     return jconfig;
 }
 
-void Server::startModbus(QString fileName)
+void Server::startModbusProcess(QString fileName)
 {
     modbus = new QProcess(this);
     modbus->setProgram(fileName);
     connect(modbus, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, &Server::handlePsCodeModbus, Qt::QueuedConnection);
+//    connect(modbus, &QProcess::readyReadStandardError, [this]() {
+//        qDebug() << modbus->program() << qPrintable(modbus->readAllStandardError());
+//    });
+//    connect(modbus, &QProcess::readyReadStandardOutput, [this]() {
+//        qDebug() << modbus->program() << qPrintable(modbus->readAllStandardOutput());
+//    });
     qDebug() << "start" << modbus->program();
     modbus->start();
     if (!modbus->waitForStarted(1000)) {
         qDebug() << Q_FUNC_INFO << fileName << "not started";
     }
+}
+
+void Server::startExperimentProccess(QString fileName)
+{
+    QString name = fileName.split('/').last();
+    QString address = name.split('-')[1];
+    QString host = QString("127.0.0.1:%1").arg(50000 | address.toUInt());
+    ClientExperiment *clientExp = new ClientExperiment(host, this);
+    experiments.insert(clientExp);
+
+    QProcess *procExp = new QProcess(this);
+    qDebug() << "start" << procExp->program();
+    procExp->start(fileName, QStringList(address));
+//    procExp->setProcessChannelMode(QProcess::MergedChannels);
+    connect(procExp, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, &Server::handlePsCodeExperiment, Qt::QueuedConnection);
+    connect(procExp, &QProcess::readyReadStandardError, [procExp]() {
+        qDebug() << procExp->program() << qPrintable(procExp->readAllStandardError());
+    });
+    connect(procExp, &QProcess::readyReadStandardOutput, [procExp]() {
+        qDebug() << procExp->program() << qPrintable(procExp->readAllStandardOutput());
+    });
+    if (!procExp->waitForStarted(1000)) {
+        qDebug() << Q_FUNC_INFO << procExp->program() << "not started";
+    }
+    procExperiments.insert(procExp);
 }
 
 void Server::stopExperiementProccesses()
@@ -93,25 +119,6 @@ void Server::stopExperiementProccesses()
             it++;
         }
     }
-}
-
-void Server::startExperimentProccess(QString fileName)
-{
-    QString name = fileName.split('/').last();
-    QString address = name.split('-')[1];
-    QString host = QString("127.0.0.1:%1").arg(50000 | address.toUInt());
-    ClientExperiment *clientExp = new ClientExperiment(host, this);
-    experiments.insert(clientExp);
-
-    QProcess *procExp = new QProcess(this);
-//    procExp->setProcessChannelMode(QProcess::MergedChannels);
-    connect(procExp, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, &Server::handlePsCodeExperiment, Qt::QueuedConnection);
-    qDebug() << "start" << procExp->program();
-    procExp->start(fileName, QStringList(address));
-    if (!procExp->waitForStarted(1000)) {
-        qDebug() << Q_FUNC_INFO << procExp->program() << "not started";
-    }
-    procExperiments.insert(procExp);
 }
 
 void Server::startProccess(QProcess *procExp)
@@ -176,14 +183,14 @@ void Server::checkAndPrepFoldersPrograms()
 {
     QDir cur_path = QDir::currentPath();
     for (const auto &jobj: qAsConst(jprograms)) {
-        QDir app_path(QDir(jobj["path"].toString()).absolutePath());
+        QDir app_path(QDir(jobj["app_folder"].toString()).absolutePath());
         if (!cur_path.mkpath(app_path.path())) {
             qDebug() << app_path.path() << "folder not created";
         }
-        QFile app_file(app_path.filePath(jobj["name"].toString()));
+        QFile app_file(app_path.filePath(jobj["app_name"].toString()));
         if (!app_file.exists()) {
             qDebug() << app_file.fileName() << "copy";
-            QFile srcFile(cur_path.filePath(jobj["program"].toString()));
+            QFile srcFile(cur_path.filePath(jobj["app_src_name"].toString()));
             srcFile.copy(app_file.fileName());
         } else {
             qDebug() << app_file.fileName() << "file exist";
@@ -204,13 +211,13 @@ bool Server::isRuningExperiment(quint8 address)
 void Server::runPrograms()
 {
     for (const auto &jobj: qAsConst(jprograms)) {
-        QDir app_path(QDir(jobj["path"].toString()).absolutePath());
-        QFile app_file(app_path.filePath(jobj["name"].toString()));
-        if (jobj["program"].toString() == "experiment") {
+        QDir app_path(QDir(jobj["app_folder"].toString()).absolutePath());
+        QFile app_file(app_path.filePath(jobj["app_name"].toString()));
+        if (jobj["app_src_name"].toString() == "experiment") {
             if (!isRuningExperiment(app_file.fileName().split('/').last().split('-')[1].toUInt()))
                 startExperimentProccess(app_file.fileName());
-        } else if (jobj["program"].toString() == NAME_PROGRAM_MODBUS_SERVER) {
-            startModbus(app_file.fileName());
+        } else if (jobj["app_src_name"].toString() == NAME_PROGRAM_MODBUS_SERVER) {
+            startModbusProcess(app_file.fileName());
         }
     }
 }
@@ -226,8 +233,8 @@ qint64 Server::timeInterval(const QString& date, const QString& format)
 bool Server::configContainsInstr(quint8 addr)
 {
     for (const auto &jobj: qAsConst(jprograms))
-        if (jobj["program"].toString() == "experiment")
-            if (jobj["name"].toString().split('-')[1].toUInt() == addr)
+        if (jobj["app_src_name"].toString() == "experiment")
+            if (jobj["app_name"].toString().split('-')[1].toUInt() == addr)
                 return true;
     return false;
 }
@@ -294,10 +301,10 @@ void Server::readCMD(QJsonObject jobj)
         modbus->kill();
     } else if (jobj["CMD"].toString() == "start_modbus") {
         for (const auto &jobj: qAsConst(jprograms)) {
-            QDir app_path(QDir(jobj["path"].toString()).absolutePath());
-            QFile app_file(app_path.filePath(jobj["name"].toString()));
-            if (jobj["program"].toString() == NAME_PROGRAM_MODBUS_SERVER) {
-                startModbus(app_file.fileName());
+            QDir app_path(QDir(jobj["app_folder"].toString()).absolutePath());
+            QFile app_file(app_path.filePath(jobj["app_name"].toString()));
+            if (jobj["app_src_name"].toString() == NAME_PROGRAM_MODBUS_SERVER) {
+                startModbusProcess(app_file.fileName());
             }
         }
     } else if (jobj["CMD"].toString() == "stop_experiemnt") {

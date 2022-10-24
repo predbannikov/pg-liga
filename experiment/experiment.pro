@@ -5,6 +5,7 @@ CONFIG += c++17 console
 CONFIG -= app_bundle
 
 TEMPLATE = app
+DESTDIR=$$DESTDIR_RELEASE
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -45,9 +46,14 @@ HEADERS += \
 
 
 INCLUDEPATH += $$PWD/../
+
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../network/release/ -lnetwork
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../network/debug/ -lnetwork
-else:unix: LIBS += -L$$OUT_PWD/../network/ -lnetwork
+else:unix: LIBS += -L$$DESTDIR -lnetwork
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../datastore/release/ -ldatastore
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../datastore/debug/ -ldatastore
+else:unix: LIBS += -L$$DESTDIR -ldatastore
 
 
 # Default rules for deployment.

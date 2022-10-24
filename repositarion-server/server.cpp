@@ -2,13 +2,6 @@
 
 Server::Server(QObject *parent) : QTcpServer(parent)
 {
-    serialPortThread = new QThread;
-    serialPort = new SerialPort;
-    serialPort->moveToThread(serialPortThread);
-    connect(serialPortThread, &QThread::started, serialPort, &SerialPort::process, Qt::QueuedConnection);
-    connect(serialPort, &SerialPort::readyRequest, this, &Server::parserReadyRequest, Qt::QueuedConnection);
-    serialPortThread->start();
-    qDebug() << "Server::Server()       threadID =" << QThread::currentThreadId();
 }
 
 Server::~Server()
@@ -18,7 +11,7 @@ Server::~Server()
 
 void Server::startServer()
 {
-    if(!this->listen(QHostAddress::Any,1234))
+    if(!this->listen(QHostAddress::Any,51234))
     {
         qDebug() << Q_FUNC_INFO << "Could not start server" << this->serverAddress() << this->serverPort();
     }
@@ -36,18 +29,16 @@ void Server::incomingConnection(qintptr socketDescriptor)
         qDebug() << socket->error();
         return;
     }
-    ClientSocket *clientSock = new ClientSocket(socket, serialPort, this);
-    connect(clientSock, &ClientSocket::disconnectClient, this, &Server::removeClient);
+    ClientSocket *clientSock = new ClientSocket(socket, this);
+    connect(clientSock, &AbstractJSONClient::disconnectClient, this, &Server::removeClient);
 
-    clients.insert(reinterpret_cast<quint64>(socket), clientSock);
+    clients.insert(reinterpret_cast<qint64>(socket), clientSock);
 
     qDebug() << socketDescriptor << " Connecting... clients.size =" << clients.size();
-
 }
 
 void Server::parserReadyRequest(QJsonObject jobj)
 {
-//    QMutexLocker lock(&mutex);
     quint64 tcpsock = jobj["id_experiment"].toString().toULongLong();
 
     if (clients.contains(tcpsock)) {
@@ -61,11 +52,9 @@ void Server::removeClient(qint64 isock)
         qDebug() << "Error clients not contains this socket" << isock;
         return;
     }
-//    QMutexLocker lock(&mutex);
     clients.value(isock)->deleteLater();
     clients.remove(isock);
     if (clients.size() == 0)
         qDebug() << " #####################################  clients.size =" << clients.size();
-
 }
 

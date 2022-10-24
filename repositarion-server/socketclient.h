@@ -10,7 +10,6 @@
 #include <QMutex>
 #include <mutex>
 
-#include "serialport.h"
 #include "network/abstractjsonclient.h"
 
 
@@ -21,7 +20,7 @@ class ClientSocket : public AbstractJSONClient
     QJsonObject jrequest;
 
 public:
-    ClientSocket(QTcpSocket *sock, SerialPort *serial_port, QObject *parent = nullptr);
+    ClientSocket(QTcpSocket *sock, QObject *parent = nullptr);
     ~ClientSocket();
 
 signals:
@@ -34,7 +33,6 @@ public slots:
 
 
 private:
-    SerialPort *serialport;
 };
 
 #endif // SOCKETCLIENT_H

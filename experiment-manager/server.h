@@ -36,8 +36,8 @@ protected:
 
 private:
     void startExperimentProccess(QString fileName);
+    void startModbusProcess(QString fileName);
     void startProccess(QProcess *procExp);
-    void startModbus(QString fileName);
     void stopExperiementProccesses();
 //    void stopExperiemnt
     QProcess *modbus = nullptr;

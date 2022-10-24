@@ -13,7 +13,7 @@
 #include "experimentdata.h"
 #include "decoratedplot.h"
 
-#include "DataStore/datastore.h"
+#include "datastore/datastore.h"
 
 namespace Strings {
 
@@ -115,6 +115,7 @@ signals:
 
 private:
     void setupPlots();
+    void clearData();
 
     QMap<QString, DataStore> dataStore;
 

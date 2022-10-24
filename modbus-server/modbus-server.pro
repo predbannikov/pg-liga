@@ -10,6 +10,7 @@ CONFIG += c++11 console
 # In order to do so, uncomment the following line.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 TEMPLATE = app
+DESTDIR=$$DESTDIR_RELEASE
 
 
 SOURCES += \
@@ -28,7 +29,7 @@ HEADERS += \
 INCLUDEPATH += $$PWD/../
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../network/release/ -lnetwork
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../network/debug/ -lnetwork
-else:unix: LIBS += -L$$OUT_PWD/../network/ -lnetwork
+else:unix: LIBS += -L$$DESTDIR -lnetwork
 
 
 # Default rules for deployment.

@@ -1,9 +1,15 @@
 {
     "programs": [
         {
+<<<<<<< HEAD
             "program": "modbus-server",
             "name": "modbus-server",
             "path": "./modbus"
+=======
+            "app_src_name": "modbus-server",
+            "app_name": "modbus-server",
+            "app_folder": "./modbus"
+>>>>>>> 606d7607feaf5dae8802378755a1cbab1f872f63
         }
     ]
 }

@@ -4,7 +4,7 @@
 #include "mainwindow.h"
 
 
-#define SENSORS_POLLING_INTERVAL    1000
+#define SENSORS_POLLING_INTERVAL_TIMEOUT    5000
 
 
 ServerWindow::ServerWindow(QString host_, QWidget *parent) :
@@ -18,7 +18,7 @@ ServerWindow::ServerWindow(QString host_, QWidget *parent) :
     connect(clnt, &ClientManager::connectedClient, this, &ServerWindow::clientConnected, Qt::QueuedConnection);
     connect(clnt, &ClientManager::disconnectClient, this, &ServerWindow::onDisconnectClient, Qt::QueuedConnection);
     connect(clnt, &ClientManager::readyReadResponse, this, &ServerWindow::onReadyReadResponse, Qt::QueuedConnection);
-    timerPollSensors.setInterval(SENSORS_POLLING_INTERVAL);
+    timerPollSensors.setInterval(SENSORS_POLLING_INTERVAL_TIMEOUT);
     connect(&timerPollSensors, &QTimer::timeout, this, &ServerWindow::onPollSensorsCurrentPage);
     this->resize(720, 1280);
     ui->verticalLayout->setSizeConstraint(QLayout::SetNoConstraint);
@@ -205,9 +205,9 @@ void ServerWindow::on_btnAddInstr_clicked()
         if (item.toObject()["name"].toString() == prog_name)
             return;
     QJsonObject jInstr;
-    jInstr["program"] = "experiment";
-    jInstr["name"] = prog_name;
-    jInstr["path"] = QString("./experiments/%1").arg(addr);
+    jInstr["app_src_name"] = "experiment";
+    jInstr["app_name"] = prog_name;
+    jInstr["app_folder"] = QString("./experiments/%1").arg(addr);
     jprograms.append(jInstr);
     jServerConfig["programs"] = jprograms;
 
@@ -226,7 +226,7 @@ void ServerWindow::on_btnRemoveInstr_clicked()
     QString prog_name = QString("experiment-%1").arg(addr);
     QJsonArray jprograms = jServerConfig["programs"].toArray();
     for (auto it = jprograms.begin(); it != jprograms.end();) {
-        if ((*it).toObject()["name"].toString() == prog_name) {
+        if ((*it).toObject()["app_name"].toString() == prog_name) {
             it = jprograms.erase(it);
             break;
         } else

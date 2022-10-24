@@ -1,11 +1,13 @@
 TEMPLATE = subdirs
 
+
 SUBDIRS += \
- DataStore \
+ datastore \
  network \
  experiment \
  experiment-manager \
  modbus-server \
+ repositarion-server \
  measurements
 
 enable-gui-client {

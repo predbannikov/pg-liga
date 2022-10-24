@@ -3,7 +3,6 @@
 
 #include <QTcpServer>
 #include <QMutex>
-#include "serialport.h"
 #include "socketclient.h"
 
 
@@ -22,12 +21,10 @@ protected:
     void incomingConnection(qintptr socketDescriptor);
 
 private:
-    SerialPort *serialPort;
 
 
 
 public slots:
-//    void readyRequest(QJsonObject jobj);
     void parserReadyRequest(QJsonObject jobj);
     void removeClient(qint64 isock);
 

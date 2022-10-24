@@ -61,7 +61,7 @@ public slots:
 
 signals:
     void connectedClient();
-    void disconnectClient();
+    void disconnectClient(qint64);
     void finished();
 };
 
