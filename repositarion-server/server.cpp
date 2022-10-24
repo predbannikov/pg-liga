@@ -31,6 +31,7 @@ void Server::incomingConnection(qintptr socketDescriptor)
     }
     ClientSocket *clientSock = new ClientSocket(socket, this);
     connect(clientSock, &AbstractJSONClient::disconnectClient, this, &Server::removeClient);
+    connect(clientSock, &AbstractJSONClient::finished, this, &Server::removeClient);
 
     clients.insert(reinterpret_cast<qint64>(socket), clientSock);
 

@@ -62,7 +62,7 @@ public slots:
 signals:
     void connectedClient();
     void disconnectClient(qint64);
-    void finished();
+    void finished(qint64);
 };
 
 #endif // ABSTRACTJSONCLIENT_H

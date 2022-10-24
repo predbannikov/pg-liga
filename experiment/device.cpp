@@ -81,11 +81,7 @@ RETCODE LoadFrame::next(StatusOperation &operation)
                      << "\t\tstepper pos =" << stepper.position
                      << "\t\tcounter =" << counter;
             fflush(stderr);
-<<<<<<< HEAD
             QThread::msleep(5000);
-=======
-            QThread::msleep(3000);
->>>>>>> 606d7607feaf5dae8802378755a1cbab1f872f63
         }
         break;
     case STATE_START:

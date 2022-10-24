@@ -186,7 +186,6 @@ void SerialPort::process()
     connectDevice();
     while(!abort) {
         QMutexLocker lock(&mtx);
-//        std::unique_lock<std::mutex> lock(mtx);
         while (queue.empty()) {
             notEmpty.wait(&mtx);
         }
@@ -203,10 +202,10 @@ void SerialPort::process()
 
         timeSpentWait.restart();
 
-        if (timeElapse.elapsed() > 1000) {
-            printCountErrors();
-            timeElapse.restart();
-        }
+//        if (timeElapse.elapsed() > 1000) {
+//            printCountErrors();
+//            timeElapse.restart();
+//        }
 
         procError();
 

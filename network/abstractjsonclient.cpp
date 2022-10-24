@@ -218,7 +218,7 @@ void AbstractJSONClient::disconnected()
     qDebug() << Q_FUNC_INFO << "client disconnected";
     switch (type) {
     case SERVER:
-        emit finished();
+        emit finished(reinterpret_cast<qint64>(socket));
         break;
     case CLIENT:
         emit disconnectClient(reinterpret_cast<qint64>(socket));

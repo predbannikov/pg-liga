@@ -15,7 +15,7 @@ class Interface : public QObject
     Q_OBJECT
 
     QMutex mtx;
-    QMutex mtxcmd;
+//    QMutex mtxcmd;
     QWaitCondition notEmpty;
     /// json объект из очереди комманд
     QJsonObject jobjTaked;
@@ -38,7 +38,7 @@ signals:
     void sendRequestToClient(const QJsonObject &);
 
 private:
-    ModbusClient *modbusClient;
+//    ModbusClient *modbusClient;
     quint8 address = 0;
 };
 
