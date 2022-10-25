@@ -81,6 +81,7 @@ void Server::startExperimentProccess(QString fileName)
     QString address = name.split('-')[1];
     QString host = QString("127.0.0.1:%1").arg(50000 | address.toUInt());
     ClientExperiment *clientExp = new ClientExperiment(host, this);
+    connect(clientExp, &ClientExperiment::sendReadyResponse, this, &Server::readyReadResponseExperiment);
     experiments.insert(clientExp);
 
     QProcess *procExp = new QProcess(this);
@@ -164,6 +165,17 @@ void Server::onRemoveClientManager()
     (*it)->deleteLater();
     clients.erase(it);
     qDebug() << " #####################################  clientsManager.size =" << clients.size();
+}
+
+void Server::readyReadResponseExperiment(QJsonObject jobj)
+{
+    for (auto &client: clients) {
+        qint64 id = client->socketID();
+        if (jobj["id_client"].toString().toLongLong() == id) {
+            qDebug() << jobj["id_client"].toString();
+            client->procQueue(jobj);
+        }
+    }
 }
 
 void Server::onRemoveClientExperiment()

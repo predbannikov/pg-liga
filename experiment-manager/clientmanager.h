@@ -22,6 +22,7 @@ public:
     ClientManager(QSet<ClientExperiment*> *experiments_, QTcpSocket *sock, QObject *parent = nullptr);
     ~ClientManager();
 
+    void parserJSON(QJsonObject &jobj);
     void readyRead(QJsonObject &jobj) override;
 
 signals:
@@ -36,7 +37,6 @@ public slots:
     void procQueue(const QJsonObject &jResponse);
 
 private:
-    void parserJSON(QJsonObject &jobj);
     QSet<ClientExperiment*> *experiments;
 };
 

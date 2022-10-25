@@ -48,6 +48,7 @@ public slots:
     void handlePsCodeExperiment(int exitCode, QProcess::ExitStatus exitStatus);
     void readCMD(QJsonObject jobj);
     void onRemoveClientManager();
+    void readyReadResponseExperiment(QJsonObject jobj);
     int countClients();
 
     void onRemoveClientExperiment();

@@ -4,9 +4,9 @@
 ClientManager::ClientManager(QSet<ClientExperiment *> *experiments_, QTcpSocket *sock, QObject *parent) : AbstractJSONClient(sock, parent)
 {
     experiments = experiments_;
-    for(auto &exp: qAsConst(*experiments)) {
-        connect(exp, &ClientExperiment::sendReadyResponse, this, &ClientManager::procQueue);
-    }
+//    for(auto &exp: qAsConst(*experiments)) {
+//        connect(exp, &ClientExperiment::sendReadyResponse, this, &ClientManager::procQueue);
+//    }
 
 //    const int address = 2;
 //    QString host = QString("127.0.0.1:%1").arg(50000 | address);
@@ -57,6 +57,7 @@ void ClientManager::parserJSON(QJsonObject &jobj)
         if (jobj.contains("CMD")) {
             for(auto &exp: *experiments)
                 if (jobj["address"].toString().toInt() == exp->address) {
+                    jobj["id_client"] = QString::number(socketID());
                     exp->onSendReadyRequest(jobj);
                 }
         }
