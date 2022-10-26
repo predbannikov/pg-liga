@@ -49,6 +49,7 @@ public slots:
     void readCMD(QJsonObject jobj);
     void onRemoveClientManager();
     int countClients();
+    void resolvingResponsExperiment(QJsonObject jobj);
 
     void onRemoveClientExperiment();
 

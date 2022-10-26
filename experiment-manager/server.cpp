@@ -81,6 +81,7 @@ void Server::startExperimentProccess(QString fileName)
     QString address = name.split('-')[1];
     QString host = QString("127.0.0.1:%1").arg(50000 | address.toUInt());
     ClientExperiment *clientExp = new ClientExperiment(host, this);
+    connect(clientExp, &ClientExperiment::sendReadyResponse, this, &Server::resolvingResponsExperiment, Qt::QueuedConnection);
     experiments.insert(clientExp);
 
     QProcess *procExp = new QProcess(this);
@@ -133,6 +134,18 @@ void Server::startProccess(QProcess *procExp)
 int Server::countClients()
 {
     return clients.size();
+}
+
+void Server::resolvingResponsExperiment(QJsonObject jobj)
+{
+    auto it = clients.begin();
+    for (; it != clients.end(); it++) {
+        if ((*it)->socketID() == jobj["client_liga"].toString().toLongLong()) {
+            (*it)->procQueue(jobj);
+            return;
+        }
+    }
+    qDebug() << Q_FUNC_INFO << "not found client for response experiemnt";
 }
 
 void Server::incomingConnection(qintptr socketDescriptor)

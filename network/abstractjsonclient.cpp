@@ -109,9 +109,9 @@ void AbstractJSONClient::setTimerPing(int ms)
     }
 }
 
-quint64 AbstractJSONClient::socketID()
+qint64 AbstractJSONClient::socketID()
 {
-    return reinterpret_cast<quint64>(socket);
+    return reinterpret_cast<qint64>(socket);
 }
 
 void AbstractJSONClient::init()
