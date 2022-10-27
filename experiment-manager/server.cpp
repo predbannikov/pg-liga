@@ -140,7 +140,7 @@ void Server::resolvingResponsExperiment(QJsonObject jobj)
 {
     auto it = clients.begin();
     for (; it != clients.end(); it++) {
-        if ((*it)->socketID() == jobj["client_liga"].toString().toLongLong()) {
+        if ((*it)->socketID() == jobj["client_liga_id"].toString().toLongLong()) {
             (*it)->procQueue(jobj);
             return;
         }

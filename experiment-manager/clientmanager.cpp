@@ -23,7 +23,7 @@ ClientManager::~ClientManager()
 
 void ClientManager::readyRead(QJsonObject &jobj)
 {
-    jobj["client_liga"] = QString::number(socketID());
+    jobj["client_liga_id"] = QString::number(socketID());
     parserJSON(jobj);
 }
 
