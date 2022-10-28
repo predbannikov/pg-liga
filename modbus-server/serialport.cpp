@@ -202,10 +202,10 @@ void SerialPort::process()
 
         timeSpentWait.restart();
 
-//        if (timeElapse.elapsed() > 1000) {
-//            printCountErrors();
-//            timeElapse.restart();
-//        }
+        if (timeElapse.elapsed() > 1000) {
+            printCountErrors();
+            timeElapse.restart();
+        }
 
         procError();
 

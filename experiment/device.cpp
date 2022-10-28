@@ -3,6 +3,8 @@
 
 using namespace Measurements;
 
+#define TIMEWAIT_AFTER_IDLE_STATUS_SENSOR   1000
+
 LoadFrame::LoadFrame() :
     /// первая рама
     forceSens(SensLoad0Addr, SensLoad0),
@@ -81,7 +83,7 @@ RETCODE LoadFrame::next(StatusOperation &operation)
                      << "\t\tstepper pos =" << stepper.position
                      << "\t\tcounter =" << counter;
             fflush(stderr);
-            QThread::msleep(5000);
+            QThread::msleep(TIMEWAIT_AFTER_IDLE_STATUS_SENSOR);
         }
         break;
     case STATE_START:
