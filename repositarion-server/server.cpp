@@ -2,6 +2,9 @@
 
 Server::Server(QObject *parent) : QTcpServer(parent)
 {
+    QDir cur_path = QDir::currentPath();
+    cur_path.mkpath("testing");
+    cur_path.mkpath("release");
 }
 
 Server::~Server()

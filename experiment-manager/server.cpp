@@ -14,6 +14,18 @@ Server::Server(QObject *parent) : QTcpServer(parent)
         checkAndPrepFoldersPrograms();
         runPrograms();
     }
+
+    repos = new ClientRepositarion(this);
+    QJsonObject jobj;
+    jobj["CMD"] = "check";
+    jobj["VERSION_MAJOR"] = QString(VERSION_MAJOR);
+    jobj["VERSION_MINOR"] = QString(VERSION_MINOR);
+    repos->onSendReadyRequest(jobj);
+
+
+
+    qDebug() << tr("Версия: <b>%1.%2</b> Ревизия: <b>%3</b>").arg(VERSION_MAJOR, VERSION_MINOR, VERSION_BUILD);
+
 }
 
 Server::~Server()

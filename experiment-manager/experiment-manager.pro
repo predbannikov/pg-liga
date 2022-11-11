@@ -12,19 +12,24 @@ DESTDIR=$$DESTDIR_RELEASE
 
 #CONFIG += c++11
 
-# You can make your code fail to compile if it uses deprecated APIs.
-# In order to do so, uncomment the following line.
-#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
+VERSION_MAJOR=1
+VERSION_MINOR=0
+VERSION_BUILD=$$system(git rev-list HEAD --count)
+DEFINES += VERSION_MAJOR=\\\"$$VERSION_MAJOR\\\" \
+           VERSION_MINOR=\\\"$$VERSION_MINOR\\\" \
+           VERSION_BUILD=\\\"$$VERSION_BUILD\\\" \
 
 SOURCES += \
     clientexperiment.cpp \
     clientmanager.cpp \
+    clientrepositarion.cpp \
     server.cpp  \
     main.cpp
 
 HEADERS += \
     clientexperiment.h \
     clientmanager.h \
+    clientrepositarion.h \
     server.h
 
 

@@ -13,6 +13,12 @@ unix:{
 }
 TARGET = liga
 
+VERSION_MAJOR=1
+VERSION_MINOR=0
+VERSION_BUILD=$$system(git rev-list HEAD --count)
+DEFINES += VERSION_MAJOR=\\\"$$VERSION_MAJOR\\\" \
+           VERSION_MINOR=\\\"$$VERSION_MINOR\\\" \
+           VERSION_BUILD=\\\"$$VERSION_BUILD\\\" \
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.

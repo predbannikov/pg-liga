@@ -19,6 +19,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actScan, &QAction::triggered, this, &MainWindow::scanInstruments);
 //    connect(ui->tabMain, &QTabWidget::tabCloseRequested, this, &MainWindow::onTabCloseRequested);
 //    this->resize(1280, 768);
+
+    qDebug() << tr("Версия: <b>%1.%2</b> Ревизия: <b>%3</b>").arg(VERSION_MAJOR, VERSION_MINOR, VERSION_BUILD);
+
     this->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
 
     ui->serverCmbBox->addItem(SettingsManager::instance()->getServers());

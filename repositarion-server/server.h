@@ -2,7 +2,9 @@
 #define SERVER_H
 
 #include <QTcpServer>
-#include <QMutex>
+#include <QJsonObject>
+#include <QFile>
+#include <QDir>
 #include "socketclient.h"
 
 

@@ -10,12 +10,16 @@
 #include <QThread>
 
 #include "clientmanager.h"
+#include "clientexperiment.h"
+#include "clientrepositarion.h"
 
 #define NAME_PROGRAM_MODBUS_SERVER  "modbus-server"
 
 class Server : public QTcpServer
 {
     Q_OBJECT
+    ClientRepositarion *repos;
+
 
     QSet <ClientManager*> clients;
     QSet <ClientExperiment*> experiments;
