@@ -1,5 +1,4 @@
 #include "clientrepositarion.h"
-#include <QHostAddress>
 
 ClientRepositarion::ClientRepositarion(QObject *parent) : AbstractJSONClient("176.119.147.253:51234", parent)
 {

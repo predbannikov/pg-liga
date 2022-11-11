@@ -16,7 +16,7 @@ class ClientRepositarion : public AbstractJSONClient
 {
     Q_OBJECT
 public:
-    ClientRepositarion();
+    ClientRepositarion(QObject *parent = nullptr);
     ~ClientRepositarion();
 
 signals:
