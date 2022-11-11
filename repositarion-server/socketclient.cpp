@@ -10,7 +10,11 @@ ClientSocket::~ClientSocket()
 
 void ClientSocket::readyRead(QJsonObject &jobj)
 {
-    jobj["id_experiment"] = QString::number(socketID());
+    if (jobj["CMD"].toString() == "check")  {
+        qDebug() << "client version" << jobj;
+    } else {
+        qDebug() << "readyRead " << jobj;
+    }
 }
 
 void ClientSocket::sendReadyRequest(QJsonObject &jobj)
