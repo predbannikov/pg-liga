@@ -16,15 +16,12 @@ Server::Server(QObject *parent) : QTcpServer(parent)
     }
 
     repos = new ClientRepositarion(this);
-    QJsonObject jobj;
-    jobj["CMD"] = "check";
-    jobj["VERSION_MAJOR"] = QString(VERSION_MAJOR);
-    jobj["VERSION_MINOR"] = QString(VERSION_MINOR);
-    repos->onSendReadyRequest(jobj);
+    connect(repos, &ClientRepositarion::connectedClient, this, &Server::connectedClientRepositarion);
 
 
 
-    qDebug() << tr("Версия: <b>%1.%2</b> Ревизия: <b>%3</b>").arg(VERSION_MAJOR, VERSION_MINOR, VERSION_BUILD);
+
+    qDebug() << tr("Version: %1.%2 Revision: %3").arg(VERSION_MAJOR, VERSION_MINOR, VERSION_BUILD);
 
 }
 
@@ -262,6 +259,16 @@ bool Server::configContainsInstr(quint8 addr)
             if (jobj["app_name"].toString().split('-')[1].toUInt() == addr)
                 return true;
     return false;
+}
+
+void Server::connectedClientRepositarion()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "check";
+    jobj["VERSION_MAJOR"] = QString(VERSION_MAJOR);
+    jobj["VERSION_MINOR"] = QString(VERSION_MINOR);
+    jobj["VERSION_BUILD"] = QString(VERSION_BUILD);
+    repos->onSendReadyRequest(jobj);
 }
 
 void Server::handlePsCodeModbus(int exitCode, QProcess::ExitStatus exitStatus)

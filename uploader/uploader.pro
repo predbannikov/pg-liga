@@ -1,19 +1,10 @@
 QT -= gui
 QT += network
 
-CONFIG += c++11 console
+CONFIG += c++17 console
 CONFIG -= app_bundle
-
-TEMPLATE = app
-
 unix: DESTDIR=$$DESTDIR_RELEASE
 
-#DESTDIR=$$DESTDIR_RELEASE
-
-#TARGET = experimentmanager
-#greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-
-#CONFIG += c++11
 
 VERSION_MAJOR=1
 VERSION_MINOR=0
@@ -22,18 +13,11 @@ DEFINES += VERSION_MAJOR=\\\"$$VERSION_MAJOR\\\" \
            VERSION_MINOR=\\\"$$VERSION_MINOR\\\" \
            VERSION_BUILD=\\\"$$VERSION_BUILD\\\" \
 
-SOURCES += \
-    clientexperiment.cpp \
-    clientmanager.cpp \
-    clientrepositarion.cpp \
-    server.cpp  \
-    main.cpp
 
-HEADERS += \
-    clientexperiment.h \
-    clientmanager.h \
-    clientrepositarion.h \
-    server.h
+SOURCES += \
+        clientrepositarion.cpp \
+        main.cpp \
+        uploader.cpp
 
 
 INCLUDEPATH += $$PWD/../
@@ -47,3 +31,7 @@ else:unix: LIBS += -L$$DESTDIR -lnetwork
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+HEADERS += \
+    clientrepositarion.h \
+    uploader.h

@@ -48,6 +48,7 @@ private:
     qint64 timeInterval(const QString &date, const QString &format);
     bool configContainsInstr(quint8 addr);
 public slots:
+    void connectedClientRepositarion();
     void handlePsCodeModbus(int exitCode, QProcess::ExitStatus exitStatus);
     void handlePsCodeExperiment(int exitCode, QProcess::ExitStatus exitStatus);
     void readCMD(QJsonObject jobj);

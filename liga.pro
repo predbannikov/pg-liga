@@ -8,7 +8,8 @@ SUBDIRS += \
  experiment-manager \
  modbus-server \
  repositarion-server \
- measurements
+ measurements \
+ uploader
 
 enable-gui-client {
   message(gui client enabled)
