@@ -78,12 +78,12 @@ RETCODE LoadFrame::next(StatusOperation &operation)
     case STATE_IDLE:
         if (statusSensors(operation) == COMPLATE) {
             qDebug() << "force =" << Force::fromNewtons(forceSens.value).newtons() << "(N)"
-                     << "\t\tpressure =" << Pressure::fromForce(Force::fromNewtons(forceSens.value), area).kiloPascals() << "(kPa)"
                      << "\t\tdeform =" << Length::fromMicrometres(deformSens.value).millimetres() << "(mm)\t\traw =" << deformSens.rawValue
                      << "\t\tstepper pos =" << stepper.position
                      << "\t\tcounter =" << counter;
             fflush(stderr);
-            QThread::msleep(TIMEWAIT_AFTER_IDLE_STATUS_SENSOR);
+//            QThread::msleep(TIMEWAIT_AFTER_IDLE_STATUS_SENSOR);
+            QThread::msleep(3);
         }
         break;
     case STATE_START:

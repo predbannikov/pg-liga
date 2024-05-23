@@ -29,7 +29,7 @@ class LoadFrame
                 STATE_UNLOCK_PID,
                 STATE_FINISH} state = STATE_IDLE;
 
-    enum READ_SENS {READ_SENS_1, READ_SENS_2, READ_SENS_3, READ_SENS_4, READ_SENS_5, READ_SENS_6} readSensState;
+    enum READ_SENS {READ_SENS_1, READ_SENS_2, READ_SENS_3, READ_SENS_4, READ_SENS_5, READ_SENS_6} readSensState = READ_SENS_1;
 
 
     void init();

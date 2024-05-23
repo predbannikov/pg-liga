@@ -23,6 +23,9 @@ void SequenceExecutor::execCMD(QJsonObject &jobj)
         qDebug() << "write new config" << QJsonDocument(jobj["config"].toObject());
         file.write(QJsonDocument(jobj["config"].toObject()).toJson());
         file.close();
+    } else if (jobj["CMD"].toString() == "scan") {
+        loadFrame.readSensors(jobj);
+        emit sendRequestToClient(jobj);
     } else if (jobj["CMD"].toString() == "start") {
         loadFrame.readConfig();
         loadFrame.startProcess();

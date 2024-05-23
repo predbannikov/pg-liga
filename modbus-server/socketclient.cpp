@@ -15,6 +15,7 @@ ClientSocket::~ClientSocket()
 void ClientSocket::readyRead(QJsonObject &jobj)
 {
     jobj["id_experiment"] = QString::number(socketID());
+    qDebug().noquote() << jobj;
     serialport->put(jobj);
 }
 

@@ -195,13 +195,14 @@ void ServerWindow::on_btnStartModbus_clicked()
 void ServerWindow::on_btnAddInstr_clicked()
 {
     QJsonObject jobj;
-    jobj["type"] = "singleboard";
+    jobj["type"] = "client";
     jobj["CMD"] = "scan";
 
     int addr = ui->spinNumInstr->value();
 
 
     jobj["address"] = addr;
+    qDebug().noquote() << Q_FUNC_INFO << jobj;
     clnt->sendReadyRequest(jobj);
 //    QTimer::singleShot(1000, this, &ServerWindow::on_updateClientExperiments_clicked);
 }
