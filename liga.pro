@@ -12,6 +12,6 @@ SUBDIRS += \
  uploader
 
 enable-gui-client {
-  message(gui client enabled)
+  message(gui_client_enabled)
   SUBDIRS += pg-liga
 }

@@ -9,6 +9,7 @@
 #include <QDataStream>
 #include <QDebug>
 #include <QHostAddress>
+#include <QHostInfo>
 #include <QTimer>
 
 #define TIMEOUT_CONNECTION  1000
@@ -21,7 +22,7 @@ class AbstractJSONClient : public QObject
 
     enum TYPE {CLIENT, SERVER} type;
 
-    QTcpSocket *socket;
+    QTcpSocket *socket = nullptr;
     QTimer timerReconnect;
     QTimer timerPing;
     QHostAddress host;
@@ -41,13 +42,14 @@ public:
     void setTimeoutConnection(int ms = TIMEOUT_CONNECTION);
     void setTimerReconnect(int ms = TIMER_RECONNECTION);
     void setTimerPing(int ms = TIMER_PING);
+    bool getStatusConnection() { return statusConnection; }
     qint64 socketID();
     bool write(QJsonObject &jobj);
     virtual void readyRead(QJsonObject &jobj) = 0;
 
     QString clientLastError;
 private:
-
+    QString typeToStr(TYPE tp);
 
 public slots:
     void init();
@@ -61,7 +63,15 @@ public slots:
 
 signals:
     void connectedClient();
+
+    /**
+     * @brief disconnectClient      client закрыл соединени
+     */
     void disconnectClient(qint64);
+
+    /**
+     * @brief finished              server закрыл соединение
+     */
     void finished(qint64);
 };
 

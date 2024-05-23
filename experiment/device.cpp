@@ -78,7 +78,7 @@ RETCODE LoadFrame::next(StatusOperation &operation)
     case STATE_IDLE:
         if (statusSensors(operation) == COMPLATE) {
             qDebug() << "force =" << Force::fromNewtons(forceSens.value).newtons() << "(N)"
-                     << "\t\tpressure =" << Pressure::fromForce(Force::fromNewtons(forceSens.value), area).kiloPascals() << "(kP)"
+                     << "\t\tpressure =" << Pressure::fromForce(Force::fromNewtons(forceSens.value), area).kiloPascals() << "(kPa)"
                      << "\t\tdeform =" << Length::fromMicrometres(deformSens.value).millimetres() << "(mm)\t\traw =" << deformSens.rawValue
                      << "\t\tstepper pos =" << stepper.position
                      << "\t\tcounter =" << counter;

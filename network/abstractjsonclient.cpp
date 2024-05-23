@@ -2,18 +2,34 @@
 
 AbstractJSONClient::AbstractJSONClient(QString endPoint, QObject *parent) : QObject(parent), host(endPoint.split(':')[0]), port(endPoint.split(':')[1].toInt())
 {
+    QHostInfo hostInfo = QHostInfo::fromName(endPoint.split(':')[0]);
+
+    if (hostInfo.error() != QHostInfo::NoError) {
+        qDebug() << Q_FUNC_INFO << hostInfo.errorString();
+        return;
+    }
+    host = hostInfo.addresses().first();
     type = CLIENT;
     socket = new QTcpSocket(this);
-    //TODO Необходимо добавить проверку на успешное создание сокета
 
-    QMetaObject::invokeMethod(this, &AbstractJSONClient::init, Qt::QueuedConnection);
+    if (socket == nullptr) {
+        qDebug() << typeToStr(type) << "socket not created";
+    } else {
+        QMetaObject::invokeMethod(this, &AbstractJSONClient::init, Qt::QueuedConnection);
+    }
+
 }
 
 AbstractJSONClient::AbstractJSONClient(QTcpSocket *socket_, QObject *parent) : QObject(parent)
 {
     type = SERVER;
     socket = socket_;
-    QMetaObject::invokeMethod(this, &AbstractJSONClient::init, Qt::QueuedConnection);
+
+    if (socket == nullptr) {
+        qDebug() << typeToStr(type) << "socket not created";
+    } else {
+        QMetaObject::invokeMethod(this, &AbstractJSONClient::init, Qt::QueuedConnection);
+    }
 }
 
 AbstractJSONClient::~AbstractJSONClient()
@@ -26,10 +42,10 @@ void AbstractJSONClient::connectToHost()
     if (socket->state() == QAbstractSocket::UnconnectedState) {
         qDebug() << Q_FUNC_INFO << "Connecting,.." << QString("%1:%2").arg(host.toString()).arg(port);
         socket->connectToHost(host, port);
-        if(!socket->waitForConnected(timeout))
-        {
-            qDebug() << "Error: " << socket->errorString();
-        }
+//        if(!socket->waitForConnected(timeout))
+//        {
+//            qDebug() << "Error: " << socket->errorString();
+//        }
     }
 }
 
@@ -46,6 +62,15 @@ bool AbstractJSONClient::write(QJsonObject &jobj)
         return true;
     }
     return false;
+}
+
+QString AbstractJSONClient::typeToStr(TYPE tp)
+{
+    if (tp == CLIENT)
+        return "CLIENT";
+    else if (tp == SERVER)
+        return "SERVER";
+    return "TYPE NOT DEFINED";
 }
 
 void AbstractJSONClient::onReadyRead()
@@ -116,6 +141,10 @@ qint64 AbstractJSONClient::socketID()
 
 void AbstractJSONClient::init()
 {
+    if (socket == nullptr) {
+        qDebug() << Q_FUNC_INFO << "socket is nullptr";
+        return;
+    }
     connect(socket, &QTcpSocket::readyRead, this, &AbstractJSONClient::onReadyRead, Qt::DirectConnection);
     connect(socket, &QTcpSocket::disconnected, this, &AbstractJSONClient::disconnected, Qt::DirectConnection);
     connect(socket, &QTcpSocket::connected, this, &AbstractJSONClient::connected, Qt::DirectConnection);
@@ -134,7 +163,7 @@ void AbstractJSONClient::init()
 
 void AbstractJSONClient::onErrorOccurred(QAbstractSocket::SocketError error)
 {
-    qDebug() << Q_FUNC_INFO << "error:" << error;
+//    qDebug() << Q_FUNC_INFO << "error:" << error;
     clientLastError = socket->errorString();
     switch (error) {
     case QAbstractSocket::ConnectionRefusedError:
@@ -216,6 +245,8 @@ void AbstractJSONClient::onErrorOccurred(QAbstractSocket::SocketError error)
 void AbstractJSONClient::disconnected()
 {
     qDebug() << Q_FUNC_INFO << "client disconnected";
+    statusConnection = false;
+
     switch (type) {
     case SERVER:
         emit finished(reinterpret_cast<qint64>(socket));

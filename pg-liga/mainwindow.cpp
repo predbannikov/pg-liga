@@ -11,10 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     const auto isOperational = SettingsManager::instance()->load();
     if(!isOperational) {
-        QMessageBox::warning(this, tr("Внимание"),
-                             tr("<p><b>Не удалось загрузить настройки.</b></p>"
-                                "<p>Перейдите в \"Система->Настройки\" и установите необходимые параметры, "
-                                "после чего перезапустите программу.</p>"));
+        qDebug() << Q_FUNC_INFO << tr("Не удалось загрузить настройки");
     }
     connect(ui->actScan, &QAction::triggered, this, &MainWindow::scanInstruments);
 //    connect(ui->tabMain, &QTabWidget::tabCloseRequested, this, &MainWindow::onTabCloseRequested);
@@ -25,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
 
     ui->serverCmbBox->addItem(SettingsManager::instance()->getServers());
+    on_serverCmbBox_activated(ui->serverCmbBox->currentText());
 }
 
 MainWindow::~MainWindow()
@@ -506,5 +504,5 @@ QString InstrumentButton::getAddress()
 void MainWindow::on_serverCmbBox_activated(const QString &arg1)
 {
     if (!arg1.isEmpty())
-        ui->mainLayout->addWidget( new ServerWindow(ui->serverCmbBox->currentText(), this));
+        ui->mainLayout->addWidget(new ServerWindow(ui->serverCmbBox->currentText(), this));
 }

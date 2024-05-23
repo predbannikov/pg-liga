@@ -12,6 +12,7 @@ ClientManager::~ClientManager()
 
 void ClientManager::readyRead(QJsonObject &jobj)
 {
+    qDebug() << Q_FUNC_INFO << jobj;
     experiment->put(jobj);
 }
 

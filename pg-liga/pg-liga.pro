@@ -4,14 +4,23 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
 CONFIG += qwt
-
-QMAKE_CXXFLAGS += -Wextra
+win32 {
+    msvc: LIBS += -LC:\Qwt-6.1.3\lib-msvc-compiller17.9
+    else: win32-g++: LIBS += -LC:\Qwt-6.1.3\lib
+    CONFIG(release, debug|release) {
+        LIBS += -lqwt
+    } else {
+        LIBS += -lqwtd
+    }
+    INCLUDEPATH += C:\Qwt-6.1.3\include
+}
+#QMAKE_CXXFLAGS += -Wextra
 
 TEMPLATE = app
 unix:{
     DESTDIR=$$DESTDIR_RELEASE
 }
-TARGET = liga
+#TARGET = liga
 
 VERSION_MAJOR=1
 VERSION_MINOR=0

@@ -70,7 +70,7 @@
            </sizepolicy>
           </property>
           <property name="title">
-           <string>GroupBox</string>
+           <string>Список приборов</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_3">
            <property name="spacing">
@@ -100,8 +100,8 @@
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>477</width>
-                  <height>584</height>
+                  <width>660</width>
+                  <height>610</height>
                  </rect>
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -153,7 +153,7 @@
                <item>
                 <widget class="QPushButton" name="btnAddInstr">
                  <property name="text">
-                  <string>Добавить</string>
+                  <string>Определить</string>
                  </property>
                 </widget>
                </item>
@@ -162,15 +162,6 @@
                  <property name="text">
                   <string>Удалить</string>
                  </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QComboBox" name="comboBox">
-                 <item>
-                  <property name="text">
-                   <string>Компрессионный прибор</string>
-                  </property>
-                 </item>
                 </widget>
                </item>
               </layout>

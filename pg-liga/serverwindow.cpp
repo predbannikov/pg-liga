@@ -195,25 +195,15 @@ void ServerWindow::on_btnStartModbus_clicked()
 void ServerWindow::on_btnAddInstr_clicked()
 {
     QJsonObject jobj;
-    jobj["type"] = "manager";
-    jobj["CMD"] = "update_config";
+    jobj["type"] = "singleboard";
+    jobj["CMD"] = "scan";
 
     int addr = ui->spinNumInstr->value();
-    QString prog_name = QString("experiment-%1").arg(addr);
-    QJsonArray jprograms = jServerConfig["programs"].toArray();
-    for (auto item: qAsConst(jprograms))
-        if (item.toObject()["name"].toString() == prog_name)
-            return;
-    QJsonObject jInstr;
-    jInstr["app_src_name"] = "experiment";
-    jInstr["app_name"] = prog_name;
-    jInstr["app_folder"] = QString("./experiments/%1").arg(addr);
-    jprograms.append(jInstr);
-    jServerConfig["programs"] = jprograms;
 
-    jobj["settings"] = QString(QJsonDocument(jServerConfig).toJson().toBase64());
+
+    jobj["address"] = addr;
     clnt->sendReadyRequest(jobj);
-    QTimer::singleShot(1000, this, &ServerWindow::on_updateClientExperiments_clicked);
+//    QTimer::singleShot(1000, this, &ServerWindow::on_updateClientExperiments_clicked);
 }
 
 void ServerWindow::on_btnRemoveInstr_clicked()
