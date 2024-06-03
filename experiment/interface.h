@@ -6,8 +6,9 @@
 #include <QQueue>
 #include <QMutexLocker>
 #include <QWaitCondition>
+#include "serialport.h"
 
-#include "socketclientmodbus.h"
+//#include "socketclientmodbus.h"
 #include "global.h"
 
 class Interface : public QObject
@@ -32,9 +33,13 @@ public:
     void stop();
 
     virtual void execCMD(QJsonObject &jobj) = 0;
+
+
+    SerialPort *modbus = nullptr;
+
 signals:
     /// send to modbus
-    void sendRequestToModbus(const QJsonObject &);
+    void sendRequestToModbus(QJsonObject &);
     void sendRequestToClient(const QJsonObject &);
 
 private:

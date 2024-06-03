@@ -55,6 +55,7 @@ void ServerWindow::clientConnected()
 
 void ServerWindow::onReadyReadResponse(const QJsonObject &jresponse)
 {
+    qDebug().noquote() << jresponse;
     if (jresponse["type"].toString() == "manager") {
         if (jresponse.contains("get")) {
             qDebug() << "count connected exeperiments =" << jresponse["clients_size"].toString();

@@ -2,6 +2,7 @@
 #define EXPERIMENT_H
 
 #include "sequenceexecutor.h"
+#include "serialport.h"
 
 
 class Experiment : public SequenceExecutor
@@ -16,9 +17,8 @@ public slots:
 
 
 private:
+
     void state_machine_experiment();
-
-
 
 };
 

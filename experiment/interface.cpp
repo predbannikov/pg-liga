@@ -21,7 +21,8 @@ void Interface::write(StatusOperation &statusOperation)
     jRequest["PDU_request"] = QString(statusOperation.request);
     jRequest["address"] = QString::number(address);
     jRequest["status"] = "wait";
-    emit sendRequestToModbus(jRequest);
+    modbus->parseReqest(jRequest);
+//    emit sendRequestToModbus(jRequest);
     qApp->processEvents();
 }
 

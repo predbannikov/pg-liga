@@ -4,8 +4,9 @@
 #include <QTcpServer>
 #include <QThread>
 #include "experiment.h"
-#include "socketclientmodbus.h"
+//#include "socketclientmodbus.h"
 #include "clientmanager.h"
+//#include "serialport.h"
 
 class Server : public QTcpServer
 {
@@ -14,7 +15,7 @@ class Server : public QTcpServer
     QSet <ClientManager*> clients;
 
     QThread *threadExperiment;
-    ModbusClient *modbusClient;
+//    SerialPort *modbus = nullptr;
 
     const quint8 address;
 

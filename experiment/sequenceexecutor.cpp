@@ -13,6 +13,7 @@ SequenceExecutor::~SequenceExecutor()
 
 void SequenceExecutor::execCMD(QJsonObject &jobj)
 {
+    qDebug().noquote() << Q_FUNC_INFO << jobj;
     if (jobj["CMD"].toString() == "settings") {
         QFile file;
         file.setFileName("test.txt");

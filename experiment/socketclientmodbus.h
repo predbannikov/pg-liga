@@ -13,7 +13,7 @@
 class Experiment;
 
 
-class ModbusClient : public AbstractJSONClient
+class ModbusClient
 {
     Q_OBJECT
 

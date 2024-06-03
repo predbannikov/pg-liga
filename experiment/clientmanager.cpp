@@ -21,6 +21,7 @@ void ClientManager::procQueue(const QJsonObject &jResponse)
     queueResponse.push_back(jResponse);
     while(!queueResponse.isEmpty()) {
         QJsonObject jobj(queueResponse.takeFirst());
+        jobj["responseComplated"] = "responseComplated";
         write(jobj);
     }
 }

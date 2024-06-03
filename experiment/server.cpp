@@ -7,11 +7,11 @@ Server::Server(quint8 addr_, QObject *parent) : QTcpServer(parent), address(addr
 //    connect(modbusClient, &ModbusClient::connectedClient, this, &Experiment::resume);
 
     experiment = new Experiment(address);
-    modbusClient = new ModbusClient(experiment, this);
+//    modbus = new SerialPort(this);
     threadExperiment = new QThread;
     experiment->moveToThread(threadExperiment);
     QObject::connect(threadExperiment, &QThread::started, experiment, &Experiment::doWork, Qt::QueuedConnection);
-    QObject::connect(experiment, &Experiment::sendRequestToModbus, modbusClient, &ModbusClient::sendRequest, Qt::QueuedConnection);
+//    QObject::connect(experiment, &Experiment::sendRequestToModbus, modbus, &SerialPort::parseReqest, Qt::QueuedConnection);
     threadExperiment->start();
 
 

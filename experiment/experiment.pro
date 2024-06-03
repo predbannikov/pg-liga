@@ -1,5 +1,5 @@
 QT -= gui
-QT += network
+QT += network serialport
 
 CONFIG += c++17 console
 CONFIG -= app_bundle
@@ -18,12 +18,14 @@ SOURCES += \
         device.cpp \
         experiment.cpp \
         interface.cpp \
+#    modbusclient.cpp \
         operations.cpp \
         sensors.cpp \
         sequenceexecutor.cpp \
+    serialport.cpp \
         server.cpp  \
         main.cpp \
-        socketclientmodbus.cpp \
+#        socketclientmodbus.cpp \
         stepper.cpp \
         storedata.cpp
 
@@ -35,12 +37,14 @@ HEADERS += \
     experiment.h    \
     global.h \
     interface.h \
+#    modbusclient.h \
     operations.h \
     sensors.h \
     sequenceexecutor.h \
     measurements.h  \
+    serialport.h \
     server.h    \
-    socketclientmodbus.h \
+#    socketclientmodbus.h \
     stepper.h \
     storedata.h
 

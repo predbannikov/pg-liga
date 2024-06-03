@@ -6,7 +6,7 @@ SUBDIRS += \
  network \
  experiment \
  experiment-manager \
- modbus-server \
+# modbus-server \
  repositarion-server \
  measurements \
  uploader
