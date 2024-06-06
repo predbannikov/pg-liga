@@ -92,7 +92,7 @@ RETCODE AbstractUnit::write(QJsonObject &jOperation, QVariant data)
 void AbstractUnit::readValue(const QJsonObject &jOperation)
 {
     values.clear();
-    QString response = jOperation["response"].toString();
+    QString response = jOperation["PDU_response"].toString();
     QByteArray arr = QByteArray::fromHex(response.toUtf8());
     for(int i = 2; i < arr.size(); i+= sizeof(quint16))
         values.append(qFromBigEndian<quint16>(arr.mid(i, sizeof(quint16))));

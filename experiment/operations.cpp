@@ -32,7 +32,7 @@ bool Operations::execut()
     write(jStatusOperation);    // send to modbas
 //    qDebug() << "write" << statusOperation.request;
 //    for (int i = 0; i < 3; i++)
-//        if (read(statusOperation))
+//        if (read(jStatusOperation))
 //            break;
 //        else if (i == 2)
 //            return true;
