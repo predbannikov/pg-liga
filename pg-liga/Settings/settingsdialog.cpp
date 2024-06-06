@@ -17,17 +17,16 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
 
     ui->setupUi(this);
 
-//    if(InstrumentManager::instance()->instrumentCount() > 0) {
-//        for(const auto *instrument : InstrumentManager::instance()->instruments()) {
-//            ui->cmbInstrument->addItem(instrument->name());
-//        }
-
-//    } else {
+    QStringList addresses = SettingsManager::instance()->listAddressDevices();
+    if (addresses.isEmpty()){
 //        ui->tabInstrument->setEnabled(false);
-//    }
+    } else {
+        ui->cmbInstrument->addItems(addresses);
+    }
+
+
 
     /* Network */
-    ui->textEdit->append(SettingsManager::instance()->getServers());
 //    ui->spinMaxAddress->setValue(SettingsManager::instance()->maxAddress());
 //    ui->spinPollPeriod->setValue(SettingsManager::instance()->pollPeriod());
 //    ui->spinTimeout->setValue(SettingsManager::instance()->timeout());
@@ -119,8 +118,12 @@ void SettingsDialog::saveSettings()
     SettingsManager::instance()->setTemplatePath(ui->editTemplatePath->text());
     SettingsManager::instance()->setRestorePath(ui->editRestorePath->text());
 
-//    if(ui->cmbInstrument->isEnabled()) {
-//        InstrumentParameters parameters;
+    if(ui->cmbInstrument->isEnabled()) {
+        InstrumentParameters *parameters = new InstrumentParameters;
+        QString instrName = ui->cmbInstrument->currentText();
+        parameters->instrumentName = instrName;
+
+
 //        parameters.instrumentType = ui->cmbInstrumentType->currentIndex();
 
 //        parameters.triaxialChamber.type = ui->cmbChamberType->currentIndex();
@@ -140,8 +143,8 @@ void SettingsDialog::saveSettings()
 //        parameters.cellVolumeter.multipicationCoefficient = ui->spinVolumeterMultiplication->value();
 //        parameters.poreVolumeter.multipicationCoefficient = ui->spinVolumeterMultiplication->value();
 
-//        SettingsManager::instance()->setInstrumentParameters(ui->cmbInstrument->currentText(), parameters);
-//    }
+        SettingsManager::instance()->setInstrumentParameters(ui->cmbInstrument->currentText(), parameters);
+    }
 
 //    SettingsManager::instance()->enableSpecimenChange(ui->chkSpecimenChange->isChecked());
 //    SettingsManager::instance()->enableReadAllSensors(ui->chkEnableSensorReadAll->isChecked());
@@ -151,7 +154,6 @@ void SettingsDialog::saveSettings()
 //    SettingsManager::instance()->setEnableDumpingProtocol(ui->chkDumpingEnable->isChecked());
 
 
-    SettingsManager::instance()->setServers(ui->textEdit->toPlainText());
 
     SettingsManager::instance()->save();
     SettingsManager::instance()->load();
@@ -287,3 +289,28 @@ void SettingsDialog::onChkUnitStepDistanceStateChanged(int state)
                                                     "Все изменения производятся пользователем на свой страх и риск.");
     } else {}
 }
+
+void SettingsDialog::on_btnAddDeviceAddress_clicked()
+{
+    QString address = ui->leAddressDevice->text();
+    auto map = SettingsManager::instance()->getServers();
+    map.insert(address, address);
+    SettingsManager::instance()->setServers(map);
+    ui->cmbInstrument->clear();
+    ui->cmbInstrument->addItems(map.keys());
+}
+
+
+void SettingsDialog::on_cmbInstrument_currentTextChanged(const QString &arg1)
+{
+    const auto parameters = SettingsManager::instance()->instrumentParameters(arg1);
+
+}
+
+
+void SettingsDialog::on_btnRmoveDevice_clicked()
+{
+    ui->chkClearSettings->setChecked(false);
+    SettingsManager::instance()->removeDevice(ui->cmbInstrument->currentText());
+}
+

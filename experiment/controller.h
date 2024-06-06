@@ -17,21 +17,21 @@ class Controller : public AbstractUnit
     PIDParameters defaultPID = {0.3, 0.0, 3.0};
     qint32 status;
 public:
-    Controller(quint16 addr_, FunctionCode funCode_) : AbstractUnit(addr_, funCode_) {};
+    Controller(quint16 addr_, FunctionCode funCode_) : AbstractUnit(addr_, funCode_) {}
 
-    RETCODE readStatus(StatusOperation &operation);
+    RETCODE readStatus(QJsonObject &jOperation);
 
-    RETCODE setTarget(StatusOperation &operation, float newtons);
+    RETCODE setTarget(QJsonObject &jOperation, float newtons);
 
-    RETCODE setKp(StatusOperation &operation);
+    RETCODE setKp(QJsonObject &jOperation);
 
-    RETCODE setKi(StatusOperation &operation);
+    RETCODE setKi(QJsonObject &jOperation);
 
-    RETCODE setKd(StatusOperation &operation);
+    RETCODE setKd(QJsonObject &jOperation);
 
 //    RETCODE setPID(StatusOperation &operation, float p, float i, float d);
 
-    RETCODE stopPID(StatusOperation &operation);
+    RETCODE stopPID(QJsonObject &jOperation);
 
 
 

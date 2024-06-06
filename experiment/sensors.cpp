@@ -1,21 +1,21 @@
 #include "sensors.h"
 
-RETCODE Sensor::read(StatusOperation &operation) {
-    return AbstractUnit::read(operation, SensorRead);
+RETCODE Sensor::read(QJsonObject &jOperation) {
+    return AbstractUnit::read(jOperation, SensorRead);
 }
 
-RETCODE Sensor::readRaw(StatusOperation &operation)
+RETCODE Sensor::readRaw(QJsonObject &jOperation)
 {
-    return AbstractUnit::read(operation, SensorReadRaw);
+    return AbstractUnit::read(jOperation, SensorReadRaw);
 }
 
-RETCODE Sensor::setNull(StatusOperation &operation) {
-    return write(operation, SensorNull);
+RETCODE Sensor::setNull(QJsonObject &jOperation) {
+    return write(jOperation, SensorNull);
 }
 
-RETCODE Sensor::reset(StatusOperation &operation)
+RETCODE Sensor::reset(QJsonObject &jOperation)
 {
-    return write(operation, SensorReset);
+    return write(jOperation, SensorReset);
 }
 
 void Sensor::setValue(quint16 *data, AbstractUnit::CMD cmd) {

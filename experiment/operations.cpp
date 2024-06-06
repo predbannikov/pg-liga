@@ -25,26 +25,23 @@ bool Operations::execut()
 //            qDebug() << "";
 //        }
 //    }
-    if (statusOperation.request.isEmpty())
+    if (jStatusOperation["request"].toString().isEmpty())
         return true;
 
 
-    write(statusOperation);
+    write(jStatusOperation);    // send to modbas
 //    qDebug() << "write" << statusOperation.request;
-    for (int i = 0; i < 3; i++)
-        if (read(statusOperation))
-            break;
-        else if (i == 2)
-            return true;
+//    for (int i = 0; i < 3; i++)
+//        if (read(statusOperation))
+//            break;
+//        else if (i == 2)
+//            return true;
     next();
 
 //    qDebug() << statusOperation.request;
 //    qDebug() << statusOperation.response;
 
-    statusOperation.request.clear();
-    statusOperation.response.clear();
-    statusOperation.strError = "";
-
+    jStatusOperation = QJsonObject();
     return true;
 }
 

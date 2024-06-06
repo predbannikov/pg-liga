@@ -2,9 +2,9 @@
 
 Experiment::Experiment(quint8 addr) : SequenceExecutor(addr)
 {
-    modbus = new SerialPort(this);
+//    modbus = new SerialPort(this);
 //    QObject::connect(this, &Interface::sendRequestToModbus, modbus, &SerialPort::parseReqest, Qt::QueuedConnection);
-    modbus->process();
+//    modbus->init();
 }
 
 Experiment::~Experiment()
@@ -16,6 +16,9 @@ Experiment::~Experiment()
 
 void Experiment::doWork()
 {
+    modbus = new SerialPort();
+    modbus->init();
+
     state_machine_experiment();
 }
 

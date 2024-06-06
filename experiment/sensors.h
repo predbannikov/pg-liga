@@ -7,19 +7,19 @@
 class Sensor : public AbstractUnit
 {
 public:
-    Sensor(quint16 addr_, FunctionCode funCode_) : AbstractUnit(addr_, funCode_) {};
-    ~Sensor() {};
+    Sensor(quint16 addr_, FunctionCode funCode_) : AbstractUnit(addr_, funCode_) {}
+    ~Sensor() {}
 
     float value;
     qint64 rawValue;
 
-    RETCODE read(StatusOperation &operation);
+    RETCODE read(QJsonObject &jOperation);
 
-    RETCODE readRaw(StatusOperation &operation);
+    RETCODE readRaw(QJsonObject &jOperation);
 
-    RETCODE setNull(StatusOperation &operation);
+    RETCODE setNull(QJsonObject &jOperation);
 
-    RETCODE reset(StatusOperation &operation);
+    RETCODE reset(QJsonObject &jOperation);
 
 
 private:

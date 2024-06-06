@@ -5,7 +5,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 CONFIG += c++11
 CONFIG += qwt
 win32 {
-    msvc: LIBS += -LC:\Qwt-6.1.3\lib-msvc-compiller17.9
+#    msvc: LIBS += -LC:\Qwt-6.1.3\lib-msvc-compiller17.9
+    msvc: LIBS += -LC:\Qwt-6.1.3\lib-msvc
     else: win32-g++: LIBS += -LC:\Qwt-6.1.3\lib
     CONFIG(release, debug|release) {
         LIBS += -lqwt
@@ -38,6 +39,7 @@ SOURCES += \
     Settings/settingsmanager.cpp \
     Settings/settingsdialog.cpp     \
     clientmanager.cpp \
+    clientwindow.cpp \
     experimentview.cpp \
 	decoratedplot.cpp \
 	experimentdata.cpp \
@@ -47,8 +49,7 @@ SOURCES += \
 	plotadapter.cpp \
 	plotxyadapter.cpp \
     main.cpp \
-    mainwindow.cpp \
-    serverwindow.cpp
+    mainwindow.cpp
 
 
 HEADERS += \
@@ -60,6 +61,7 @@ HEADERS += \
     abstract/abstractjsonclient.h \
     Physics/measurements.h \
     clientmanager.h \
+    clientwindow.h \
     experimentview.h \
 	experimentdata.h \
 	decoratedplot.h \
@@ -68,14 +70,13 @@ HEADERS += \
 	qaxiszoomsvc.h \
 	plotadapter.h \
 	plotxyadapter.h \
-    mainwindow.h \
-    serverwindow.h
+    mainwindow.h
 
 FORMS += \
+    clientwindow.ui \
     experimentview.ui \
     mainwindow.ui   \
-    Settings/settingsdialog.ui \
-    serverwindow.ui
+    Settings/settingsdialog.ui
 
 TRANSLATIONS += \
     pg-liga_ru_RU.ts

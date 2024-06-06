@@ -73,31 +73,15 @@ bool SettingsManager::load()
 
     settings.beginGroup(networkGroup);
     if (settings.contains(serversConf)) {
-        servers = settings.value(serversConf).toString();
-    }
-
-    if(settings.contains(maxAddrKey)) {
-        m_maxAddress = settings.value(maxAddrKey).toInt();
-    }
-
-    if(settings.contains(pollPeriodKey)) {
-        m_pollPeriodMs = settings.value(pollPeriodKey).toInt();
+        m_addressDevices = settings.value(serversConf).toMap();
     }
 
     if(settings.contains(timeoutKey)) {
         m_timeoutMs = settings.value(timeoutKey).toInt();
     }
 
-    if(settings.contains(avoidIdenticalRequestKey)) {
-        m_avoidIdenticalRequest = settings.value(avoidIdenticalRequestKey).toBool();
-    }
-
     if(settings.contains(timeoutCountKey)) {
         m_timeoutCount = settings.value(timeoutCountKey).toInt();
-    }
-
-    if(settings.contains(enableAutoStartKey)) {
-        m_enableAutoStart = settings.value(enableAutoStartKey).toBool();
     }
 
     if(settings.contains(idleRestoreTimeKey)) {
@@ -191,7 +175,7 @@ bool SettingsManager::load()
 //            parameters.poreVolumeter.multipicationCoefficient = settings.value(volumeterMultiplicationCoefficientKey).toDouble();
 //        }
 
-        settings.endGroup();
+//        settings.endGroup();
 
     }
     settings.endGroup();
@@ -205,10 +189,6 @@ bool SettingsManager::load()
 
     settings.beginGroup(miscGroup);
 
-    if(settings.contains(enableDumpingProtocol)) {
-        m_enableDumpingProtocol = settings.value(enableDumpingProtocol).toBool();
-    }
-
     settings.endGroup();
 
     return (settings.status() == QSettings::NoError);
@@ -220,13 +200,9 @@ bool SettingsManager::save()
     QSettings settings(fileName, QSettings::IniFormat);
 
     settings.beginGroup(networkGroup);
-    settings.setValue(serversConf, servers);
-    settings.setValue(maxAddrKey, m_maxAddress);
-    settings.setValue(pollPeriodKey, m_pollPeriodMs);
+    settings.setValue(serversConf, m_addressDevices);
     settings.setValue(timeoutKey, m_timeoutMs);
     settings.setValue(timeoutCountKey, m_timeoutCount);
-    settings.setValue(avoidIdenticalRequestKey, m_avoidIdenticalRequest);
-    settings.setValue(enableAutoStartKey, m_enableAutoStart);
     settings.setValue(idleRestoreTimeKey, m_idleRestoreTime);
     settings.endGroup();
 
@@ -250,10 +226,19 @@ bool SettingsManager::save()
     settings.endGroup();
 
     settings.beginGroup(miscGroup);
-    settings.setValue(enableDumpingProtocol, m_enableDumpingProtocol);
     settings.endGroup();
 
     settings.sync();
 
     return (settings.status() == QSettings::NoError);
+}
+
+QStringList SettingsManager::listInstrumentAddresses()
+{
+    return m_instrumentParameters.keys();
+}
+
+void SettingsManager::removeDevice(QString name)
+{
+    m_addressDevices.remove(name);
 }

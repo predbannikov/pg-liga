@@ -6,14 +6,14 @@ Server::Server(quint8 addr_, QObject *parent) : QTcpServer(parent), address(addr
 //    connect(modbusClient, &ModbusClient::readyReadPDU, this, &Experiment::readyReadPDU);
 //    connect(modbusClient, &ModbusClient::connectedClient, this, &Experiment::resume);
 
-    experiment = new Experiment(address);
 //    modbus = new SerialPort(this);
+    experiment = new Experiment(address);
     threadExperiment = new QThread;
     experiment->moveToThread(threadExperiment);
     QObject::connect(threadExperiment, &QThread::started, experiment, &Experiment::doWork, Qt::QueuedConnection);
-//    QObject::connect(experiment, &Experiment::sendRequestToModbus, modbus, &SerialPort::parseReqest, Qt::QueuedConnection);
     threadExperiment->start();
 
+//    experiment->doWork();
 
 }
 
@@ -24,7 +24,7 @@ Server::~Server()
 
 void Server::startServer()
 {
-    if(!this->listen(QHostAddress::Any,50000 | address))
+    if(!this->listen(QHostAddress::Any,50000))
     {
         qDebug() << Q_FUNC_INFO << "Could not start server" << this->serverAddress() << this->serverPort();;
     }

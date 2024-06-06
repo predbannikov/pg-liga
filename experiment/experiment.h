@@ -2,7 +2,6 @@
 #define EXPERIMENT_H
 
 #include "sequenceexecutor.h"
-#include "serialport.h"
 
 
 class Experiment : public SequenceExecutor

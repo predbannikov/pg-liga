@@ -27,7 +27,8 @@ class LoadFrame
     enum STATE {STATE_IDLE, STATE_START, STATE_INIT, STATE_READ_NEXT_STEP, STATE_EXPERIMENT, STATE_COMPLATION,
                 STATE_MOVE_FRAME, STATE_STOP_FRAME,
                 STATE_UNLOCK_PID,
-                STATE_FINISH} state = STATE_IDLE;
+                STATE_FINISH,
+                STATE_SERVICE_MODE} state = STATE_IDLE;
 
     enum READ_SENS {READ_SENS_1, READ_SENS_2, READ_SENS_3, READ_SENS_4, READ_SENS_5, READ_SENS_6} readSensState = READ_SENS_1;
 
@@ -41,19 +42,19 @@ public:
 
     bool readNextStep();
 
-    RETCODE next(StatusOperation &operation);
+    RETCODE next(QJsonObject &jOperation);
 
-    RETCODE setPresure(StatusOperation &operation);
+    RETCODE setPresure(QJsonObject &jOperation);
 
-    RETCODE statusSensors(StatusOperation &operation);
+    RETCODE statusSensors(QJsonObject &jOperation);
 
-    RETCODE compression(StatusOperation &operation);
+    RETCODE compression(QJsonObject &jOperation);
 
-    RETCODE criterionTime(StatusOperation &operation);
+    RETCODE criterionTime(QJsonObject &jOperation);
 
-    RETCODE criterionStabilization(StatusOperation &operation);
+    RETCODE criterionStabilization(QJsonObject &jOperation);
 
-    RETCODE criterionManual(StatusOperation &operation);
+    RETCODE criterionManual(QJsonObject &jOperation);
 
 
     void readConfig();
@@ -65,6 +66,7 @@ public:
     void readSensors(QJsonObject &jobj);
     void sendProtocol(QJsonObject &jobj);
     void sendStoreData(QJsonObject &jobj);
+    void switchToServiceMode(QJsonObject &jobj);
 
 
     Measurements::Pressure targetPresure;

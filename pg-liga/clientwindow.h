@@ -14,13 +14,13 @@ namespace Ui {
 class ServerWindow;
 }
 
-class ServerWindow : public QWidget
+class ClientWindow : public QWidget
 {
     Q_OBJECT
     QJsonObject jServerConfig;
 public:
-    explicit ServerWindow(QString host_, QWidget *parent = nullptr);
-    ~ServerWindow();
+    explicit ClientWindow(QString host_, QWidget *parent = nullptr);
+    ~ClientWindow();
 
 public slots:
     void on_readBtn();
@@ -45,8 +45,6 @@ private slots:
 
     void on_btnAddInstr_clicked();
 
-    void on_btnRemoveInstr_clicked();
-
     void on_tabWidget_tabCloseRequested(int index);
 
     void on_pushButton_3_clicked();
@@ -59,6 +57,7 @@ private:
     QMap <QString, ExperimentView*> openTabs;
     ClientManager *clnt = nullptr;
     QTimer timerPollSensors;
+    ExperimentView *experimentView = nullptr;
 };
 
 #endif // SERVERWINDOW_H

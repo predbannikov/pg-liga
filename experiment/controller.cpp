@@ -1,17 +1,17 @@
 #include "controller.h"
 
-RETCODE Controller::readStatus(StatusOperation &operation)
+RETCODE Controller::readStatus(QJsonObject &jOperation)
 {
-    return read(operation, ControllerStatus);
+    return read(jOperation, ControllerStatus);
 }
 
-RETCODE Controller::setTarget(StatusOperation &operation, float newtons)
+RETCODE Controller::setTarget(QJsonObject &jOperation, float newtons)
 {
     // 0.0004 метра квадратных
     RETCODE ret = ERROR;
     switch(stateSet) {
     case STATE_SET_TARGET_VALUE:
-        ret = write(operation, newtons);
+        ret = write(jOperation, newtons);
         if (ret == COMPLATE)
             stateSet = STATE_SET_TARGET;
         else if (ret == ERROR) {
@@ -20,7 +20,7 @@ RETCODE Controller::setTarget(StatusOperation &operation, float newtons)
         }
         break;
     case STATE_SET_TARGET:
-        ret = write(operation, ControllerSet);
+        ret = write(jOperation, ControllerSet);
         if (ret == COMPLATE)
             stateSet = STATE_SET_PID_P_VALUE;
         else if (ret == ERROR) {
@@ -29,7 +29,7 @@ RETCODE Controller::setTarget(StatusOperation &operation, float newtons)
         }
         break;
     case STATE_SET_PID_P_VALUE:
-        ret = write(operation, 7.5);                    // TODO
+        ret = write(jOperation, 7.5);                    // TODO
         if (ret == COMPLATE)
             stateSet = STATE_SET_PID_P;
         else if (ret == ERROR) {
@@ -38,7 +38,7 @@ RETCODE Controller::setTarget(StatusOperation &operation, float newtons)
         }
         break;
     case STATE_SET_PID_P:
-        ret = write(operation, ControllerSetKp);
+        ret = write(jOperation, ControllerSetKp);
         if (ret == COMPLATE)
             stateSet = STATE_SET_PID_D_VALUE;
         else if (ret == ERROR) {
@@ -47,7 +47,7 @@ RETCODE Controller::setTarget(StatusOperation &operation, float newtons)
         }
         break;
     case STATE_SET_PID_D_VALUE:
-        ret = write(operation, 75.);                    // TODO
+        ret = write(jOperation, 75.);                    // TODO
         if (ret == COMPLATE)
             stateSet = STATE_SET_PID_D;
         else if (ret == ERROR) {
@@ -56,7 +56,7 @@ RETCODE Controller::setTarget(StatusOperation &operation, float newtons)
         }
         break;
     case STATE_SET_PID_D:
-        ret = write(operation, ControllerSetKd);
+        ret = write(jOperation, ControllerSetKd);
         if (ret == COMPLATE) {
             stateSet = STATE_ACTIVATE_PID_VALUE;
         }
@@ -66,7 +66,7 @@ RETCODE Controller::setTarget(StatusOperation &operation, float newtons)
         }
         break;
     case STATE_ACTIVATE_PID_VALUE:
-        ret = write(operation, 1);                      // (0x0 - stop, 0x1 - locked, 0x11 - fast
+        ret = write(jOperation, 1);                      // (0x0 - stop, 0x1 - locked, 0x11 - fast
         if (ret == COMPLATE) {
             stateSet = STATE_ACTIVATE_PID;
         }
@@ -76,7 +76,7 @@ RETCODE Controller::setTarget(StatusOperation &operation, float newtons)
         }
         break;
     case STATE_ACTIVATE_PID:
-        ret = write(operation, ControllerLock);
+        ret = write(jOperation, ControllerLock);
         if (ret == COMPLATE) {
             stateSet = STATE_SET_TARGET_VALUE;
             return COMPLATE;
@@ -92,12 +92,12 @@ RETCODE Controller::setTarget(StatusOperation &operation, float newtons)
 
 #define DEBUG_STOP_PID 0
 
-RETCODE Controller::stopPID(StatusOperation &operation)
+RETCODE Controller::stopPID(QJsonObject &jOperation)
 {
     if (DEBUG_STOP_PID) {
         switch (stateUnlock) {
         case STATE_UNLOCK_START:
-            ret = readStatus(operation);
+            ret = readStatus(jOperation);
             if (ret == COMPLATE) {
                 qDebug() << "status =" << status;
                 if (status != 0) {
@@ -122,7 +122,7 @@ RETCODE Controller::stopPID(StatusOperation &operation)
             }
             break;
         case STATE_UNLOCK_SET_VALUE:
-            ret = write(operation, 0x0);                      // (0x0 - stop, 0x1 - locked, 0x11 - fast
+            ret = write(jOperation, 0x0);                      // (0x0 - stop, 0x1 - locked, 0x11 - fast
             if (ret == COMPLATE) {
                 stateUnlock = STATE_UNLOCK_SET_CMD;
             }
@@ -132,7 +132,7 @@ RETCODE Controller::stopPID(StatusOperation &operation)
             }
             break;
         case STATE_UNLOCK_SET_CMD:
-            ret = write(operation, ControllerLock);
+            ret = write(jOperation, ControllerLock);
             if (ret == COMPLATE) {
                 stateUnlock = STATE_UNLOCK_START;
                 return COMPLATE;
@@ -143,7 +143,7 @@ RETCODE Controller::stopPID(StatusOperation &operation)
             }
             break;
         case STATE_HANDLE_ERROR:
-            ret = readStatus(operation);
+            ret = readStatus(jOperation);
             if (ret == COMPLATE) {
                 qDebug() << "status =" << status;
                 stateUnlock = STATE_UNLOCK_SET_VALUE;
@@ -159,19 +159,19 @@ RETCODE Controller::stopPID(StatusOperation &operation)
     } else {
         switch (stateUnlock) {
         case STATE_UNLOCK_SET_VALUE:
-            ret = write(operation, 0x0);                      // (0x0 - stop, 0x1 - locked, 0x11 - fast
+            ret = write(jOperation, 0x0);                      // (0x0 - stop, 0x1 - locked, 0x11 - fast
             if (ret == COMPLATE) {
                 stateUnlock = STATE_UNLOCK_SET_CMD;
             }
             else if (ret == ERROR) {
                 stateUnlock = STATE_HANDLE_ERROR;
-                qDebug() << "request" << operation.request;
-                qDebug() << "response" << operation.response;
+                qDebug() << "request" << jOperation["request"];
+                qDebug() << "response" << jOperation["response"];
                 qDebug() << "###" << Q_FUNC_INFO;
             }
             break;
         case STATE_UNLOCK_SET_CMD:
-            ret = write(operation, ControllerLock);
+            ret = write(jOperation, ControllerLock);
             if (ret == COMPLATE) {
                 stateUnlock = STATE_UNLOCK_SET_VALUE;
                 return COMPLATE;
@@ -181,7 +181,7 @@ RETCODE Controller::stopPID(StatusOperation &operation)
             }
             break;
         case STATE_HANDLE_ERROR:
-            ret = readStatus(operation);
+            ret = readStatus(jOperation);
             if (ret == COMPLATE) {
                 qDebug() << "status (if 1 what that is?(atomic?)) " << status;
                 stateUnlock = STATE_UNLOCK_SET_VALUE;

@@ -2,6 +2,7 @@
 #define SETTINGSDIALOG_H
 
 #include <QDialog>
+#include <QMap>
 
 namespace Ui {
 class SettingsDialog;
@@ -31,12 +32,21 @@ private slots:
     void on_cmbInstrumentType_currentIndexChanged(int index);
     void onChkUnitStepDistanceStateChanged(int state);
 
+    void on_btnAddDeviceAddress_clicked();
+
+    void on_cmbInstrument_currentTextChanged(const QString &arg1);
+
+    void on_btnRmoveDevice_clicked();
+
 signals:
     void dialogClosed();
 
 private:
     void saveSettings();
     Ui::SettingsDialog *ui;
+
+    QMap <QString, QVariant> m_addressDevices;
+
 };
 
 #endif // SETTINGSDIALOG_H

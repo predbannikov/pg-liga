@@ -13,9 +13,9 @@ ExperimentView::ExperimentView(QWidget *parent) :
     font.setBold(true);
     ui->lblSensors->setFont(font);
 
-    QList<int> sizes;
-    sizes << 100 << 0;
-    ui->splitter->setSizes({90, 10});
+    QList<int> size;
+    size << 100 << 0;
+    ui->splitter->setSizes(size);
     setupPlots();
 }
 
@@ -59,13 +59,6 @@ qint64 ExperimentView::timeInterval(const QString& date, const QString& format)
     return interval.toSecsSinceEpoch();
 }
 
-void ExperimentView::on_pushButton_clicked()
-{
-    QJsonObject jobj;
-    jobj["type"] = "client";
-    emit sendRequest(jobj);
-}
-
 void ExperimentView::onCreateJsonObject()
 {
     QJsonDocument jdoc = QJsonDocument::fromJson(ui->textEdit->toPlainText().toUtf8());
@@ -97,7 +90,6 @@ void ExperimentView::onCreateJsonObject()
 void ExperimentView::onReadDataStore()
 {
     QJsonObject jobj;
-    jobj["type"] = "client";
     jobj["CMD"] = "get_store_data";
     QJsonObject jDataStore;
     if (!dataStore.isEmpty()) {
@@ -119,7 +111,6 @@ void ExperimentView::onReadDataStore()
 void ExperimentView::onReadSensors()
 {
     QJsonObject jobj;
-    jobj["type"] = "client";
     jobj["CMD"] = "read_sensors";
 }
 
@@ -147,7 +138,6 @@ void ExperimentView::on_btnSendRequest_clicked()
 {
 //    setupPlots();
     QJsonObject jobj;
-    jobj["type"] = "client";
     jobj["CMD"] = "get_store_data";
     emit sendRequest(jobj);
 }
@@ -175,7 +165,6 @@ void ExperimentView::on_pushButton_2_clicked()
     }
     jconfig["steps"] = jarr;
     QJsonObject jobj;
-    jobj["type"] = "client";
     jobj["CMD"] = "settings";
     jobj["config"] = jconfig;
 
@@ -196,7 +185,6 @@ void ExperimentView::on_btnReadConfig_clicked()
 {
     QJsonObject jobj;
     jobj["CMD"] = "read_config";
-    jobj["type"] = "client";
     emit sendRequest(jobj);
 }
 
@@ -204,7 +192,6 @@ void ExperimentView::on_btnStart_clicked()
 {
     QJsonObject jobj;
     jobj["CMD"] = "start";
-    jobj["type"] = "client";
     clearData();
     emit sendRequest(jobj);
 }
@@ -282,7 +269,6 @@ void ExperimentView::on_btnClearTextEdit_clicked()
 void ExperimentView::on_btnMoveUp_clicked()
 {
     QJsonObject jobj;
-    jobj["type"] = "client";
     jobj["CMD"] = "move_frame";
     jobj["speed"] = "-100";
     emit sendRequest(jobj);
@@ -291,7 +277,6 @@ void ExperimentView::on_btnMoveUp_clicked()
 void ExperimentView::on_btnMoveDown_clicked()
 {
     QJsonObject jobj;
-    jobj["type"] = "client";
     jobj["CMD"] = "move_frame";
     jobj["speed"] = "100";
     emit sendRequest(jobj);
@@ -300,7 +285,6 @@ void ExperimentView::on_btnMoveDown_clicked()
 void ExperimentView::on_btnStopStepper_clicked()
 {
     QJsonObject jobj;
-    jobj["type"] = "client";
     jobj["CMD"] = "stop_frame";
     emit sendRequest(jobj);
 }
@@ -340,3 +324,12 @@ void ExperimentView::on_btnGetStoreData_clicked()
 {
     onReadDataStore();
 }
+
+void ExperimentView::on_btnGetSensorValue_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "get_sensor_value";
+    jobj["arg1"] = ui->cmbSensorName->currentText();
+    emit sendRequest(jobj);
+}
+

@@ -11,58 +11,39 @@ SerialPort::SerialPort(QObject *parent) : QObject(parent)
     timeSpentWait.start();
 }
 
-bool SerialPort::connectDevice ()
-{
-    if(!(port->isOpen())) {
-        if(port->open(QIODevice::ReadWrite)) {
-            port->setBreakEnabled(false);
-            qDebug() << Q_FUNC_INFO << port->portName() << "OPEN";
-            return true;
-        }
-    }
-    qDebug() << Q_FUNC_INFO << port->portName() << port->errorString();
-    return false;
-}
-
 void SerialPort::parseReqest(QJsonObject &jobj)
 {
-    if (jobj["action"].toString() == "usually") {
-        QByteArray pdu = QByteArray::fromHex(jobj["PDU_request"].toString().toUtf8());
-        quint8 address = jobj["address"].toString().toInt();
-        QByteArray modbuspack;
-        QDataStream str(&modbuspack, QIODevice::WriteOnly);
-        str.setVersion(QDataStream::Qt_5_11);
-        str << address;
-        str.writeRawData(pdu.data(), pdu.size());
-        str.setByteOrder(QDataStream::LittleEndian);
-        str << calculateCRC16(modbuspack);
-        jobj["port_error"] = writeToPort(modbuspack);           // WRITE
-        jobj["status"] = "complate";
-        if (jobj["port_error"].toString() == "no_error") {
-            if (!modbuspack.isEmpty()) {
-                if (checkCRC(modbuspack)) {
-                    modbuspack.remove(modbuspack.size() - 2, modbuspack.size());
-                    modbuspack.remove(0, 1);
-                    jobj["modbus_error"] = "no_error";
-                } else {
-                    jobj["modbus_error"] = "crc_error";
-                    countErrors.CrcError++;
-                }
+    QByteArray pdu = QByteArray::fromHex(jobj["PDU_request"].toString().toUtf8());
+    quint8 address = jobj["address"].toString().toInt();
+    QByteArray modbuspack;
+    QDataStream str(&modbuspack, QIODevice::WriteOnly);
+    str.setVersion(QDataStream::Qt_5_11);
+    str << address;
+    str.writeRawData(pdu.data(), pdu.size());
+    str.setByteOrder(QDataStream::LittleEndian);
+    str << calculateCRC16(modbuspack);
+    jobj["port_error"] = writeToPort(modbuspack);           // WRITE
+    jobj["status"] = "complate";
+    if (jobj["port_error"].toString() == "no_error") {
+        if (!modbuspack.isEmpty()) {
+            if (checkCRC(modbuspack)) {
+                modbuspack.remove(modbuspack.size() - 2, modbuspack.size());
+                modbuspack.remove(0, 1);
+                jobj["modbus_error"] = "no_error";
+            } else {
+                jobj["modbus_error"] = "crc_error";
+                countErrors.CrcError++;
             }
-        } else {
-            jobj["modbus_error"] = jobj["port_error"].toString();
         }
+    } else {
+//        procError();
+//        printCountErrors();
+//        count_requestes_all++;
 
-        jobj["PDU_response"] = QString(modbuspack.toHex());
-
-    } else if(jobj["action"].toString() == "service") {
-        QJsonObject jservice = jobj["object"].toObject();
-        if (jservice["action"].toString() == "scan") {
-
-        } else if (jservice["action"].toString() == "smth") {
-
-        }
+        jobj["modbus_error"] = jobj["port_error"].toString();
     }
+
+    jobj["PDU_response"] = QString(modbuspack.toHex());
 }
 
 void SerialPort::procError()
@@ -138,7 +119,7 @@ QString SerialPort::writeToPort(QByteArray &req)
             req = port->readAll();
             break;
         }
-        req.clear();
+//        req.clear();
     }
     stateErr = port->error();
     return portError;    // TODO переделать на возвращение ошибок только от протокола Modbus ADU (CRC, нет ответа, ...)
@@ -174,7 +155,20 @@ bool SerialPort::isValidResponse(const QByteArray &data) {
     return false;
 }
 
-void SerialPort::process()
+bool SerialPort::connectDevice ()
+{
+    if(!(port->isOpen())) {
+        if(port->open(QIODevice::ReadWrite)) {
+            port->setBreakEnabled(false);
+            qDebug() << Q_FUNC_INFO << port->portName() << "OPEN";
+            return true;
+        }
+    }
+    qDebug() << Q_FUNC_INFO << port->portName() << port->errorString();
+    return false;
+}
+
+void SerialPort::init()
 {
     port = new QSerialPort(this);
     port->setPortName("COM3");
@@ -217,7 +211,7 @@ void SerialPort::process()
 //    }
 }
 
-//void SerialPort::put(QJsonObject &jobj)
+//void SerialPort::put(const QJsonObject &jobj)
 //{
 //    QMutexLocker lock(&mtx);
 //    queue.push_back(std::move(jobj));

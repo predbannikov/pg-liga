@@ -8,50 +8,41 @@
 #include <QPushButton>
 #include "Settings/settingsmanager.h"
 #include "Settings/settingsdialog.h"
-#include "serverwindow.h"
+#include "clientwindow.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
-enum TYPE_INSTRUMENT {
-    TYPE_INSTR_COMPRESSION
-};
 
 class InstrumentButton;
+class InstrumentGrid;
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
-//    ClientExperiment *clientExperiment;
-//    ServerWindow *serverWindow = nullptr;
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
 private slots:
-    void scanInstruments();
     void onTabCloseRequested(int idx);
-    void onScanFinished();
-    void onInstrumentSelected(TYPE_INSTRUMENT type);
+    void onInstrumentSelected(QString name);
 
     /* Auto slots */
     void on_actExit_triggered();
-//    void on_actScan_triggered();
     void on_actSettings_triggered();
-
+    void addInstruments();
 
     void exitWindow();
-
-
-
-    void on_serverCmbBox_activated(const QString &arg1);
 
 private:
     void setFirstTab(QWidget *widget, const QString &title);
 
+    void addServersWindow(const QMap<QString, QVariant> map);
 
+    InstrumentGrid *grid = nullptr;
     Ui::MainWindow *ui;
 };
 
@@ -92,17 +83,17 @@ public:
     InstrumentGrid(QWidget *parent = nullptr);
 
 signals:
-    void instrumentSelected(TYPE_INSTRUMENT type);
+    void instrumentSelected(QString name);
 
 public slots:
-    void addInstrument(TYPE_INSTRUMENT type);
-    void removeInstrument(TYPE_INSTRUMENT type);
+    void addInstrument(QString name);
+    void removeInstrument(QString name);
 
 private slots:
     void onInstrumentButtonClicked();
 
 private:
-    InstrumentButton *findButton(TYPE_INSTRUMENT type);
+    InstrumentButton *findButton(QString name);
     FlowLayout *m_layout;
 };
 
@@ -111,18 +102,15 @@ class InstrumentButton : public QPushButton
     Q_OBJECT
 
 public:
-    InstrumentButton(QString addr, TYPE_INSTRUMENT type, QWidget *parent = nullptr);
-    TYPE_INSTRUMENT instrument() const { return type_instr; }
+    InstrumentButton(QString name, QWidget *parent = nullptr);
 
 public slots:
-    void setStatus(int status);
-    QString getAddress();
+    QString getSN();
 
 private:
 //    QString getIconName(int type);
 
-    TYPE_INSTRUMENT type_instr;
-    QString address;
+    QString m_SN;
     QLabel *m_statusText;
 };
 

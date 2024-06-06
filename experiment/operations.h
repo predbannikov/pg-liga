@@ -17,7 +17,7 @@ public:
     bool execut();
 
 
-    StatusOperation statusOperation;
+    QJsonObject jStatusOperation;
 
 private:
 

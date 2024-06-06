@@ -13,21 +13,21 @@
 #include <QMutex>
 
 struct CountErrors {
-    quint64 NoError;
-    quint64 DeviceNotFoundError;
-    quint64 PermissionError;
-    quint64 OpenError;
-    quint64 NotOpenError;
-    quint64 ParityError;
-    quint64 FramingError;
-    quint64 BreakConditionError;
-    quint64 WriteError;
-    quint64 ReadError;
-    quint64 ResourceError;
-    quint64 UnsupportedOperationError;
-    quint64 TimeoutError;
-    quint64 UnknownError;
-    quint64 CrcError;
+    quint64 NoError = 0;
+    quint64 DeviceNotFoundError = 0;
+    quint64 PermissionError = 0;
+    quint64 OpenError = 0;
+    quint64 NotOpenError = 0;
+    quint64 ParityError = 0;
+    quint64 FramingError = 0;
+    quint64 BreakConditionError = 0;
+    quint64 WriteError = 0;
+    quint64 ReadError = 0;
+    quint64 ResourceError = 0;
+    quint64 UnsupportedOperationError = 0;
+    quint64 TimeoutError = 0;
+    quint64 UnknownError = 0;
+    quint64 CrcError = 0;
 };
 
 enum ResponseSize {
@@ -55,7 +55,7 @@ enum FunctionCodeModeBus : quint8 {
 
 struct ModBusReply {
     const int m_maxRequests = 3;
-    const int m_timeoutSendRequest = 50;
+    const int m_timeoutSendRequest = 150;
     int m_currentNumRequest = 0;
 };
 
@@ -94,14 +94,14 @@ public:
     explicit SerialPort(QObject *parent = nullptr);
     ~SerialPort();
 
-    void process();
+    void init();
 
 signals:
     void readyRequest(QJsonObject);
 
 public slots:
     void parseReqest(QJsonObject &jobj);
-//    void put(QJsonObject&);
+//    void put(const QJsonObject&);
 };
 
 #endif // SERIALPORT_H

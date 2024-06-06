@@ -14,8 +14,8 @@ class Server : public QTcpServer
 
     QSet <ClientManager*> clients;
 
-    QThread *threadExperiment;
-//    SerialPort *modbus = nullptr;
+    QThread *threadExperiment = nullptr;
+    Experiment *experiment = nullptr;
 
     const quint8 address;
 
@@ -28,7 +28,6 @@ protected:
     void incomingConnection(qintptr socketDescriptor);
 
 private:
-    Experiment *experiment;
 
 
 

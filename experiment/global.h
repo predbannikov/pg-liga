@@ -8,6 +8,7 @@
 #include <QtEndian>
 #include <QString>
 #include <QDebug>
+#include <QJsonObject>
 
 //#include "device.h"
 
@@ -116,11 +117,11 @@ enum OpCode : quint16 {
     ControllerStatus = 0x3500,
 };
 
-struct StatusOperation {
-    QByteArray request;
-    QByteArray response;
-    QString strError;
-};
+//struct StatusOperation {
+//    QByteArray request;
+//    QByteArray response;
+//    QString strError;
+//};
 
 
 struct Requests {

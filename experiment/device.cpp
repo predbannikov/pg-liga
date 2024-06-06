@@ -11,11 +11,7 @@ LoadFrame::LoadFrame() :
     deformSens(SensDeform0Addr, SensDef0),
     stepper(ActLoad0Addr, ActLoad0),
     controller(CtrlLoad0Addr, CtrlLoad0)
-    /// вторая рама
-//    forceSens(SensLoad1Addr, SensLoad1),
-//    deformSens(SensDeform1Addr, SensDef1),
-//    stepper(ActLoad1Addr, ActLoad1),
-//    controller(CtrlLoad1Addr, CtrlLoad1)
+
 {
     targetPresure = Measurements::Pressure::fromKiloPascals(50.);
     area.setSiValue(0.004003928);
@@ -70,13 +66,13 @@ bool LoadFrame::readNextStep()
     return check;
 }
 
-RETCODE LoadFrame::next(StatusOperation &operation)
+RETCODE LoadFrame::next(QJsonObject &jOperation)
 {
     counter++;
     RETCODE ret = ERROR;
     switch (state) {
     case STATE_IDLE:
-        if (statusSensors(operation) == COMPLATE) {
+        if (statusSensors(jOperation) == COMPLATE) {
             qDebug() << "force =" << Force::fromNewtons(forceSens.value).newtons() << "(N)"
                      << "\t\tdeform =" << Length::fromMicrometres(deformSens.value).millimetres() << "(mm)\t\traw =" << deformSens.rawValue
                      << "\t\tstepper pos =" << stepper.position
@@ -105,7 +101,7 @@ RETCODE LoadFrame::next(StatusOperation &operation)
         break;
     case STATE_EXPERIMENT:
         if (jcurStep["exp_type"].toString() == "compression")
-            ret = compression(operation);
+            ret = compression(jOperation);
 
         if (ret == COMPLATE) {
             state = STATE_READ_NEXT_STEP;
@@ -116,7 +112,7 @@ RETCODE LoadFrame::next(StatusOperation &operation)
         }
         break;
     case STATE_COMPLATION:
-        ret = controller.stopPID(operation);
+        ret = controller.stopPID(jOperation);
         if (ret == COMPLATE) {
             qDebug() << "PID stoped";
             state = STATE_FINISH;
@@ -124,14 +120,14 @@ RETCODE LoadFrame::next(StatusOperation &operation)
         }
         break;
     case STATE_MOVE_FRAME:
-        ret = stepper.setSpeed(operation, cur_speed);
+        ret = stepper.setSpeed(jOperation, cur_speed);
         if(ret == COMPLATE) {
             qDebug() << "stepper stop";
             state = STATE_FINISH;
         }
         break;
     case STATE_STOP_FRAME:
-        ret = stepper.stop(operation);
+        ret = stepper.stop(jOperation);
         if(ret == COMPLATE) {
             qDebug() << "stepper stop";
             state = STATE_FINISH;
@@ -156,7 +152,7 @@ RETCODE LoadFrame::next(StatusOperation &operation)
     return NOERROR;
 }
 
-RETCODE LoadFrame::setPresure(StatusOperation &operation)
+RETCODE LoadFrame::setPresure(QJsonObject &jOperation)
 {
 //    double newtones = 0;
     RETCODE ret = ERROR;
@@ -165,7 +161,7 @@ RETCODE LoadFrame::setPresure(StatusOperation &operation)
     case STATE_PRESURE_1:
 //        newtones = targetPresure.siValue() * area.siValue();
         targetPresure = Pressure::fromKiloPascals(jcurStep["pressure"].toString().toDouble());
-        ret = controller.setTarget(operation, targetPresure.pascals() * area.siValue());      // 200.19642105368277
+        ret = controller.setTarget(jOperation, targetPresure.pascals() * area.siValue());      // 200.19642105368277
         if (ret == COMPLATE) {
             statePresure = STATE_PRESURE_2;
         }
@@ -175,7 +171,7 @@ RETCODE LoadFrame::setPresure(StatusOperation &operation)
         }
         break;
     case STATE_PRESURE_2:
-        ret = statusSensors(operation);
+        ret = statusSensors(jOperation);
         if (ret == COMPLATE) {
             double diffPressure = abs(Pressure::fromPascals(forceSens.value / area.siValue()).siValue() - targetPresure.pascals());
             qDebug() << "\n### taretPressure =" << targetPresure.kiloPascals();
@@ -203,31 +199,31 @@ RETCODE LoadFrame::setPresure(StatusOperation &operation)
     return NOERROR;
 }
 
-RETCODE LoadFrame::statusSensors(StatusOperation &operation)
+RETCODE LoadFrame::statusSensors(QJsonObject &jOperation)
 {
     switch (readSensState) {
     case READ_SENS_1:
-        if (forceSens.read(operation) == COMPLATE)
+        if (forceSens.read(jOperation) == COMPLATE)
             readSensState = READ_SENS_2;
         break;
     case READ_SENS_2:
-        if (deformSens.read(operation) == COMPLATE)
+        if (deformSens.read(jOperation) == COMPLATE)
             readSensState = READ_SENS_3;
         break;
     case READ_SENS_3:
-        if (deformSens.readRaw(operation) == COMPLATE)
+        if (deformSens.readRaw(jOperation) == COMPLATE)
             readSensState = READ_SENS_4;
         break;
     case READ_SENS_4:
-        if (stepper.readStatus(operation) == COMPLATE)
+        if (stepper.readStatus(jOperation) == COMPLATE)
             readSensState = READ_SENS_5;
         break;
     case READ_SENS_5:
-        if (stepper.readPos(operation) == COMPLATE)
+        if (stepper.readPos(jOperation) == COMPLATE)
             readSensState = READ_SENS_6;
         break;
     case READ_SENS_6:
-        if (controller.readStatus(operation) == COMPLATE) {
+        if (controller.readStatus(jOperation) == COMPLATE) {
             readSensState = READ_SENS_1;
             if (!jcurStep.empty())
                 store->updateData();
@@ -238,7 +234,7 @@ RETCODE LoadFrame::statusSensors(StatusOperation &operation)
     return NOERROR;
 }
 
-RETCODE LoadFrame::compression(StatusOperation &operation)
+RETCODE LoadFrame::compression(QJsonObject &jOperation)
 {
     static enum {STATE_INIT_SENSORS, STATE_INIT, STATE_CRITERION_TIME, STATE_CRITERION_STABILIZATION, STATE_CRITERION_MANUAL} state_cmprs = STATE_INIT_SENSORS;
     RETCODE ret = ERROR;
@@ -251,14 +247,14 @@ RETCODE LoadFrame::compression(StatusOperation &operation)
 
     switch (state_cmprs) {
     case STATE_INIT_SENSORS:
-        ret = statusSensors(operation);
+        ret = statusSensors(jOperation);
         if (ret == COMPLATE) {
             state_cmprs = STATE_INIT;
             store->updateData();
         }
         break;
     case STATE_INIT:
-        ret = setPresure(operation);
+        ret = setPresure(jOperation);
         if (ret == COMPLATE) {
             if (jcurStep["criterion"].toString() == "time") {
                 state_cmprs = STATE_CRITERION_TIME;
@@ -274,7 +270,7 @@ RETCODE LoadFrame::compression(StatusOperation &operation)
         }
         break;
     case STATE_CRITERION_TIME:
-        ret = criterionTime(operation);
+        ret = criterionTime(jOperation);
         if (ret == COMPLATE) {
             state_cmprs = STATE_INIT_SENSORS;
             return COMPLATE;
@@ -284,7 +280,7 @@ RETCODE LoadFrame::compression(StatusOperation &operation)
         }
         break;
     case STATE_CRITERION_STABILIZATION:
-        ret = criterionStabilization(operation);
+        ret = criterionStabilization(jOperation);
         if (ret == COMPLATE) {
             state_cmprs = STATE_INIT_SENSORS;
             return COMPLATE;
@@ -300,7 +296,7 @@ RETCODE LoadFrame::compression(StatusOperation &operation)
     return NOERROR;
 }
 
-RETCODE LoadFrame::criterionTime(StatusOperation &operation)
+RETCODE LoadFrame::criterionTime(QJsonObject &jOperation)
 {
     static enum {STATE_INIT, STATE_2} state_criterion_time = STATE_INIT;
     RETCODE ret = ERROR;
@@ -312,7 +308,7 @@ RETCODE LoadFrame::criterionTime(StatusOperation &operation)
         state_criterion_time = STATE_2;
         break;
     case STATE_2:
-        ret = statusSensors(operation);
+        ret = statusSensors(jOperation);
         if (ret == COMPLATE) {
             if (timeElapse.elapsed() > 10000) {
                 qDebug() << criterionElapseTime.elapsed() << "ms" << "  criterion=" << jcurStep["criterion_arg1"].toString().toLongLong() * 1000 << " curStep =" << jcurStep["step"].toString();
@@ -331,7 +327,7 @@ RETCODE LoadFrame::criterionTime(StatusOperation &operation)
     return NOERROR;
 }
 
-RETCODE LoadFrame::criterionStabilization(StatusOperation &operation)
+RETCODE LoadFrame::criterionStabilization(QJsonObject &jOperation)
 {
     static enum {STATE_INIT, STATE_2, STATE_CRITERION_STABILIZATION} state_criterion_stabilization = STATE_INIT;
 
@@ -348,7 +344,7 @@ RETCODE LoadFrame::criterionStabilization(StatusOperation &operation)
         state_criterion_stabilization = STATE_2;
         break;
     case STATE_2:
-        ret = statusSensors(operation);
+        ret = statusSensors(jOperation);
         if (ret == COMPLATE) {
 //            if (timeElapse.elapsed() > 1000) {
 //                qDebug() << criterionElapseTime.elapsed() << "ms" << "  criterion=" << jcurStep["criterion_arg1"].toString().toLongLong() * 1000;
@@ -389,9 +385,9 @@ RETCODE LoadFrame::criterionStabilization(StatusOperation &operation)
     return NOERROR;
 }
 
-RETCODE LoadFrame::criterionManual(StatusOperation &operation)
+RETCODE LoadFrame::criterionManual(QJsonObject &jOperation)
 {
-    Q_UNUSED(operation)
+    Q_UNUSED(jOperation)
     static enum {STATE_INIT} state_criterion_manual = STATE_INIT;
     switch (state_criterion_manual) {
     case STATE_INIT:
@@ -505,4 +501,9 @@ void LoadFrame::sendStoreData(QJsonObject &jobj)
     } else {
         jobj["store_data"] = QString(QByteArray("no experiment has been launched yet").toBase64());
     }
+}
+
+void LoadFrame::switchToServiceMode(QJsonObject &jobj)
+{
+
 }

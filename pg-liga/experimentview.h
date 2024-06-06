@@ -64,8 +64,6 @@ private slots:
 
     void onReadSensors();
 
-    void on_pushButton_clicked();
-
     void on_spinPressure_textChanged(const QString &arg1);
 
     void on_comboBox_activated(const QString &arg1);
@@ -109,6 +107,8 @@ private slots:
     void on_btnSendTestRequest_clicked();
 
     void on_btnGetStoreData_clicked();
+
+    void on_btnGetSensorValue_clicked();
 
 signals:
     void sendRequest(QJsonObject &jobj);

@@ -24,6 +24,8 @@ void SequenceExecutor::execCMD(QJsonObject &jobj)
         qDebug() << "write new config" << QJsonDocument(jobj["config"].toObject());
         file.write(QJsonDocument(jobj["config"].toObject()).toJson());
         file.close();
+    } else if (jobj["CMD"].toString() == "get_sensor_value") {
+
     } else if (jobj["CMD"].toString() == "scan") {
         loadFrame.readSensors(jobj);
         emit sendRequestToClient(jobj);
@@ -54,7 +56,7 @@ void SequenceExecutor::execCMD(QJsonObject &jobj)
 void SequenceExecutor::next()
 {
 
-    RETCODE ret = loadFrame.next(statusOperation);
+    RETCODE ret = loadFrame.next(jStatusOperation);
     if (ret == COMPLATE) {
         qDebug() << "succ, stop";
         stop();

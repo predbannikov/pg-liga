@@ -13,7 +13,6 @@ MainWindow::MainWindow(QWidget *parent)
     if(!isOperational) {
         qDebug() << Q_FUNC_INFO << tr("Не удалось загрузить настройки");
     }
-    connect(ui->actScan, &QAction::triggered, this, &MainWindow::scanInstruments);
 //    connect(ui->tabMain, &QTabWidget::tabCloseRequested, this, &MainWindow::onTabCloseRequested);
 //    this->resize(1280, 768);
 
@@ -21,8 +20,12 @@ MainWindow::MainWindow(QWidget *parent)
 
     this->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
 
-    ui->serverCmbBox->addItem(SettingsManager::instance()->getServers());
-    on_serverCmbBox_activated(ui->serverCmbBox->currentText());
+    grid = new InstrumentGrid(this);
+    ui->mainLayout->addWidget(grid);
+    ui->tabWidget->insertTab(0, grid, "Список");
+    QTimer::singleShot(100, this, &MainWindow::addInstruments);
+
+
 }
 
 MainWindow::~MainWindow()
@@ -30,160 +33,20 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::scanInstruments()
+void MainWindow::onInstrumentSelected(QString name)
 {
-    ui->actScan->setEnabled(false);
-//    QUrl url(SettingsManager::instance()->getServers());
-//    qDebug() << url.host();
-//    qDebug() << url.port();
-    onScanFinished();
-//    setFirstTab(new ProgressLabel(this), tr("Поиск устройств"));
-//    InterfaceLiga interface(this);
-
-}
-
-void MainWindow::onScanFinished()
-{
-    ui->actScan->setEnabled(true);
-
-//    this->centralWidget()->layout()->replaceWidget(this, new ServerWindow);
-
-
-
-//    this->layout()->addWidget(new ServerWindow(this));
-//    this->setCentralWidget(new ServerWindow(this));
-
-
-
-}
-
-void MainWindow::onInstrumentSelected(TYPE_INSTRUMENT type)
-{
-//    auto *tab = m_openTabs.value (instrument, nullptr);
-
-    qInfo() << QDateTime::currentDateTime() << "[instrumentSelected]" << type;
-
-    QWidget *tab = new QWidget(this);
-
-    if (tab == nullptr)
-    {
-        // если вкладка выбранного инструмента (прибора Лига) ещё не была открыта в интерфейсе
-
-        // проверяем, есть ли по данному прибору незавершённые эксперименты
-//        auto experimentToResume = ExperimentManager::instance()->checkForUnfinished(instrument->name());
-
-//        if (experimentToResume.isValid)
-//        {
-//            // если незавершённые эксперименты есть
-
-//            // пытаемся понять причину, по которой эксперимент был прерван
-//            if (instrument->units().loadFrame    ->position() == Measurements::Length::fromMillimetres(0) &&
-//                    instrument->units().shearDevice  ->position() == Measurements::Length::fromMillimetres(0) &&
-//                    instrument->units().cellVolumeter->position() == Measurements::Length::fromMillimetres(0) &&
-//                    instrument->units().poreVolumeter->position() == Measurements::Length::fromMillimetres(0)  )
-//            {
-//                experimentToResume.restoreReason = ExperimentManager::PowerError;   // guessing based on reading
-//            }
-//            else experimentToResume.restoreReason = ExperimentManager::CommunicationError;
-//            qInfo() << QDateTime::currentDateTime() << instrument->name() << "Restore reason:" << experimentToResume.restoreReason;
-
-//            // выясняем, нужно ли этот эксперимент восcтанавливать
-//            // (если режим восстановления автоматический, то сразу нужно, а
-//            // если нет, то проводим опрос местного населения)
-//            QMessageBox resumeBox;
-//            int isRestoring = 0;
-//            if (!m_restoreMode)
-//            {
-//                resumeBox.setText(QString("На приборе найден незавершённый эксперимент.\n\n"
-//                                          "Дата эксперимента: \t%1\n"
-//                                          "Тип эксперимента: \t%2\n"
-//                                          "Этап: \t%3").arg(experimentToResume.date.toString("dd.MM.yyyy hh:mm:ss"),
-//                                                            experimentToResume.typeString,
-//                                                            experimentToResume.stageName));
-//                resumeBox.setInformativeText("Вы желаете продолжить эксперимент?");
-//                resumeBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-//                resumeBox.setDefaultButton(QMessageBox::Ok);
-
-//                isRestoring = resumeBox.exec();
-//            }
-//            else
-//            {
-//                isRestoring = QMessageBox::Ok;         // позволяет миновать диалог восстановления эксперимента в авторежиме
-//            }
-
-//            // дальнейшие действия в зависимости от того, нужно или нет
-//            // восставливать эксперимент
-//            if(isRestoring == QMessageBox::Ok)
-//            {
-//                auto *newTab = new ExperimentContainer(instrument, this);
-//                m_openTabs.insert(instrument, newTab);
-//                m_instrumentsInUse.insert(newTab, instrument);
-
-//                ui->tabMain->addTab(newTab, instrument->name());
-//                ui->tabMain->setCurrentWidget(newTab);
-
-//                newTab->setAutoResume(SettingsManager::instance()->autoStart());
-//                newTab->autoResumeRequested(&experimentToResume);
-//                ExperimentManager::instance()->setValidState(false, instrument->name());
-
-//                auto client = ClientManager::instance()->client (instrument->parseName(instrument->name()).portName);
-//                connect (client, &MinibusClient::clientReconnected, newTab, &ExperimentContainer::onClientReconnected);
-//            }
-//            else
-//            {
-//                //  Если пользователь отказывается восстановить сессию, удаляем найденные незавершенные эксперементы
-//                {
-//                    qDebug() << "cancel restore of the found experiment";
-
-//                    const QString deleteFilenameMask = instrument->name() + "-*.xml";
-//                    const QString deleteFilenameMaskLinux = instrument->name() + "-*.xml";
-//                    const QString deleteFilenameMaskLinuxAlt = instrument->name() + "-*.xml";
-
-//                    //QDir current;
-//                    QDir path;
-//                    path.setPath(SettingsManager::instance()->restorePath());
-//                    path.setNameFilters({deleteFilenameMask, deleteFilenameMaskLinux,
-//                                         deleteFilenameMaskLinuxAlt});
-//                    path.setFilter(QDir::Files);
-//                    QFileInfoList infoList = path.entryInfoList();
-
-//                    for (const auto &file: qAsConst(infoList)) {
-//                        qDebug() << "remove -" << file.absoluteFilePath();
-//                        path.remove(file.absoluteFilePath());
-//                    }
-//                    /// ATT! experimentToResume тут будет удалён (так как пользователь отказался от восстановления
-//                    if (!ExperimentManager::instance()->remove_experiment(instrument->name()))
-//                        qDebug() << QString("Error: m_experiments not removed %1").arg(instrument->name());
-//                }
-//                auto *newTab = new ExperimentContainer(instrument, this);
-//                m_openTabs.insert(instrument, newTab);
-//                m_instrumentsInUse.insert(newTab, instrument);
-
-//                ui->tabMain->addTab(newTab, instrument->name());
-//                ui->tabMain->setCurrentWidget(newTab);
-//            }
-//        }
-//        else
-//        {
-//            // иначе, если незавершённых экспериментов нет
-
-//            auto *newTab = new ExperimentContainer(instrument, this);
-//            m_openTabs.insert(instrument, newTab);
-//            m_instrumentsInUse.insert(newTab, instrument);
-
-//            ui->tabMain->addTab(newTab, instrument->name());
-//            ui->tabMain->setCurrentWidget(newTab);
-//        }
-    }
-    else
-    {
-//        ui->tabMain->setCurrentWidget(tab);
+    QWidget *tab = nullptr;
+    for (int i = 0; i < ui->tabWidget->count(); i++) {
+        if (ui->tabWidget->tabText(i) == name) {
+            tab = ui->tabWidget->widget(i);
+        }
     }
 
-//    if (m_idleTimer->isActive()) m_idleTimer->stop();
-
-
-
+    if (tab == nullptr) {
+        tab = new ClientWindow(name);
+        ui->tabWidget->addTab(tab, name);
+    }
+    ui->tabWidget->setCurrentWidget(tab);
 }
 
 void MainWindow::on_actExit_triggered()
@@ -202,6 +65,16 @@ void MainWindow::on_actSettings_triggered()
 {
     SettingsDialog sd(this);
     sd.exec();
+}
+
+void MainWindow::addInstruments()
+{
+    auto map = SettingsManager::instance()->getServers();
+    auto list = map.keys();
+    for (auto device: list) {
+        grid->addInstrument(device);
+        connect(grid, &InstrumentGrid::instrumentSelected, this, &MainWindow::onInstrumentSelected);
+    }
 }
 
 void MainWindow::exitWindow()
@@ -226,7 +99,33 @@ void MainWindow::setFirstTab(QWidget *widget, const QString &title)
 //        ui->tabMain->removeTab(0);
 //        ui->tabMain->insertTab(0, widget, title);
 //        oldWidget->deleteLater();
-//    }
+    //    }
+}
+
+void MainWindow::addServersWindow(const QMap<QString, QVariant> map)
+{
+
+
+    for (const QString &serverName: map.keys()) {
+
+//        InstrumentButton *instrBtn = new InstrumentButton(serverName, this);
+//        instrBtn->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+//    //                instrBtn->resize(150, 128);
+//    //                instrBtn->setText("INSTR:" + item.toString());
+//    //                QPushButton *btn = new QPushButton("INSTR:" + item.toString(), this);
+//    //                for (auto &item: ui->verticalLayout->children()) {
+//    //                    QPushButton *childBtn = qobject_cast<QPushButton *>(item);
+//    //                    if (childBtn != nullptr)
+//    //                        if (childBtn->text() == btn->text()
+
+//    //                }
+//        ui->mainLayout->addWidget(instrBtn);
+//        connect(instrBtn, &InstrumentButton::clicked, this, &ServerWindow::clickBtnNumInstr);
+
+        auto *pServer = new ClientWindow(serverName, this);
+        ui->mainLayout->addWidget(pServer);
+//        pServer->
+    }
 }
 
 void MainWindow::onTabCloseRequested(int idx)
@@ -267,17 +166,17 @@ InstrumentGrid::InstrumentGrid(QWidget *parent):
     setFrameShape(QFrame::NoFrame);
 }
 
-void InstrumentGrid::addInstrument(TYPE_INSTRUMENT type)
+void InstrumentGrid::addInstrument(QString name)
 {
-    auto *button = new InstrumentButton("1", type, this);
+    auto *button = new InstrumentButton(name, this);
     connect(button, &QPushButton::clicked, this, &InstrumentGrid::onInstrumentButtonClicked);
 
     m_layout->addWidget(button);
 }
 
-void InstrumentGrid::removeInstrument(TYPE_INSTRUMENT type)
+void InstrumentGrid::removeInstrument(QString name)
 {
-    auto *btn = findButton(type);
+    auto *btn = findButton(name);
     if(btn != nullptr) {
         m_layout->removeWidget(btn);
     }
@@ -286,10 +185,10 @@ void InstrumentGrid::removeInstrument(TYPE_INSTRUMENT type)
 void InstrumentGrid::onInstrumentButtonClicked()
 {
     auto instrumentButton = qobject_cast<InstrumentButton*>(sender());
-    emit instrumentSelected(instrumentButton->instrument());
+    emit instrumentSelected(instrumentButton->getSN());
 }
 
-InstrumentButton *InstrumentGrid::findButton(TYPE_INSTRUMENT type)
+InstrumentButton *InstrumentGrid::findButton(QString name)
 {
     for(auto *child : children()) {
         if(auto *btn = qobject_cast<InstrumentButton*>(child)) {
@@ -333,6 +232,7 @@ QSize FlowLayout::minimumSize() const
 
 void FlowLayout::setGeometry(const QRect &r)
 {
+//    if (r.x())
     m_minSize = buildLayout(r);
 }
 
@@ -397,23 +297,17 @@ QSize FlowLayout::buildLayout(const QRect &r) const
  * 					INSTRUMENT_BUTTON
  * **********************************************/
 
-InstrumentButton::InstrumentButton(QString addr, TYPE_INSTRUMENT type, QWidget *parent):
+InstrumentButton::InstrumentButton(QString name, QWidget *parent):
     QPushButton(parent),
     m_statusText(new QLabel(this))
 {
-    address = addr;
+    m_SN = name;
     m_statusText->setAlignment(Qt::AlignLeft | Qt::AlignBottom);
 
-    QString name;
-    switch(type){
-    case TYPE_INSTR_COMPRESSION: {
-        name = "Компрессионный прибор";
-        break;
-    }
-    }
 
 
-    auto *titleText = new QLabel(QString("INSTR:%1\t").arg(addr) + name, this);
+
+    auto *titleText = new QLabel(QString("%1\t").arg(name), this);
     titleText->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 
     auto *image = new QLabel(this);
@@ -446,30 +340,11 @@ InstrumentButton::InstrumentButton(QString addr, TYPE_INSTRUMENT type, QWidget *
 
 }
 
-void InstrumentButton::setStatus(int status)
+
+
+QString InstrumentButton::getSN()
 {
-
-
-//    if(status == Instrument::Ready) {
-//        m_statusText->setText(tr("Готово"));
-//        m_errorCount = 0;
-//    } else if(status == Instrument::Experiment) {
-//        m_statusText->setText(tr("Идет испытание"));
-//        m_errorCount = 0;
-//    } else if(status == Instrument::Error) {
-//        if (m_errorCount >= SettingsManager::instance()->timeoutCount()) {
-//            m_statusText->setText(tr("Ошибка"));
-//            m_errorCount = 0;
-//        }
-//        else m_errorCount++;
-//    } else {}
-
-
-}
-
-QString InstrumentButton::getAddress()
-{
-    return address;
+    return m_SN;
 }
 
 //QString InstrumentButton::getIconName(int type)
@@ -501,8 +376,3 @@ QString InstrumentButton::getAddress()
 //    return iconPath;
 //}
 
-void MainWindow::on_serverCmbBox_activated(const QString &arg1)
-{
-    if (!arg1.isEmpty())
-        ui->mainLayout->addWidget(new ServerWindow(ui->serverCmbBox->currentText(), this));
-}

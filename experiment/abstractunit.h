@@ -13,7 +13,7 @@ class AbstractUnit
     QVector<quint16> values;
 
 
-    void readValue(const StatusOperation &operation);
+    void readValue(const QJsonObject &jOperation);
 
 protected:
     enum CMD : quint16 {
@@ -54,15 +54,15 @@ protected:
     STATE stateWrite2 = STATE_0x10_WRITE;
 
 public:
-    AbstractUnit(quint16 addr_, FunctionCode funCode_) :address(addr_), funCode(funCode_) {};
+    AbstractUnit(quint16 addr_, FunctionCode funCode_) :address(addr_), funCode(funCode_) {}
     ~AbstractUnit() {}
 
 
-    RETCODE read(StatusOperation &operation, CMD cmd);
+    RETCODE read(QJsonObject &jOperation, CMD cmd);
 
-    RETCODE write(StatusOperation &operation, CMD cmd);
+    RETCODE write(QJsonObject &jOperation, CMD cmd);
 
-    RETCODE write(StatusOperation &operation, QVariant data);
+    RETCODE write(QJsonObject &jOperation, QVariant data);
 
     virtual void setValue(quint16 *data, CMD cmd) = 0;
 

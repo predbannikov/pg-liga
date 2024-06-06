@@ -1,15 +1,15 @@
 #include "stepper.h"
 
 
-RETCODE Stepper::readStatus(StatusOperation &operation) {
-    return read(operation, StepperStatus);
+RETCODE Stepper::readStatus(QJsonObject &jOperation) {
+    return read(jOperation, StepperStatus);
 }
 
-RETCODE Stepper::readPos(StatusOperation &operation) {
-    return read(operation, StepperPos);
+RETCODE Stepper::readPos(QJsonObject &jOperation) {
+    return read(jOperation, StepperPos);
 }
 
-RETCODE Stepper::setSpeed(StatusOperation &operation, qint16 speed_)
+RETCODE Stepper::setSpeed(QJsonObject &jOperation, qint16 speed_)
 {
     if (speed_ > 100 || speed_ < -100) {
         qDebug() << "speed " << speed_ << "overflow";
@@ -19,11 +19,11 @@ RETCODE Stepper::setSpeed(StatusOperation &operation, qint16 speed_)
     case SPEED_SET_ARG:
         speed = Measurements::Speed::fromMillimetresPerMinute(speed_);
         speedHz = speed.micrometresPerSecond() / stepDistance.micrometres();
-        if (write(operation, speedHz) == COMPLATE)
+        if (write(jOperation, speedHz) == COMPLATE)
             state_speed = SPEED_ENABLE;
         break;
     case SPEED_ENABLE:
-        if (write(operation, StepperSpeed) == COMPLATE) {
+        if (write(jOperation, StepperSpeed) == COMPLATE) {
             state_speed = SPEED_SET_ARG;
             return COMPLATE;
         }
@@ -32,14 +32,14 @@ RETCODE Stepper::setSpeed(StatusOperation &operation, qint16 speed_)
     return NOERROR;
 }
 
-RETCODE Stepper::stop(StatusOperation &operation)
+RETCODE Stepper::stop(QJsonObject &jOperation)
 {
-    return write(operation, StepperStop);
+    return write(jOperation, StepperStop);
 }
 
-RETCODE Stepper::setNull(StatusOperation &operation)
+RETCODE Stepper::setNull(QJsonObject &jOperation)
 {
-    return write(operation, StepperNull);
+    return write(jOperation, StepperNull);
 }
 
 void Stepper::setValue(quint16 *data, AbstractUnit::CMD cmd) {
