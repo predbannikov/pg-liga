@@ -21,7 +21,7 @@ SOURCES += \
 #    modbusclient.cpp \
         operations.cpp \
         sensors.cpp \
-        sequenceexecutor.cpp \
+#        sequenceexecutor.cpp \
     serialport.cpp \
         server.cpp  \
         main.cpp \
@@ -40,7 +40,7 @@ HEADERS += \
 #    modbusclient.h \
     operations.h \
     sensors.h \
-    sequenceexecutor.h \
+#    sequenceexecutor.h \
     measurements.h  \
     serialport.h \
     server.h    \

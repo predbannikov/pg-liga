@@ -5,7 +5,7 @@ RETCODE AbstractUnit::read(QJsonObject &jOperation, CMD cmd)
     // TODO зависнет если постоянно будет ошибка в STATE_0x10_WRITE,
     switch (stateRead) {
     case STATE_0x10_WRITE:
-        jOperation["request"] = QString(Requests::write(cmd, funCode, address));
+        jOperation["PDU_request"] = QString(Requests::write(cmd, funCode, address));
         stateRead = STATE_0x10_CHECK;
         break;
     case STATE_0x10_CHECK:
@@ -15,7 +15,7 @@ RETCODE AbstractUnit::read(QJsonObject &jOperation, CMD cmd)
             stateRead = STATE_0x10_WRITE;
         break;
     case STATE_0x03_WRITE:
-        jOperation["request"] = QString(Requests::read(address, DEFAULT_READ_COUNT_REG));
+        jOperation["PDU_request"] = QString(Requests::read(address, DEFAULT_READ_COUNT_REG));
         stateRead = STATE_0x03_CHECK;
         break;
     case STATE_0x03_CHECK:
@@ -47,7 +47,7 @@ RETCODE AbstractUnit::write(QJsonObject &jOperation, AbstractUnit::CMD cmd)
     case AbstractUnit::STATE_COMPLATE:
         break;
     case STATE_0x10_WRITE:
-        jOperation["request"] = QString(Requests::write(cmd, funCode, address));
+        jOperation["PDU_request"] = QString(Requests::write(cmd, funCode, address));
         stateWrite = STATE_0x10_CHECK;
         break;
     case STATE_0x10_CHECK:
@@ -71,7 +71,7 @@ RETCODE AbstractUnit::write(QJsonObject &jOperation, QVariant data)
     case AbstractUnit::STATE_COMPLATE:
         break;
     case STATE_0x10_WRITE:
-        jOperation["request"] = QString(Requests::write(address, data));
+        jOperation["PDU_request"] = QString(Requests::write(address, data));
         stateWrite2 = STATE_0x10_CHECK;
         break;
     case STATE_0x10_CHECK:
@@ -91,10 +91,6 @@ void AbstractUnit::resetState()
     stateWrite = STATE_0x10_WRITE;
     stateWrite2 = STATE_0x10_WRITE;
 }
-
-
-
-
 
 void AbstractUnit::readValue(const QJsonObject &jOperation)
 {

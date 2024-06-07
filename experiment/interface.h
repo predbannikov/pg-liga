@@ -31,11 +31,11 @@ public:
     ~Interface();
 
     void write(QJsonObject &jOperation);
-    bool read(QJsonObject &jOperation);
+    void read(QJsonObject &jOperation);
     void put(QJsonObject &jobj);
     void stop();
 
-    virtual void execCMD(QJsonObject &jobj) = 0;
+//    virtual void execCMD(QJsonObject &jobj) = 0;
 
     SerialPort *modbus = nullptr;
 

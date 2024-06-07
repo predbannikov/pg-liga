@@ -61,9 +61,9 @@ public:
 
     void readConfig();
     void startProcess();
-    void moveFrame(QJsonObject &jobj);
+    RETCODE moveFrame(QJsonObject &jobj);
     void unlockPID();
-    void stopFrame();
+    RETCODE stopFrame(QJsonObject &jobj);
     void manualNextStep();
     void readSensors(QJsonObject &jobj);
     void sendProtocol(QJsonObject &jobj);

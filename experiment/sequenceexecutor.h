@@ -10,25 +10,25 @@
 //#include "actions/abstractaction.h"
 
 
-class SequenceExecutor : public Operations
-{
+//class SequenceExecutor : public Operations
+//{
 
-//    enum STATE_SEQUENCER {PROCESS, COMPLATE, ERROR} stateSequencer;
-    LoadFrame loadFrame;
+////    enum STATE_SEQUENCER {PROCESS, COMPLATE, ERROR} stateSequencer;
+////    LoadFrame loadFrame;
 
-public:
+//public:
 
-//    QVector<AbstractAction *> actions;
-    SequenceExecutor(quint8 addr);
-    ~SequenceExecutor();
+////    QVector<AbstractAction *> actions;
+//    SequenceExecutor(quint8 addr);
+//    ~SequenceExecutor();
 
-    void execCMD(QJsonObject &jobj) override;
+//    void execCMD(QJsonObject &jobj) override;
 
 
-private:
-    RETCODE next() override;
-    void resetCommunicationState() override;
+//private:
+////    RETCODE next() override;
+////    void resetCommunicationState() override;
 
-};
+//};
 
 #endif // SEQUENCEEXECUTOR_H

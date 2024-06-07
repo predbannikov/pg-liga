@@ -1,10 +1,10 @@
 #ifndef EXPERIMENT_H
 #define EXPERIMENT_H
 
-#include "sequenceexecutor.h"
+#include "operations.h"
 
 
-class Experiment : public SequenceExecutor
+class Experiment : public Operations
 {
     enum STATUS { STATE_IDLE, STATE_EXPERIMENT, STATE_FINISH } stat = STATE_IDLE;
 

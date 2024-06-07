@@ -442,10 +442,10 @@ void LoadFrame::manualNextStep()
     state = STATE_READ_NEXT_STEP;
 }
 
-void LoadFrame::moveFrame(QJsonObject &jobj)
+RETCODE LoadFrame::moveFrame(QJsonObject &jobj)
 {
     cur_speed = jobj["speed"].toString().toInt();
-    state = STATE_MOVE_FRAME;
+    return stepper.setSpeed(jobj, cur_speed);
 }
 
 void LoadFrame::unlockPID()
@@ -455,9 +455,9 @@ void LoadFrame::unlockPID()
     state = STATE_UNLOCK_PID;
 }
 
-void LoadFrame::stopFrame()
+RETCODE LoadFrame::stopFrame(QJsonObject &jobj)
 {
-    state = STATE_STOP_FRAME;
+    return stepper.stop(jobj);
 }
 
 void LoadFrame::readSensors(QJsonObject &jobj)

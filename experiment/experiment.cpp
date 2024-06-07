@@ -1,6 +1,6 @@
 #include "experiment.h"
 
-Experiment::Experiment(quint8 addr) : SequenceExecutor(addr)
+Experiment::Experiment(quint8 addr) : Operations(addr)
 {
 }
 

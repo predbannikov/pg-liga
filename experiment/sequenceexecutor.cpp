@@ -1,64 +1,64 @@
 #include "sequenceexecutor.h"
 
 
-SequenceExecutor::SequenceExecutor(quint8 addr) : Operations(addr)
-{
-    loadFrame.address = addr;
-}
+//SequenceExecutor::SequenceExecutor(quint8 addr) : Operations(addr)
+//{
+////    loadFrame.address = addr;
+//}
 
-SequenceExecutor::~SequenceExecutor()
-{
-    qDebug() << Q_FUNC_INFO;
-}
+//SequenceExecutor::~SequenceExecutor()
+//{
+//    qDebug() << Q_FUNC_INFO;
+//}
 
-void SequenceExecutor::execCMD(QJsonObject &jobj)
-{
-    qDebug().noquote() << Q_FUNC_INFO << jobj;
-    if (jobj["CMD"].toString() == "settings") {
-        QFile file;
-        file.setFileName("test.txt");
-        if (!file.open(QIODevice::WriteOnly)) {
-            qDebug() << "file not open";
-            return;
-        }
-        qDebug() << "write new config" << QJsonDocument(jobj["config"].toObject());
-        file.write(QJsonDocument(jobj["config"].toObject()).toJson());
-        file.close();
-    } else if (jobj["CMD"].toString() == "get_sensor_value") {
+//void SequenceExecutor::execCMD(QJsonObject &jobj)
+//{
+////    qDebug().noquote() << Q_FUNC_INFO << jobj;
+////    if (jobj["CMD"].toString() == "settings") {
+////        QFile file;
+////        file.setFileName("test.txt");
+////        if (!file.open(QIODevice::WriteOnly)) {
+////            qDebug() << "file not open";
+////            return;
+////        }
+////        qDebug() << "write new config" << QJsonDocument(jobj["config"].toObject());
+////        file.write(QJsonDocument(jobj["config"].toObject()).toJson());
+////        file.close();
+////    } else if (jobj["CMD"].toString() == "get_sensor_value") {
 
-    } else if (jobj["CMD"].toString() == "scan") {
-        loadFrame.readSensors(jobj);
-        emit sendRequestToClient(jobj);
-    } else if (jobj["CMD"].toString() == "start") {
-        loadFrame.readConfig();
-        loadFrame.startProcess();
-    } else if (jobj["CMD"].toString() == "read_config") {
-        loadFrame.readConfig();
-    } else if (jobj["CMD"].toString() == "read_sensors") {
-        loadFrame.readSensors(jobj);
-        emit sendRequestToClient(jobj);
-    } else if (jobj["CMD"].toString() == "get_protocol") {
-        loadFrame.sendProtocol(jobj);
-        emit sendRequestToClient(jobj);
-    } else if (jobj["CMD"].toString() == "get_store_data") {
-        loadFrame.sendStoreData(jobj);
-        loadFrame.readSensors(jobj);
-        emit sendRequestToClient(jobj);
-    } else if (jobj["CMD"].toString() == "move_frame") {
-        loadFrame.moveFrame(jobj);
-    } else if (jobj["CMD"].toString() == "stop_frame") {
-        loadFrame.stopFrame();
-    } else if (jobj["CMD"].toString() == "unlock_PID") {
-        loadFrame.unlockPID();
-    }
-}
+////    } else if (jobj["CMD"].toString() == "scan") {
+////        loadFrame.readSensors(jobj);
+////        emit sendRequestToClient(jobj);
+////    } else if (jobj["CMD"].toString() == "start") {
+////        loadFrame.readConfig();
+////        loadFrame.startProcess();
+////    } else if (jobj["CMD"].toString() == "read_config") {
+////        loadFrame.readConfig();
+////    } else if (jobj["CMD"].toString() == "read_sensors") {
+////        loadFrame.readSensors(jobj);
+////        emit sendRequestToClient(jobj);
+////    } else if (jobj["CMD"].toString() == "get_protocol") {
+////        loadFrame.sendProtocol(jobj);
+////        emit sendRequestToClient(jobj);
+////    } else if (jobj["CMD"].toString() == "get_store_data") {
+////        loadFrame.sendStoreData(jobj);
+////        loadFrame.readSensors(jobj);
+////        emit sendRequestToClient(jobj);
+////    } else if (jobj["CMD"].toString() == "move_frame") {
+////        loadFrame.moveFrame(jobj);
+////    } else if (jobj["CMD"].toString() == "stop_frame") {
+////        loadFrame.stopFrame();
+////    } else if (jobj["CMD"].toString() == "unlock_PID") {
+////        loadFrame.unlockPID();
+////    }
+//}
 
-RETCODE SequenceExecutor::next()
-{
-    return loadFrame.next(jStatusOperation);
-}
+//RETCODE SequenceExecutor::next()
+//{
+////    return loadFrame.next(jStatusOperation);
+//}
 
-void SequenceExecutor::resetCommunicationState()
-{
-    loadFrame.resetStateModeBusCommunication();
-}
+//void SequenceExecutor::resetCommunicationState()
+//{
+////    loadFrame.resetStateModeBusCommunication();
+//}

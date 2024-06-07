@@ -1,5 +1,6 @@
-#include "stepper.h"
+#include <QThread>
 
+#include "stepper.h"
 
 RETCODE Stepper::readStatus(QJsonObject &jOperation) {
     return read(jOperation, StepperStatus);
@@ -17,14 +18,19 @@ RETCODE Stepper::setSpeed(QJsonObject &jOperation, qint16 speed_)
     }
     switch (state_speed) {
     case SPEED_SET_ARG:
+        qDebug() << "SPEED_SET_ARG";
         speed = Measurements::Speed::fromMillimetresPerMinute(speed_);
         speedHz = speed.micrometresPerSecond() / stepDistance.micrometres();
-        if (write(jOperation, speedHz) == COMPLATE)
+        if (write(jOperation, speedHz) == COMPLATE) {
             state_speed = SPEED_ENABLE;
+            QThread::msleep(100);       // Если убрать задержку зависает , не двигается рама но отвечает успешно на комманды
+        }
         break;
     case SPEED_ENABLE:
+        qDebug() << "SPEED_ENABLE";
         if (write(jOperation, StepperSpeed) == COMPLATE) {
             state_speed = SPEED_SET_ARG;
+            QThread::msleep(100);       // Если убрать задержку зависает , не двигается рама но отвечает успешно на комманды
             return COMPLATE;
         }
         break;
