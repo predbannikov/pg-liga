@@ -26,7 +26,8 @@ public:
 
 
 private:
-    void next() override;
+    RETCODE next() override;
+    void resetCommunicationState() override;
 
 };
 

@@ -56,6 +56,8 @@ public:
 
     RETCODE criterionManual(QJsonObject &jOperation);
 
+    void resetStateModeBusCommunication();
+
 
     void readConfig();
     void startProcess();

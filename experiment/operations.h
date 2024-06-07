@@ -12,7 +12,8 @@ class Operations : public Interface
 public:
     Operations(quint8 addr);
     ~Operations();
-    virtual void next() = 0;
+    virtual RETCODE next() = 0;
+    virtual void resetCommunicationState() = 0;
 
     bool execut();
 

@@ -4,8 +4,6 @@
 
 Interface::Interface(quint8 addr, QObject *parent) : QObject(parent), address(addr)
 {
-//    QObject::connect(this, &Interface::sendRequestToModbus, modbus, &SerialPort::parseReqest, Qt::QueuedConnection);
-
 }
 
 Interface::~Interface()
@@ -16,13 +14,11 @@ Interface::~Interface()
 void Interface::write(QJsonObject &jOperation)
 {
     //    jobj["data"] = "01100000000102f100e3c0";
-//    QJsonObject jRequest;
+    //    QString pdu = "0000000102f100";
     jOperation["action"] = "usually";
-//    QString pdu = "0000000102f100";
     jOperation["PDU_request"] = jOperation["request"].toString();
     jOperation["address"] = QString::number(address);
     jOperation["status"] = "wait";
-//    emit sendRequestToModbus(jRequest);
     modbus->parseReqest(jOperation);
     qApp->processEvents();
 }
@@ -31,11 +27,11 @@ bool Interface::read(QJsonObject &jOperation)
 {
     do {
         QMutexLocker lock(&mtx);
-        while (queueResponse.empty())
+        while (queueRequest.empty())
             notEmpty.wait(&mtx);
 
 
-        jobjTaked = QJsonObject(queueResponse.takeFirst());
+        jobjTaked = QJsonObject(queueRequest.takeFirst());
         execCMD(jobjTaked);
         /*
 //        if (jobjTaked["status"] == "" || abort) {
@@ -79,7 +75,7 @@ bool Interface::read(QJsonObject &jOperation)
 void Interface::put(QJsonObject &jobj)
 {
     QMutexLocker lock(&mtx);
-    queueResponse.push_back(std::move(jobj));
+    queueRequest.push_back(std::move(jobj));
     notEmpty.notify_one();
 }
 

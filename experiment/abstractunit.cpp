@@ -85,6 +85,13 @@ RETCODE AbstractUnit::write(QJsonObject &jOperation, QVariant data)
     return NOERROR;
 }
 
+void AbstractUnit::resetState()
+{
+    stateRead = STATE_0x10_WRITE;
+    stateWrite = STATE_0x10_WRITE;
+    stateWrite2 = STATE_0x10_WRITE;
+}
+
 
 
 

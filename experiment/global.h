@@ -17,6 +17,17 @@
 
 enum RETCODE {NOERROR, COMPLATE, ERROR};
 
+static QString retcodeToStr(RETCODE code) {
+    switch (code) {
+    case NOERROR:
+        return "NOERROR";
+    case COMPLATE:
+        return "COMPLATE";
+    case ERROR:
+        return "ERROR";
+    }
+}
+
 enum PDU_COMMAND {
     PDU_COMMAND_0x03 = 0x03,
     PDU_COMMAND_0x10 = 0x10

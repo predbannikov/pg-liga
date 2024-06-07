@@ -64,6 +64,8 @@ public:
 
     RETCODE write(QJsonObject &jOperation, QVariant data);
 
+    void resetState();
+
     virtual void setValue(quint16 *data, CMD cmd) = 0;
 
     FunctionCode funCode = ActBase;

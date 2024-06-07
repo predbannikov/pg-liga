@@ -20,7 +20,7 @@ class Interface : public QObject
     QWaitCondition notEmpty;
     /// json объект из очереди комманд
     QJsonObject jobjTaked;
-    QQueue <QJsonObject> queueResponse;
+    QQueue <QJsonObject> queueRequest;
     bool abort = false;
 
 

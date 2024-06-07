@@ -2,9 +2,6 @@
 
 Experiment::Experiment(quint8 addr) : SequenceExecutor(addr)
 {
-//    modbus = new SerialPort(this);
-//    QObject::connect(this, &Interface::sendRequestToModbus, modbus, &SerialPort::parseReqest, Qt::QueuedConnection);
-//    modbus->init();
 }
 
 Experiment::~Experiment()

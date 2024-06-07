@@ -53,27 +53,12 @@ void SequenceExecutor::execCMD(QJsonObject &jobj)
     }
 }
 
-void SequenceExecutor::next()
+RETCODE SequenceExecutor::next()
 {
+    return loadFrame.next(jStatusOperation);
+}
 
-    RETCODE ret = loadFrame.next(jStatusOperation);
-    if (ret == COMPLATE) {
-        qDebug() << "succ, stop";
-        stop();
-    } else if (ret == ERROR) {
-        qDebug() << "error";
-        stop();
-    }
-//    if (current_index < actions.size()) {
-//        if (actions[current_index]->next(statusOperation) == PROCESS_COMPLATE) {
-//            qDebug() << "action success";
-//            QThread::sleep(1);
-//            current_index++;
-//        }
-//    } else {
-//        // TODO Если последовательность выполнена, загружаем следующую с эксперимента
-//        stop();
-
-//    }
-
+void SequenceExecutor::resetCommunicationState()
+{
+    loadFrame.resetStateModeBusCommunication();
 }

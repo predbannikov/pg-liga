@@ -36,16 +36,13 @@ void SerialPort::parseReqest(QJsonObject &jobj)
             }
         }
     } else {
-//        procError();
-//        count_requestes_all++;
 
-//        jobj["modbus_error"] = jobj["port_error"].toString();
     }
-    timeSpentWait.restart();
-    if (timeElapse.elapsed() > 5000) {
-        printCountErrors();
-        timeElapse.restart();
-    }
+//    timeSpentWait.restart();
+//    if (timeElapse.elapsed() > 5000) {
+//        printCountErrors();
+//        timeElapse.restart();
+//    }
 
     jobj["PDU_response"] = QString(modbuspack.toHex());
 }

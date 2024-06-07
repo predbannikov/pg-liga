@@ -68,27 +68,22 @@ bool LoadFrame::readNextStep()
 
 RETCODE LoadFrame::next(QJsonObject &jOperation)
 {
-    counter++;
     RETCODE ret = ERROR;
     switch (state) {
     case STATE_IDLE:
-        if (statusSensors(jOperation) == COMPLATE) {
-            qDebug() << qPrintable(QString("force=%1(N)\t deform=%2(mm)\t stepperPos=%3\t stepperStatus=%4\t controllerStatus=%5\t counter=%6").
-                    arg(Force::fromNewtons(forceSens.value).newtons()).
-                    arg(Length::fromMicrometres(deformSens.value).millimetres()).
-                    arg((stepper.position * 0.31250)/1000., 9).        // TODO 1:10 на эмуляторе
-                    arg(stepper.status).
-                    arg(controller.status).
-                    arg(counter));
-//            qDebug() << "force =" << Force::fromNewtons(forceSens.value).newtons() << "(N)"
-//                     << "\t\tdeform =" << Length::fromMicrometres(deformSens.value).millimetres() << "(mm)\t"
-//                     << "\t\tstepper pos =" << stepper.position
-//                     << "\t\tstepper status =" << stepper.status
-//                     << "\t\controller status =" << controller.status
-//                     << "\t\tcounter =" << counter;
+        ret = statusSensors(jOperation);
+        if (ret == COMPLATE) {
+            counter++;
+            if (counter % 10 == 0) {
+                qDebug() << qPrintable(QString("force=%1(N)\t deform=%2(mm)\t stepperPos=%3\t stepperStatus=%4\t controllerStatus=%5\t counter=%6").
+                        arg(Force::fromNewtons(forceSens.value).newtons(), 9).
+                        arg(Length::fromMicrometres(deformSens.value).millimetres(), 9).
+                        arg((stepper.position * 0.31250)/1000., 9).        // TODO 1:10 на эмуляторе
+                        arg(stepper.status).
+                        arg(controller.status).
+                        arg(counter));
+            }
             fflush(stderr);
-//            QThread::msleep(TIMEWAIT_AFTER_IDLE_STATUS_SENSOR);
-            QThread::msleep(3);
         }
         break;
     case STATE_START:
@@ -158,7 +153,7 @@ RETCODE LoadFrame::next(QJsonObject &jOperation)
         state = STATE_IDLE;
         break;
     }
-    return NOERROR;
+    return ret;
 }
 
 RETCODE LoadFrame::setPresure(QJsonObject &jOperation)
@@ -210,37 +205,43 @@ RETCODE LoadFrame::setPresure(QJsonObject &jOperation)
 
 RETCODE LoadFrame::statusSensors(QJsonObject &jOperation)
 {
+    RETCODE ret = ERROR;
     switch (readSensState) {
     case READ_SENS_1:
-        if (forceSens.read(jOperation) == COMPLATE)
+        ret = forceSens.read(jOperation);
+        if (ret == COMPLATE)
             readSensState = READ_SENS_2;
         break;
     case READ_SENS_2:
-        if (deformSens.read(jOperation) == COMPLATE)
+        ret = deformSens.read(jOperation);
+        if (ret == COMPLATE)
             readSensState = READ_SENS_4; // TODO changed READ_SENS_3
         break;
     case READ_SENS_3:
-        if (deformSens.readRaw(jOperation) == COMPLATE)
+        ret = deformSens.readRaw(jOperation);
+        if (ret == COMPLATE)
             readSensState = READ_SENS_4;
         break;
     case READ_SENS_4:
-        if (stepper.readStatus(jOperation) == COMPLATE)
+        ret = stepper.readStatus(jOperation);
+        if (ret == COMPLATE)
             readSensState = READ_SENS_5;
         break;
     case READ_SENS_5:
-        if (stepper.readPos(jOperation) == COMPLATE)
+        ret = stepper.readPos(jOperation);
+        if (ret == COMPLATE)
             readSensState = READ_SENS_6;
         break;
     case READ_SENS_6:
-        if (controller.readStatus(jOperation) == COMPLATE) {
+        ret = controller.readStatus(jOperation);
+        if (ret == COMPLATE) {
             readSensState = READ_SENS_1;
             if (!jcurStep.empty())
                 store->updateData();
-            return COMPLATE;
         }
         break;
     }
-    return NOERROR;
+    return ret;
 }
 
 RETCODE LoadFrame::compression(QJsonObject &jOperation)
@@ -405,6 +406,14 @@ RETCODE LoadFrame::criterionManual(QJsonObject &jOperation)
         break;
     }
     return NOERROR;
+}
+
+void LoadFrame::resetStateModeBusCommunication()
+{
+    forceSens.resetState();
+    deformSens.resetState();
+    controller.resetState();
+    stepper.resetState();
 }
 
 void LoadFrame::readConfig()

@@ -13,35 +13,22 @@ Operations::~Operations()
 
 bool Operations::execut()
 {
-    next();
-
-//    if (DEBUG) {
-//        if (sequencer == 0) {
-//            sequencer = 1;
-//        } else {
-//            sequencer = 0;
-//            qDebug() << statusOperation.request;
-//            qDebug() << statusOperation.response;
-//            qDebug() << "";
-//        }
-//    }
-    if (jStatusOperation["request"].toString().isEmpty())
-        return true;
+    RETCODE ret = next();
+    if (ret != NOERROR) {
+        resetCommunicationState();
+//        qDebug() << "Читаем следующую команду из списка если она есть, меняем состояние на выполнение" << retcodeToStr(ret);
+    } else {
+        if (jStatusOperation["request"].toString().isEmpty())
+            return true;
+        write(jStatusOperation);    // send to modbas
+    }
 
 
-    write(jStatusOperation);    // send to modbas
-//    qDebug() << "write" << statusOperation.request;
-//    for (int i = 0; i < 3; i++)
-//        if (read(jStatusOperation))
-//            break;
-//        else if (i == 2)
-//            return true;
-    next();
+//    write(jStatusOperation);    // send to modbas
 
-//    qDebug() << statusOperation.request;
-//    qDebug() << statusOperation.response;
+//    qDebug() << retcodeToStr(next());
 
-    jStatusOperation = QJsonObject();
+//    jStatusOperation = QJsonObject();
     return true;
 }
 
