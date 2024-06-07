@@ -71,7 +71,7 @@ class SerialPort : public QObject
     bool abort = false;
 
     QSerialPort *port;
-    CountErrors countErrors;
+    CountErrors  countErrors;
     QSerialPort::SerialPortError stateErr;
 
     QElapsedTimer timeElapse;
@@ -83,7 +83,7 @@ class SerialPort : public QObject
     quint64 spent_time_one_wait = 0;
 
     bool connectDevice();
-    void procError();
+    void procError(QSerialPort::SerialPortError err);
     QString writeToPort(QByteArray &req);
     quint16 calculateCRC16(const QByteArray &data);
     void printCountErrors();

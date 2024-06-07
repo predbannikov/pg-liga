@@ -24,7 +24,7 @@ void SerialPort::parseReqest(QJsonObject &jobj)
     str << calculateCRC16(modbuspack);
     jobj["port_error"] = writeToPort(modbuspack);           // WRITE
     jobj["status"] = "complate";
-    if (jobj["port_error"].toString() == "no_error") {
+    if (jobj["port_error"].toString() == "No error") {
         if (!modbuspack.isEmpty()) {
             if (checkCRC(modbuspack)) {
                 modbuspack.remove(modbuspack.size() - 2, modbuspack.size());
@@ -37,18 +37,22 @@ void SerialPort::parseReqest(QJsonObject &jobj)
         }
     } else {
 //        procError();
-//        printCountErrors();
 //        count_requestes_all++;
 
-        jobj["modbus_error"] = jobj["port_error"].toString();
+//        jobj["modbus_error"] = jobj["port_error"].toString();
+    }
+    timeSpentWait.restart();
+    if (timeElapse.elapsed() > 5000) {
+        printCountErrors();
+        timeElapse.restart();
     }
 
     jobj["PDU_response"] = QString(modbuspack.toHex());
 }
 
-void SerialPort::procError()
+void SerialPort::procError(QSerialPort::SerialPortError err)
 {
-    switch (stateErr) {
+    switch (err) {
     case QSerialPort::NoError:
         countErrors.NoError++;
         break;
@@ -104,21 +108,66 @@ QString SerialPort::writeToPort(QByteArray &req)
     QString portError;
     ModBusReply reply;
     while (reply.m_currentNumRequest < reply.m_maxRequests) {
+
+
+        if (!connectDevice()) {
+            QThread::msleep(3000);
+            continue;
+        }
+
         port->clear(QSerialPort::AllDirections);
+
         timeSpentRequest.restart();
         port->write(req);
-        if (!port->waitForReadyRead(reply.m_timeoutSendRequest)) {        // таймоут или ошибка
-            reply.m_currentNumRequest++;
-            countErrors.TimeoutError++;
-            portError = port->errorString();
-            port->clearError();
+
+
+        if (!port->waitForBytesWritten(150)) {
+            procError(port->error());
+            qDebug() << "Timeout waiting for bytes to be written to serial port" << port->errorString();
+            port->close();
         } else {
-            if (port->error() == QSerialPort::NoError)
-                spent_time_to_requests += timeSpentRequest.elapsed();
-            portError = "no_error";
-            req = port->readAll();
-            break;
+//            qDebug() << "Data written to serial port";
+
+            QByteArray receivedData;
+            while (receivedData.size() < expectedResponseLength(req)) {
+                procError(port->error());
+                portError = port->errorString();
+                port->clearError();
+                if (port->waitForReadyRead(reply.m_timeoutSendRequest)) {
+                    procError(port->error());
+                    receivedData.append(port->readAll());
+                } else {
+//                    qDebug() << "Timeout waiting for data to be received from serial port";
+                    break;
+                }
+
+
+            }
+            req = receivedData;
+            reply.m_currentNumRequest++;
+            if (receivedData.size() == expectedResponseLength(req)) {
+                break;
+            } else {
+                qDebug() << "larg pack";
+                break;
+            }
+//            countErrors.TimeoutError++;
         }
+
+
+
+//        if (!port->waitForReadyRead(reply.m_timeoutSendRequest)) {        // таймоут или ошибка
+//            reply.m_currentNumRequest++;
+//            countErrors.TimeoutError++;
+//            portError = port->errorString();
+//            port->clearError();
+//        } else {
+//            if (port->error() == QSerialPort::NoError)
+//                spent_time_to_requests += timeSpentRequest.elapsed();
+//            portError = "no_error";
+//            req = port->readAll();
+//            break;
+//        }
 //        req.clear();
     }
     stateErr = port->error();
@@ -162,10 +211,13 @@ bool SerialPort::connectDevice ()
             port->setBreakEnabled(false);
             qDebug() << Q_FUNC_INFO << port->portName() << "OPEN";
             return true;
+        } else {
+            qDebug() << Q_FUNC_INFO << port->portName() << "device not open";
+            return false;
         }
     }
-    qDebug() << Q_FUNC_INFO << port->portName() << port->errorString();
-    return false;
+//    qDebug() << Q_FUNC_INFO << port->portName() << port->errorString();
+    return true;
 }
 
 void SerialPort::init()
