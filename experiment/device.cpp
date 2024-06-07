@@ -73,10 +73,19 @@ RETCODE LoadFrame::next(QJsonObject &jOperation)
     switch (state) {
     case STATE_IDLE:
         if (statusSensors(jOperation) == COMPLATE) {
-            qDebug() << "force =" << Force::fromNewtons(forceSens.value).newtons() << "(N)"
-                     << "\t\tdeform =" << Length::fromMicrometres(deformSens.value).millimetres() << "(mm)\t\traw =" << deformSens.rawValue
-                     << "\t\tstepper pos =" << stepper.position
-                     << "\t\tcounter =" << counter;
+            qDebug() << qPrintable(QString("force=%1(N)\t deform=%2(mm)\t stepperPos=%3\t stepperStatus=%4\t controllerStatus=%5\t counter=%6").
+                    arg(Force::fromNewtons(forceSens.value).newtons()).
+                    arg(Length::fromMicrometres(deformSens.value).millimetres()).
+                    arg((stepper.position * 0.31250)/1000., 9).        // TODO 1:10 на эмуляторе
+                    arg(stepper.status).
+                    arg(controller.status).
+                    arg(counter));
+//            qDebug() << "force =" << Force::fromNewtons(forceSens.value).newtons() << "(N)"
+//                     << "\t\tdeform =" << Length::fromMicrometres(deformSens.value).millimetres() << "(mm)\t"
+//                     << "\t\tstepper pos =" << stepper.position
+//                     << "\t\tstepper status =" << stepper.status
+//                     << "\t\controller status =" << controller.status
+//                     << "\t\tcounter =" << counter;
             fflush(stderr);
 //            QThread::msleep(TIMEWAIT_AFTER_IDLE_STATUS_SENSOR);
             QThread::msleep(3);
@@ -208,7 +217,7 @@ RETCODE LoadFrame::statusSensors(QJsonObject &jOperation)
         break;
     case READ_SENS_2:
         if (deformSens.read(jOperation) == COMPLATE)
-            readSensState = READ_SENS_3;
+            readSensState = READ_SENS_4; // TODO changed READ_SENS_3
         break;
     case READ_SENS_3:
         if (deformSens.readRaw(jOperation) == COMPLATE)

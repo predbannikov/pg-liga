@@ -15,8 +15,9 @@ class Controller : public AbstractUnit
         double d;
     };
     PIDParameters defaultPID = {0.3, 0.0, 3.0};
-    qint32 status;
 public:
+    qint32 status = 0;
+
     Controller(quint16 addr_, FunctionCode funCode_) : AbstractUnit(addr_, funCode_) {}
 
     RETCODE readStatus(QJsonObject &jOperation);
