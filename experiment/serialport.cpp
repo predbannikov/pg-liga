@@ -126,7 +126,8 @@ QString SerialPort::writeToPort(QByteArray &req)
 //            qDebug() << "Data written to serial port";
 
             QByteArray receivedData;
-            while (receivedData.size() < expectedResponseLength(req)) {
+//            int sizeExpected = expectedResponseLength(receivedData);
+            while (receivedData.size() < expectedResponseLength(receivedData)) {
                 procError(port->error());
                 portError = port->errorString();
                 port->clearError();
@@ -140,12 +141,14 @@ QString SerialPort::writeToPort(QByteArray &req)
 
 
             }
-            req = receivedData;
             reply.m_currentNumRequest++;
-            if (receivedData.size() == expectedResponseLength(req)) {
+            if (receivedData.size() == expectedResponseLength(receivedData)) {
+                req = receivedData;
                 break;
             } else {
                 qDebug() << "larg pack";
+                expectedResponseLength(req);
+                req = receivedData;
                 break;
             }
 //            countErrors.TimeoutError++;
@@ -220,7 +223,7 @@ bool SerialPort::connectDevice ()
 void SerialPort::init()
 {
     port = new QSerialPort(this);
-    port->setPortName("COM3");
+    port->setPortName("COM8");
     port->setFlowControl(QSerialPort::NoFlowControl);
     port->setBaudRate   (QSerialPort::Baud115200);
     port->setParity     (QSerialPort::EvenParity);
