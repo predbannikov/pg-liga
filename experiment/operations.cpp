@@ -64,15 +64,8 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
 {
 //    qDebug().noquote() << Q_FUNC_INFO << jobj;
     if (jobj["CMD"].toString() == "settings") {
-        QFile file;
-        file.setFileName("test.txt");
-        if (!file.open(QIODevice::WriteOnly)) {
-            qDebug() << "file not open";
-            return COMPLATE;
-        }
-        qDebug() << "write new config" << QJsonDocument(jobj["config"].toObject());
-        file.write(QJsonDocument(jobj["config"].toObject()).toJson());
-        file.close();
+        loadFrame.writeConfig(jobj);
+        loadFrame.readConfig();
     } else if (jobj["CMD"].toString() == "get_sensor_value") {
         QString arg1 = jobj["arg1"].toString();
         double value = -1;
@@ -97,9 +90,14 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
     } else if (jobj["CMD"].toString() == "get_protocol") {
         loadFrame.sendProtocol(jobj);
         emit sendRequestToClient(jobj);
+    } else if (jobj["CMD"].toString() == "init_store_data") {
+        jobj["status"] = loadFrame.init();
+        emit sendRequestToClient(jobj);
     } else if (jobj["CMD"].toString() == "get_store_data") {
         loadFrame.sendStoreData(jobj);
-        loadFrame.readSensors(jobj);
+        qDebug() << Q_FUNC_INFO << jobj;
+        fflush(stderr);
+//        loadFrame.readSensors(jobj);
         emit sendRequestToClient(jobj);
     } else if (jobj["CMD"].toString() == "move_frame") {
         return loadFrame.moveFrame(jobj);

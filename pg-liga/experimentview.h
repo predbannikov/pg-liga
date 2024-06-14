@@ -64,31 +64,17 @@ private slots:
 
     void onReadSensors();
 
-    void on_spinPressure_textChanged(const QString &arg1);
-
     void on_comboBox_activated(const QString &arg1);
 
-    void on_spinCriter_textChanged(const QString &arg1);
-
     void on_dateTimeEdit_timeChanged(const QTime &time);
-
-    void on_btnSendRequest_clicked();
 
     void on_btnAddStep_clicked();
 
     void on_pushButton_2_clicked();
 
-    void on_btnSendConfig_clicked();
-
-    void on_btnReadConfig_clicked();
-
     void on_btnStart_clicked();
 
     void on_btnClearLogOut_clicked();
-
-    void on_btnCloseWindow_clicked();
-
-    void on_btnGetProtocol_clicked();
 
     void on_btnClearTextEdit_clicked();
 
@@ -100,15 +86,15 @@ private slots:
 
     void on_btnUnlockPid_clicked();
 
-    void on_btnCloseInstr_clicked();
-
     void on_btnSaveImage_clicked();
-
-    void on_btnSendTestRequest_clicked();
 
     void on_btnGetStoreData_clicked();
 
     void on_btnGetSensorValue_clicked();
+
+    void on_btnInitStoreData_clicked();
+
+    void on_btnSetSettings_clicked();
 
 signals:
     void sendRequest(QJsonObject &jobj);

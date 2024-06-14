@@ -24,18 +24,23 @@ LoadFrame::~LoadFrame()
     qDebug() << Q_FUNC_INFO;
 }
 
-void LoadFrame::init()
+bool LoadFrame::init()
 {
+    qDebug() << Q_FUNC_INFO;
     if (store != nullptr)
         delete store;
 
     store = new StoreData(address, jconfig);
+
+    if (store == nullptr)
+        return false;
 
     QVector<Sensor *> sens;
     sens.append(&forceSens);
     sens.append(&deformSens);
 
     store->setSensors(sens);
+    return true;
 }
 
 bool LoadFrame::readNextStep()
@@ -236,7 +241,7 @@ RETCODE LoadFrame::statusSensors(QJsonObject &jOperation)
         ret = controller.readStatus(jOperation);
         if (ret == COMPLATE) {
             readSensState = READ_SENS_1;
-            if (!jcurStep.empty())
+            if (store != nullptr)
                 store->updateData();
         }
         break;
@@ -419,7 +424,7 @@ void LoadFrame::resetStateModeBusCommunication()
 void LoadFrame::readConfig()
 {
     QFile file;
-    file.setFileName("test.txt");
+    file.setFileName("config.json");
     if (!file.open(QIODevice::ReadOnly)) {
         qDebug() << "file not open" << Q_FUNC_INFO;
         return;
@@ -430,6 +435,20 @@ void LoadFrame::readConfig()
     qDebug() << jdoc;
     jconfig = jdoc.object();
     jsteps = jconfig["steps"].toArray();
+}
+
+RETCODE LoadFrame::writeConfig(QJsonObject &jobj)
+{
+    QFile file;
+    file.setFileName("config.json");
+    if (!file.open(QIODevice::WriteOnly)) {
+        qDebug() << "file not open";
+        return ERROR;
+    }
+    qDebug() << "write new config" << QJsonDocument(jobj["config"].toObject());
+    file.write(QJsonDocument(jobj["config"].toObject()).toJson());
+    file.close();
+    return COMPLATE;
 }
 
 void LoadFrame::startProcess()
@@ -466,10 +485,6 @@ void LoadFrame::readSensors(QJsonObject &jobj)
     jsensors["force"] = QString::number(forceSens.value);
     jsensors["deform"] = QString::number(deformSens.value);
     jsensors["stepper"] = QString::number(stepper.position);
-    if (compressionManual)
-        jsensors["status_exp"] = "wait_manual";
-    else
-        jsensors["status_exp"] = "process";
     jobj["sensors"] = jsensors;
     jobj["status"] = "ok";
 }

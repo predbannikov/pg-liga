@@ -78,50 +78,13 @@ void StoreData::updateData()
     for (int i = 0; i < sensors.size(); i++) {
 //        QString keySens;
         switch (sensors[i]->funCode) {
-        case SensPrs0:
-            qDebug() << "pressure0" << sensors[i]->value;
-            break;
-        case SensPrs1:
-            qDebug() << "pressure1" << sensors[i]->value;
-            break;
-        case SensPrs2:
-            qDebug() << "pressure2" << sensors[i]->value;
-            break;
         case SensLoad0:
-            if (type == LIGA_KL0S_1T) {
-                currentData.insert("VerticalPressure_kPa", sensors[i]->value);
-                data["VerticalPressure_kPa"].append(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
-            } else if (type == LIGA_KL0S_2Load_1T) {
-                currentData.insert("VerticalPressure_kPa", sensors[i]->value);
-                data["VerticalPressure_kPa"].append(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
-            }
-            break;
-        case SensLoad1:
-            if (type == LIGA_KL0S_1T) {
-                currentData.insert("VerticalPressure_kPa", sensors[i]->value);
-                data["VerticalPressure_kPa"].append(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
-            } else if (type == LIGA_KL0S_2Load_1T) {
-                currentData.insert("VerticalPressure_kPa", sensors[i]->value);
-                data["VerticalPressure_kPa"].append(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
-            }
+            currentData.insert("VerticalPressure_kPa", sensors[i]->value);
+            data["VerticalPressure_kPa"].append(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
             break;
         case SensDef0:
-            if (type == LIGA_KL0S_1T) {
-                currentData.insert("VerticalDeform_mm", sensors[i]->value);
-                data["VerticalDeform_mm"].append(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
-            } else if (type == LIGA_KL0S_2Load_1T) {
-                currentData.insert("VerticalDeform_mm", sensors[i]->value);
-                data["VerticalDeform_mm"].append(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
-            }
-            break;
-        case SensDef1:
-            if (type == LIGA_KL0S_1T) {
-                currentData.insert("VerticalDeform_mm", sensors[i]->value);
-                data["VerticalDeform_mm"].append(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
-            } else if (type == LIGA_KL0S_2Load_1T) {
-                currentData.insert("VerticalDeform_mm", sensors[i]->value);
-                data["VerticalDeform_mm"].append(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
-            }
+            currentData.insert("VerticalDeform_mm", sensors[i]->value);
+            data["VerticalDeform_mm"].append(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
             break;
         }
     }
@@ -133,47 +96,16 @@ void StoreData::fixUpdateData()
 {
     for (int i = 0; i < sensors.size(); i++) {
         switch (sensors[i]->funCode) {
-        case SensPrs0:
-            qDebug() << "pressure0" << sensors[i]->value;
-            break;
-        case SensPrs1:
-            qDebug() << "pressure1" << sensors[i]->value;
-            break;
-        case SensPrs2:
-            qDebug() << "pressure2" << sensors[i]->value;
-            break;
         case SensLoad0:
-        case SensLoad1:
-            if (type == LIGA_KL0S_1T) {
-                data["VerticalPressure_kPa"].fixAppend(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
-            } else if (type == LIGA_KL0S_2Load_1T) {
-                data["VerticalPressure_kPa"].fixAppend(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
-            }
+            data["VerticalPressure_kPa"].fixAppend(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
             break;
-//        case SensLoad1:
-//            if (type == LIGA_KL0S_1T) {
-//                data["VerticalPressure_kPa"].fixAppend(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
-//            } else if (type == LIGA_KL0S_2Load_1T) {
-//                data["VerticalPressure_kPa"].fixAppend(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
-//            }
-//            break;
         case SensDef0:
-        case SensDef1:
-            if (type == LIGA_KL0S_1T) {
-                data["VerticalDeform_mm"].fixAppend(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
-            } else if (type == LIGA_KL0S_2Load_1T) {
-                data["VerticalDeform_mm"].fixAppend(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
-            }
+            data["VerticalDeform_mm"].fixAppend(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
             break;
-//        case SensDef1:
-//            if (type == LIGA_KL0S_1T) {
-//                data["VerticalDeform_mm"].fixAppend(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
-//            } else if (type == LIGA_KL0S_2Load_1T) {
-//                data["VerticalDeform_mm"].fixAppend(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
-//            }
-//            break;
         }
     }
+    if (period.complate())
+        writeToDataFile();
 }
 
 void StoreData::sendProtocol(QJsonObject &jobj)
@@ -220,7 +152,8 @@ void StoreData::sendStoreData(QJsonObject &jobj)
 
 
 
-    jobj["store_data"] = jstoreData;
+//    jobj["store_data"] = jstoreData;
+    jobj["store_data"] = QString(QByteArray(QJsonDocument(jstoreData).toJson()).toBase64());
 }
 
 void StoreData::setCurStep(const QJsonObject &jcurStep_)
@@ -249,7 +182,7 @@ bool StoreData::writeToDataFile()
 
     str << elapseExperimentTimer.elapsed() << '\t' <<
            0 << '\t' <<
-           jcurStep["step"].toString() << '\t' <<
+           QString((jcurStep["step"].toString().isEmpty())?"IDLE":jcurStep["step"].toString()) << '\t' <<
            QString::number(Pressure::fromForce(Force::fromNewtons(currentData.value("VerticalPressure_kPa")), Area::fromMetresSquare(jconfig["area"].toString().toDouble())).kiloPascals()) << '\t' <<
            QString::number(Pressure::fromForce(Force::fromNewtons(currentData.value("ShearPressure_kPa")), Area::fromMetresSquare(jconfig["area"].toString().toDouble())).kiloPascals()) << '\t' <<
            QString::number(Pressure::fromForce(Force::fromNewtons(currentData.value("CellPressure_kPa")), Area::fromMetresSquare(jconfig["area"].toString().toDouble())).kiloPascals()) << '\t' <<

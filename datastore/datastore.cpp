@@ -21,9 +21,9 @@ void DataStore::serializeData(QJsonObject &jobj) {
         ds.setByteOrder(QDataStream::BigEndian);
         if (start_time == itStartTime.key()) {
             auto &src_list = itStartTime.value();
-            int start_pos_list = 0;
-            while (src_list[start_pos_list++].first < cur_time);
-            auto prep_list = src_list.mid(start_pos_list);
+            int cur_pos_list = 0;
+            while (src_list.size() > cur_pos_list && src_list[cur_pos_list++].first < cur_time);
+            auto prep_list = src_list.mid(cur_pos_list);
             ds << prep_list;
             jobj[QString::number(itStartTime.key())] = QString(buff.toBase64());
         } else if (start_time < itStartTime.key()) {

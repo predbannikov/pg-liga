@@ -29,8 +29,11 @@ public:
     double relativeTo(Quantity other) const
     {
         double divider = other.siValue();
-        if ((divider < -DIVISION_EPS) || (divider > DIVISION_EPS)) return siValue() / divider;
-        else   {qDebug () << "Measurements: divide by zero #1"; return 0.0;} /// @todo Возвращать код ошибки
+        if ((divider < -DIVISION_EPS) || (divider > DIVISION_EPS))
+            return siValue() / divider;
+        else {
+            return 0.0;
+        } /// @todo Возвращать код ошибки
     }
     bool isValid() const { return !std::isnan(m_siValue); }
     bool isZero() const { return m_siValue == 0; }
@@ -43,8 +46,12 @@ public:
     T operator /(double factor) const
     {
         double divider = factor;
-        if ((divider < -DIVISION_EPS) || (divider > DIVISION_EPS)) return T(m_siValue / divider);
-        else   {qDebug () << "Measurements: divide by zero #2"; return 0.0;} /// @todo Возвращать код ошибки
+        if ((divider < -DIVISION_EPS) || (divider > DIVISION_EPS))
+            return T(m_siValue / divider);
+        else
+        {
+            return 0.0;
+        } /// @todo Возвращать код ошибки
     }
 
     void operator +=(const T &other) { m_siValue += other.m_siValue; }
@@ -55,8 +62,12 @@ public:
     double operator /(const T &other) const
     {
         double divider = other.m_siValue;
-        if ((divider < -DIVISION_EPS) || (divider > DIVISION_EPS)) return m_siValue / divider;
-        else   {qDebug () << "Measurements: divide by zero #3"; return 0.0;} /// @todo Возвращать код ошибки
+        if ((divider < -DIVISION_EPS) || (divider > DIVISION_EPS))
+            return m_siValue / divider;
+        else
+        {
+            return 0.0;
+        } /// @todo Возвращать код ошибки
     }
 
     bool operator ==(const T &other) const { return m_siValue == other.m_siValue; }
@@ -281,7 +292,6 @@ public:
         if ((divider < -DIVISION_EPS) || (divider > DIVISION_EPS))
             return Pressure(force.siValue() / divider);
         else {
-            qDebug () << "Measurements: divide by zero #4";
             return 0.0;                                         /// @todo Возвращать код ошибки
         }
     }

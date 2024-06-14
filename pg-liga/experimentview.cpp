@@ -114,17 +114,7 @@ void ExperimentView::onReadSensors()
     jobj["CMD"] = "read_sensors";
 }
 
-void ExperimentView::on_spinPressure_textChanged(const QString &arg1)
-{
-    onCreateJsonObject();
-}
-
 void ExperimentView::on_comboBox_activated(const QString &arg1)
-{
-    onCreateJsonObject();
-}
-
-void ExperimentView::on_spinCriter_textChanged(const QString &arg1)
 {
     onCreateJsonObject();
 }
@@ -132,14 +122,6 @@ void ExperimentView::on_spinCriter_textChanged(const QString &arg1)
 void ExperimentView::on_dateTimeEdit_timeChanged(const QTime &time)
 {
     onCreateJsonObject();
-}
-
-void ExperimentView::on_btnSendRequest_clicked()
-{
-//    setupPlots();
-    QJsonObject jobj;
-    jobj["CMD"] = "get_store_data";
-    emit sendRequest(jobj);
 }
 
 void ExperimentView::on_btnAddStep_clicked()
@@ -172,20 +154,6 @@ void ExperimentView::on_pushButton_2_clicked()
     ui->textEdit->append(QJsonDocument(jobj).toJson());
     emit sendRequest(jobj);
 
-}
-
-void ExperimentView::on_btnSendConfig_clicked()
-{
-    qDebug() << "IMPL. moved to old pushBtn all_request ";
-//    QJsonObject jobj = QJsonDocument::fromJson(ui->textEdit->toPlainText().toUtf8()).object();
-//    emit sendRequest(jobj);
-}
-
-void ExperimentView::on_btnReadConfig_clicked()
-{
-    QJsonObject jobj;
-    jobj["CMD"] = "read_config";
-    emit sendRequest(jobj);
 }
 
 void ExperimentView::on_btnStart_clicked()
@@ -222,14 +190,15 @@ void ExperimentView::onReadyResponse(const QJsonObject &jobj)
     } else if (CMD == "get_protocol") {
         ui->textEdit->append(QByteArray::fromBase64(jobj["protocol"].toString().toUtf8()));
     } else if (CMD == "get_store_data") {
-        QJsonObject jstoreData = jobj["store_data"].toObject();
+        QJsonObject jstoreData = QJsonDocument::fromJson(QByteArray::fromBase64(jobj["store_data"].toString().toUtf8())).object();
         for (const auto &jkey: jstoreData.keys()) {
             if (!dataStore.contains(jkey)) {
                 dataStore.insert(jkey, DataStore());
             }
             QList<QPair<qint64, float>> allList = dataStore[jkey].deSerializeData(jstoreData[jkey].toObject());
-            if (jkey == "VerticalDeform_mm")
-                data1->append(allList);
+            qDebug() << Q_FUNC_INFO << allList << jstoreData;
+//            if (jkey == "VerticalDeform_mm")
+//                data1->append(allList);
         }
         QJsonObject jsensors = jobj["sensors"].toObject();
         QString out_to_lbl;
@@ -252,19 +221,6 @@ void ExperimentView::onReadyResponse(const QJsonObject &jobj)
 void ExperimentView::on_btnClearLogOut_clicked()
 {
     ui->textEditLogOut->clear();
-}
-
-void ExperimentView::on_btnCloseWindow_clicked()
-{
-    qDebug() << "not implement";
-}
-
-void ExperimentView::on_btnGetProtocol_clicked()
-{
-    QJsonObject jobj;
-    jobj["type"] = "client";
-    jobj["CMD"] = "get_protocol";
-    emit sendRequest(jobj);
 }
 
 void ExperimentView::on_btnClearTextEdit_clicked()
@@ -303,27 +259,11 @@ void ExperimentView::on_btnUnlockPid_clicked()
     emit sendRequest(jobj);
 }
 
-void ExperimentView::on_btnCloseInstr_clicked()
-{
-    QJsonObject jobj;
-    jobj["type"] = "manager";
-    jobj["CMD"] = "close_instr";
-    emit sendRequest(jobj);
-}
-
 void ExperimentView::on_btnSaveImage_clicked()
 {
     deformVsPressure->m_plot->replot();
     QPixmap pxmap = deformVsPressure->grab();
     pxmap.save("test.png", "PNG");
-}
-
-void ExperimentView::on_btnSendTestRequest_clicked()
-{
-    QJsonObject jobj;
-    jobj["type"] = "client";
-    jobj["CMD"] = "get_store_data";
-    emit sendRequest(jobj);
 }
 
 void ExperimentView::on_btnGetStoreData_clicked()
@@ -336,6 +276,30 @@ void ExperimentView::on_btnGetSensorValue_clicked()
     QJsonObject jobj;
     jobj["CMD"] = "get_sensor_value";
     jobj["arg1"] = ui->cmbSensorName->currentText();
+    emit sendRequest(jobj);
+}
+
+
+void ExperimentView::on_btnInitStoreData_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "init_store_data";
+    emit sendRequest(jobj);
+}
+
+
+void ExperimentView::on_btnSetSettings_clicked()
+{
+    QJsonObject jconfig;
+    jconfig["area"] = QString::number(M_PI * pow(ui->spinBoxDiameter->value() / 2., 2) / 100 / 10000);	// 100мм2=1см2, 1см2=10000м2
+    jconfig["name_speciment"] = ui->leNameSpecimen->text();
+
+    QJsonObject jobj;
+    jobj["CMD"] = "settings";
+    jobj["config"] = jconfig;
+
+    ui->textEdit->clear();
+    ui->textEdit->append(QJsonDocument(jobj).toJson());
     emit sendRequest(jobj);
 }
 

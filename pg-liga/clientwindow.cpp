@@ -53,7 +53,6 @@ void ClientWindow::clientConnected()
 {
 //    ui->textEditLogout->append("Client connected:");
     qDebug() << Q_FUNC_INFO;
-    on_updateClientExperiments_clicked();
     setEnableWidget(true);
 }
 
@@ -152,56 +151,11 @@ void ClientWindow::on_sendRequest(QJsonObject &jobj)
     clnt->sendReadyRequest(jobj);
 }
 
-void ClientWindow::on_updateClientExperiments_clicked()
-{
-    QJsonObject jobj;
-    jobj["type"] = "manager";
-    jobj["get"] = "settings";
-    clnt->sendReadyRequest(jobj);
-}
-
 void ClientWindow::setEnableWidget(bool enable)
 {
 //    ui->scrollArea->setEnabled(enable);
     for (auto it: qAsConst(openTabs))
         it->setEnabled(enable);
-}
-
-void ClientWindow::on_pushButton_clicked()
-{
-    QJsonObject jobj;
-    jobj["type"] = "manager";
-    jobj["CMD"] = "stop_manager";
-    clnt->sendReadyRequest(jobj);
-}
-
-void ClientWindow::on_pushButton_2_clicked()
-{
-    QJsonObject jobj;
-    jobj["type"] = "manager";
-    jobj["CMD"] = "stop_modbus";
-    clnt->sendReadyRequest(jobj);
-}
-
-void ClientWindow::on_btnStartModbus_clicked()
-{
-    QJsonObject jobj;
-    jobj["type"] = "manager";
-    jobj["CMD"] = "start_modbus";
-    clnt->sendReadyRequest(jobj);
-}
-
-void ClientWindow::on_btnAddInstr_clicked()
-{
-    QJsonObject jobj;
-    jobj["type"] = "client";
-    jobj["CMD"] = "scan";
-
-
-
-    qDebug().noquote() << Q_FUNC_INFO << jobj;
-    clnt->sendReadyRequest(jobj);
-//    QTimer::singleShot(1000, this, &ServerWindow::on_updateClientExperiments_clicked);
 }
 
 void ClientWindow::on_tabWidget_tabCloseRequested(int index)

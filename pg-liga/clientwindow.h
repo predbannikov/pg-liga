@@ -35,16 +35,6 @@ private slots:
     void on_sendRequest(QJsonObject &jobj);
 //    void on_readyResponse(QJsonObject &jobj);
 
-    void on_updateClientExperiments_clicked();
-
-    void on_pushButton_clicked();
-
-    void on_pushButton_2_clicked();
-
-    void on_btnStartModbus_clicked();
-
-    void on_btnAddInstr_clicked();
-
     void on_tabWidget_tabCloseRequested(int index);
 
     void on_pushButton_3_clicked();

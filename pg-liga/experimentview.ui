@@ -292,105 +292,21 @@
               <string>GroupBox</string>
              </property>
              <layout class="QGridLayout" name="gridLayout_3">
-              <item row="6" column="0">
-               <widget class="QPushButton" name="btnGetSensorValue">
-                <property name="text">
-                 <string>getSensorValue</string>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="2">
-               <widget class="QPushButton" name="btnMoveDown">
-                <property name="text">
-                 <string>moveDown</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="0">
-               <widget class="QPushButton" name="btnSendTestRequest">
-                <property name="text">
-                 <string>sendRequest</string>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="2">
-               <widget class="QPushButton" name="btnSaveImage">
-                <property name="text">
-                 <string>save image</string>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="3">
-               <widget class="QPushButton" name="btnStopStepper">
-                <property name="text">
-                 <string>stop</string>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="0">
-               <widget class="QPushButton" name="btnCreateGraph">
-                <property name="text">
-                 <string>graph</string>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="0">
+              <item row="3" column="0">
                <widget class="QPushButton" name="btnMoveUp">
                 <property name="text">
                  <string>moveUp</string>
                 </property>
                </widget>
               </item>
-              <item row="10" column="0">
+              <item row="8" column="0">
                <widget class="QPushButton" name="btnUnlockPid">
                 <property name="text">
                  <string>unlockPID</string>
                 </property>
                </widget>
               </item>
-              <item row="3" column="0">
-               <widget class="QPushButton" name="btnGetStoreData">
-                <property name="text">
-                 <string>getStoreData</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="0">
-               <widget class="QPushButton" name="btnGetProtocol">
-                <property name="text">
-                 <string>getProto</string>
-                </property>
-               </widget>
-              </item>
-              <item row="11" column="2">
-               <widget class="QPushButton" name="btnCloseWindow">
-                <property name="text">
-                 <string>closeManager</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="0">
-               <widget class="QPushButton" name="pushButton_2">
-                <property name="text">
-                 <string>setExperiment</string>
-                </property>
-               </widget>
-              </item>
-              <item row="11" column="0">
-               <widget class="QPushButton" name="btnCloseInstr">
-                <property name="text">
-                 <string>closeInstr</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="2">
-               <widget class="QPushButton" name="btnStart">
-                <property name="text">
-                 <string>Start</string>
-                </property>
-               </widget>
-              </item>
-              <item row="6" column="2">
+              <item row="4" column="3">
                <widget class="QComboBox" name="cmbSensorName">
                 <item>
                  <property name="text">
@@ -432,6 +348,89 @@
                   <string>SensBase</string>
                  </property>
                 </item>
+               </widget>
+              </item>
+              <item row="3" column="4">
+               <widget class="QPushButton" name="btnStopStepper">
+                <property name="text">
+                 <string>stop</string>
+                </property>
+               </widget>
+              </item>
+              <item row="9" column="0">
+               <spacer name="verticalSpacer">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item row="3" column="3">
+               <widget class="QPushButton" name="btnMoveDown">
+                <property name="text">
+                 <string>moveDown</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QPushButton" name="btnCreateGraph">
+                <property name="text">
+                 <string>graph</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="3">
+               <widget class="QPushButton" name="btnGetStoreData">
+                <property name="text">
+                 <string>getStoreData</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="3">
+               <widget class="QPushButton" name="btnSaveImage">
+                <property name="text">
+                 <string>save image</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QPushButton" name="btnInitStoreData">
+                <property name="text">
+                 <string>initStoreData</string>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="0">
+               <widget class="QPushButton" name="btnGetSensorValue">
+                <property name="text">
+                 <string>getSensorValue</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0">
+               <widget class="QPushButton" name="btnSetSettings">
+                <property name="text">
+                 <string>setSettings</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="4">
+               <widget class="QPushButton" name="btnStart">
+                <property name="text">
+                 <string>Start</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="3">
+               <widget class="QPushButton" name="pushButton_2">
+                <property name="text">
+                 <string>setExperiment</string>
+                </property>
                </widget>
               </item>
              </layout>

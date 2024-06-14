@@ -26,8 +26,10 @@ void Interface::write(QJsonObject &jOperation)
 void Interface::read(QJsonObject &jOperation)
 {
     QMutexLocker lock(&mtx);
-    if (!queueRequest.isEmpty())
+    if (!queueRequest.isEmpty()) {
         jobjTaked = QJsonObject(queueRequest.takeFirst());
+        qDebug() << Q_FUNC_INFO << jobjTaked;
+    }
     else
         jobjTaked = QJsonObject();
     jOperation = jobjTaked;

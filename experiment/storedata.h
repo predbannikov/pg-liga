@@ -8,6 +8,7 @@
 #include <QDateTime>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QJsonDocument>
 #include "sensors.h"
 #include <limits>
 #include <QList>
@@ -166,7 +167,7 @@ private:
     QJsonObject jcurStep;
     QVector <Sensor*> sensors;
 
-    InstrumentType type = LIGA_KL0S_2Load_1T;
+    InstrumentType type = LIGA_KL0_1T;
     bool writeToDataFile();
 
     QElapsedTimer elapseExperimentTimer;
