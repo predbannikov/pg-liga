@@ -16,12 +16,12 @@ void ClientManager::readyRead(QJsonObject &jobj)
     experiment->put(jobj);
 }
 
-void ClientManager::procQueue(const QJsonObject &jResponse)
+void ClientManager::procQueue(QJsonObject jResponse)
 {
-    queueResponse.push_back(jResponse);
-    while(!queueResponse.isEmpty()) {
-        QJsonObject jobj(queueResponse.takeFirst());
-        jobj["responseComplated"] = "responseComplated";
-        write(jobj);
-    }
+    write(jResponse);
+//    queueResponse.push_back(jResponse);
+//    while(!queueResponse.isEmpty()) {
+//        QJsonObject jobj(queueResponse.takeFirst());
+//        jobj["responseComplated"] = "responseComplated";
+//    }
 }

@@ -198,8 +198,14 @@ void ExperimentView::on_btnStart_clicked()
 
 void ExperimentView::onReadyResponse(const QJsonObject &jobj)
 {
+    qDebug() << Q_FUNC_INFO << jobj;
 //    ui->textEditLogOut->append(QString(QJsonDocument(jobj).toJson()).replace('\n', ' '));
-    if (jobj["CMD"].toString() == "read_sensors") {
+    QString CMD = jobj["CMD"].toString();
+    if (CMD == "get_sensor_value") {
+        double value = jobj["value"].toString().toDouble();
+        data1->append(value);
+    }
+    if (CMD == "read_sensors") {
         QJsonObject jsensors = jobj["sensors"].toObject();
         QString out_to_lbl;
         QStringList keys = jsensors.keys();
@@ -213,9 +219,9 @@ void ExperimentView::onReadyResponse(const QJsonObject &jobj)
             }
         }
         ui->lblSensors->setText(out_to_lbl);
-    } else if (jobj["CMD"].toString() == "get_protocol") {
+    } else if (CMD == "get_protocol") {
         ui->textEdit->append(QByteArray::fromBase64(jobj["protocol"].toString().toUtf8()));
-    } else if (jobj["CMD"].toString() == "get_store_data") {
+    } else if (CMD == "get_store_data") {
         QJsonObject jstoreData = jobj["store_data"].toObject();
         for (const auto &jkey: jstoreData.keys()) {
             if (!dataStore.contains(jkey)) {

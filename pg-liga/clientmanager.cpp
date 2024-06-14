@@ -10,6 +10,7 @@ ClientManager::~ClientManager()
 }
 
 void ClientManager::readyRead(QJsonObject &jobj) {
+    qDebug() << jobj;
     emit readyReadResponse(jobj);
 }
 

@@ -43,7 +43,7 @@ public:
 signals:
     /// send to modbus
     void sendRequestToModbus(QJsonObject &);
-    void sendRequestToClient(const QJsonObject &);
+    void sendRequestToClient(QJsonObject);
 
 private:
 //    ModbusClient *modbusClient;

@@ -25,7 +25,10 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tabWidget->insertTab(0, grid, "Список");
     QTimer::singleShot(100, this, &MainWindow::addInstruments);
 
-
+    connect(&timerFFlush, &QTimer::timeout, [](){
+        fflush(stderr);
+    });
+    timerFFlush.start(1000);
 }
 
 MainWindow::~MainWindow()

@@ -5,6 +5,7 @@
 #include <QScrollArea>
 #include <QLayout>
 #include <QLabel>
+#include <QTimer>
 #include <QPushButton>
 #include "Settings/settingsmanager.h"
 #include "Settings/settingsdialog.h"
@@ -44,6 +45,8 @@ private:
 
     InstrumentGrid *grid = nullptr;
     Ui::MainWindow *ui;
+
+    QTimer timerFFlush;
 };
 
 class FlowLayout : public QLayout

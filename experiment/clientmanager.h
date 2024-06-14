@@ -28,7 +28,7 @@ signals:
 //    void sendReqeust(QJsonObject);
 
 public slots:
-    void procQueue(const QJsonObject &jResponse);
+    void procQueue(QJsonObject jResponse);
 //    void readyReadPDU(const QJsonObject &jobj);
 
 //    void readyRead();

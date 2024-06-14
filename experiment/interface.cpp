@@ -86,7 +86,8 @@ void Interface::read(QJsonObject &jOperation)
 void Interface::put(QJsonObject &jobj)
 {
     QMutexLocker lock(&mtx);
-    queueRequest.push_back(std::move(jobj));
+    if (!queueRequest.contains(jobj))
+        queueRequest.push_back(std::move(jobj));
 //    notEmpty.notify_one();
 }
 
