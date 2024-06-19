@@ -206,7 +206,7 @@ bool SerialPort::isValidResponse(const QByteArray &data) {
 
 bool SerialPort::connectDevice ()
 {
-    if(!(port->isOpen())) {
+    if(!port->isOpen()) {
         if(port->open(QIODevice::ReadWrite)) {
             port->setBreakEnabled(false);
             qDebug() << Q_FUNC_INFO << port->portName() << "OPEN";
@@ -223,7 +223,7 @@ bool SerialPort::connectDevice ()
 void SerialPort::init()
 {
     port = new QSerialPort(this);
-    port->setPortName("COM8");
+    port->setPortName("COM3");
     port->setFlowControl(QSerialPort::NoFlowControl);
     port->setBaudRate   (QSerialPort::Baud115200);
     port->setParity     (QSerialPort::EvenParity);

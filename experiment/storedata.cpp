@@ -80,7 +80,7 @@ void StoreData::updateData()
         switch (sensors[i]->funCode) {
         case SensLoad0:
             currentData.insert("VerticalPressure_kPa", sensors[i]->value);
-            data["VerticalPressure_kPa"].append(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
+            data["VerticalPressure_kPa"].append(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value);
             break;
         case SensDef0:
             currentData.insert("VerticalDeform_mm", sensors[i]->value);

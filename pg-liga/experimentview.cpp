@@ -31,24 +31,25 @@ void ExperimentView::setupPlots()
 
     /* First Experiment Plots */
 //    auto deformVsTime = new DecoratedPlot(this);
-
-    data1 = new ExperimentData(this);
-    QDateTime time = QDateTime::currentDateTime();
-
+    dataDeform = new ExperimentData(this);
+//    QDateTime time = QDateTime::currentDateTime();
 //    data1->append(3, time.addMSecs(0));
+    deformVsTime = new DecoratedPlot(this);
+    deformVsTime->addTrace(dataDeform, tr("Время (t, мин)"), tr("Деформация, %1").arg(Strings::mm));
+    ui->tabGraphics->addTab(deformVsTime, tr("Вертикальная деформация (t)"));
 
-
-    deformVsPressure = new DecoratedPlot(this);
-    deformVsPressure->addTrace(data1, tr("Время (t, мин)"), tr("Деформация, %1").arg(Strings::mm));
-    ui->tabGraphics->addTab(deformVsPressure, tr("Вертикальная деформация (t)"));
+    dataPressure = new ExperimentData(this);
+    pressureVsTime = new DecoratedPlot(this);
+    pressureVsTime->addTrace(dataPressure, tr("Время (t, мин)"), tr("Сила %1").arg(Strings::N));
+    ui->tabGraphics->addTab(pressureVsTime, tr("Сила (H)"));
 
 }
 
 void ExperimentView::clearData()
 {
-    data1->clearData();
+    dataDeform->clearData();
     dataStore.clear();
-    deformVsPressure->m_plot->replot();
+    deformVsTime->m_plot->replot();
 }
 
 qint64 ExperimentView::timeInterval(const QString& date, const QString& format)
@@ -166,12 +167,12 @@ void ExperimentView::on_btnStart_clicked()
 
 void ExperimentView::onReadyResponse(const QJsonObject &jobj)
 {
-    qDebug() << Q_FUNC_INFO << jobj;
+//    qDebug() << Q_FUNC_INFO << jobj;
 //    ui->textEditLogOut->append(QString(QJsonDocument(jobj).toJson()).replace('\n', ' '));
     QString CMD = jobj["CMD"].toString();
     if (CMD == "get_sensor_value") {
         double value = jobj["value"].toString().toDouble();
-        data1->append(value);
+        dataDeform->append(value);
     }
     if (CMD == "read_sensors") {
         QJsonObject jsensors = jobj["sensors"].toObject();
@@ -191,14 +192,20 @@ void ExperimentView::onReadyResponse(const QJsonObject &jobj)
         ui->textEdit->append(QByteArray::fromBase64(jobj["protocol"].toString().toUtf8()));
     } else if (CMD == "get_store_data") {
         QJsonObject jstoreData = QJsonDocument::fromJson(QByteArray::fromBase64(jobj["store_data"].toString().toUtf8())).object();
+//        qDebug() << Q_FUNC_INFO << "jstoreData" << jstoreData;
         for (const auto &jkey: jstoreData.keys()) {
             if (!dataStore.contains(jkey)) {
+//                qDebug() << QString("key%1    value%2").arg(jkey).arg(QJsonDocument::fromJson(QByteArray::fromBase64(jstoreData.value(jkey).toString().toUtf8())).object());
                 dataStore.insert(jkey, DataStore());
             }
             QList<QPair<qint64, float>> allList = dataStore[jkey].deSerializeData(jstoreData[jkey].toObject());
-            qDebug() << Q_FUNC_INFO << allList << jstoreData;
-//            if (jkey == "VerticalDeform_mm")
-//                data1->append(allList);
+            qDebug() << Q_FUNC_INFO << "allList" << jkey << allList;
+            if (jkey == "VerticalDeform_mm") {
+                dataDeform->append(allList);
+            }
+            if (jkey == "VerticalPressure_kPa") {
+                dataPressure->append(allList);
+            }
         }
         QJsonObject jsensors = jobj["sensors"].toObject();
         QString out_to_lbl;
@@ -213,7 +220,7 @@ void ExperimentView::onReadyResponse(const QJsonObject &jobj)
             }
         }
         ui->lblSensors->setText(out_to_lbl);
-        qDebug() << "stop";
+//        qDebug() << "stop";
 //        qDebug() << dataStore;
     }
 }
@@ -261,8 +268,8 @@ void ExperimentView::on_btnUnlockPid_clicked()
 
 void ExperimentView::on_btnSaveImage_clicked()
 {
-    deformVsPressure->m_plot->replot();
-    QPixmap pxmap = deformVsPressure->grab();
+    deformVsTime->m_plot->replot();
+    QPixmap pxmap = deformVsTime->grab();
     pxmap.save("test.png", "PNG");
 }
 

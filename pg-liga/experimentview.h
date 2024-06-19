@@ -28,6 +28,7 @@ static const auto position = QObject::tr("положение");
 
 static const auto kPa = QObject::tr("кПа");
 static const auto kN = QObject::tr("кН");
+static const auto N = QObject::tr("H");
 static const auto mm = QObject::tr("мм");
 static const auto mm3 = QObject::tr("мм³");
 static const auto cm3 = QObject::tr("см³");
@@ -108,8 +109,10 @@ private:
 
     QMap<QString, ExperimentData*> m_deformData;
     QMap<QString, ExperimentData*> m_presureData;
-    DecoratedPlot *deformVsPressure = nullptr;
-    ExperimentData *data1 = nullptr;
+    DecoratedPlot *deformVsTime = nullptr;
+    DecoratedPlot *pressureVsTime = nullptr;
+    ExperimentData *dataDeform = nullptr;
+    ExperimentData *dataPressure = nullptr;
 
     QList <QLineEdit*> steps;
     QJsonObject jRequest;

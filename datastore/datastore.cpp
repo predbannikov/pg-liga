@@ -13,7 +13,7 @@ void DataStore::serializeData(QJsonObject &jobj) {
     qint64 cur_time = jobj["cur_time"].toString().toInt();
     jobj = QJsonObject();
 
-    auto itStartTime = data.begin();
+    QMap<qint64, QList<QPair<qint64, float>>>::iterator itStartTime = data.begin();
     for (; itStartTime != data.end(); itStartTime++) {
         QByteArray buff;
         QDataStream ds(&buff, QIODevice::ReadWrite);
@@ -74,12 +74,13 @@ void DataStore::append(qint64 start_time, qint64 cur_time, float value, float ep
     if (!data.contains(start_time)) {
         data.insert(start_time, {{cur_time, value}});
     } else {
-        if (abs (data[start_time].last().second - (value)) > eps) {
-            if (last.first != data[start_time].last().first)
-                data[start_time].append(last);
+        double diffValue = fabs (data[start_time].last().second - (value));
+        if (diffValue > eps) {
             data[start_time].append({cur_time, value});
+//            if (last.first != data[start_time].last().first)
+//                data[start_time].append(last);
         }
-        last = {cur_time, value};
+//        last = {cur_time, value};
     }
 }
 

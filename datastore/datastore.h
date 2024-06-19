@@ -26,7 +26,14 @@ public:
 
     float valueFromBack(qint64 step_time, qint64 time);
 
-    void append(qint64 start_time, qint64 cur_time, float value, float eps = 0.01);
+    /**
+     * @brief append            Добавить точку в хранилище
+     * @param start_time        время начала ступени
+     * @param cur_time          текущее время
+     * @param value
+     * @param eps
+     */
+    void append(qint64 start_time, qint64 cur_time, float value, float eps = 0.00001);
 
     void fixAppend(qint64 start_time, qint64 cur_time, float value);
 
