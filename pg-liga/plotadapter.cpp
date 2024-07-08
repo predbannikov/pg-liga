@@ -4,7 +4,7 @@
 
 #include "experimentdata.h"
 
-static constexpr auto SECONDS_IN_MINUTE = 60.0;
+static constexpr auto SECONDS_IN_MINUTE = 1.0;     // TODO CHANGED 60
 
 PlotAdapter::PlotAdapter(ExperimentData *model):
     m_model(model)

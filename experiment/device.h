@@ -45,7 +45,9 @@ public:
 
     RETCODE next(QJsonObject &jOperation);
 
-    RETCODE setPresure(QJsonObject &jOperation);
+    RETCODE setTarget(QJsonObject &jOperation);
+
+    RETCODE setHz(QJsonObject &jOperation);
 
     RETCODE statusSensors(QJsonObject &jOperation);
 
@@ -64,7 +66,7 @@ public:
     RETCODE writeConfig(QJsonObject &jobj);
     void startProcess();
     RETCODE moveFrame(QJsonObject &jobj);
-    void unlockPID();
+    RETCODE unlockPID(QJsonObject &jobj);
     RETCODE stopFrame(QJsonObject &jobj);
     void manualNextStep();
     void readSensors(QJsonObject &jobj);
@@ -73,7 +75,7 @@ public:
     void switchToServiceMode(QJsonObject &jobj);
 
 
-    Measurements::Pressure targetPresure;
+    Measurements::Force targetNewtones;
     Measurements::Area area;
 
     QJsonArray jsteps;

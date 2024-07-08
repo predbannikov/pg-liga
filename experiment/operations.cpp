@@ -104,7 +104,11 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
     } else if (jobj["CMD"].toString() == "stop_frame") {
         return loadFrame.stopFrame(jobj);
     } else if (jobj["CMD"].toString() == "unlock_PID") {
-        loadFrame.unlockPID();
+        return loadFrame.unlockPID(jobj);
+    } else if (jobj["CMD"].toString() == "set_target") {
+        return loadFrame.setTarget(jobj);
+    } else if (jobj["CMD"].toString() == "set_hz") {
+        return loadFrame.setHz(jobj);
     }
 
     return COMPLATE;

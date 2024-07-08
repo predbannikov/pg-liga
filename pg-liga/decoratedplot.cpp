@@ -90,7 +90,10 @@ void DecoratedPlot::addTrace(ExperimentData *data, const QString &xlabel, const 
 
     curve->setData(adapter);
     curve->setPen(Qt::darkGreen, 2.0);
+//    curve->setStyle(QwtPlotCurve::Lines);
     curve->setRenderHint(QwtPlotItem::RenderAntialiased, true);
+
+//    curve->setCurveAttribute(QwtPlotCurve::Fitted);
 
     curve->attach(m_plot);
 

@@ -22,49 +22,49 @@ RETCODE Controller::setTarget(QJsonObject &jOperation, float newtons)
     case STATE_SET_TARGET:
         ret = write(jOperation, ControllerSet);
         if (ret == COMPLATE)
-            stateSet = STATE_SET_PID_P_VALUE;
-        else if (ret == ERROR) {
-            stateSet = STATE_SET_TARGET_VALUE;
-            return ERROR;
-        }
-        break;
-    case STATE_SET_PID_P_VALUE:
-        ret = write(jOperation, 7.5);                    // TODO
-        if (ret == COMPLATE)
-            stateSet = STATE_SET_PID_P;
-        else if (ret == ERROR) {
-            stateSet = STATE_SET_TARGET_VALUE;
-            return ERROR;
-        }
-        break;
-    case STATE_SET_PID_P:
-        ret = write(jOperation, ControllerSetKp);
-        if (ret == COMPLATE)
-            stateSet = STATE_SET_PID_D_VALUE;
-        else if (ret == ERROR) {
-            stateSet = STATE_SET_TARGET_VALUE;
-            return ERROR;
-        }
-        break;
-    case STATE_SET_PID_D_VALUE:
-        ret = write(jOperation, 75.);                    // TODO
-        if (ret == COMPLATE)
-            stateSet = STATE_SET_PID_D;
-        else if (ret == ERROR) {
-            stateSet = STATE_SET_TARGET_VALUE;
-            return ERROR;
-        }
-        break;
-    case STATE_SET_PID_D:
-        ret = write(jOperation, ControllerSetKd);
-        if (ret == COMPLATE) {
             stateSet = STATE_ACTIVATE_PID_VALUE;
-        }
         else if (ret == ERROR) {
             stateSet = STATE_SET_TARGET_VALUE;
             return ERROR;
         }
         break;
+//    case STATE_SET_PID_P_VALUE:
+//        ret = write(jOperation, 7.5);                    // TODO
+//        if (ret == COMPLATE)
+//            stateSet = STATE_SET_PID_P;
+//        else if (ret == ERROR) {
+//            stateSet = STATE_SET_TARGET_VALUE;
+//            return ERROR;
+//        }
+//        break;
+//    case STATE_SET_PID_P:
+//        ret = write(jOperation, ControllerSetKp);
+//        if (ret == COMPLATE)
+//            stateSet = STATE_SET_PID_D_VALUE;
+//        else if (ret == ERROR) {
+//            stateSet = STATE_SET_TARGET_VALUE;
+//            return ERROR;
+//        }
+//        break;
+//    case STATE_SET_PID_D_VALUE:
+//        ret = write(jOperation, 75.);                    // TODO
+//        if (ret == COMPLATE)
+//            stateSet = STATE_SET_PID_D;
+//        else if (ret == ERROR) {
+//            stateSet = STATE_SET_TARGET_VALUE;
+//            return ERROR;
+//        }
+//        break;
+//    case STATE_SET_PID_D:
+//        ret = write(jOperation, ControllerSetKd);
+//        if (ret == COMPLATE) {
+//            stateSet = STATE_ACTIVATE_PID_VALUE;
+//        }
+//        else if (ret == ERROR) {
+//            stateSet = STATE_SET_TARGET_VALUE;
+//            return ERROR;
+//        }
+//        break;
     case STATE_ACTIVATE_PID_VALUE:
         ret = write(jOperation, 1);                      // (0x0 - stop, 0x1 - locked, 0x11 - fast
         if (ret == COMPLATE) {
@@ -84,6 +84,28 @@ RETCODE Controller::setTarget(QJsonObject &jOperation, float newtons)
         else if (ret == ERROR) {
             stateSet = STATE_SET_TARGET_VALUE;
             return ERROR;
+        }
+        break;
+    }
+    return NOERROR;
+}
+
+RETCODE Controller::setHz(QJsonObject &jOperation, float hz)
+{
+    switch (stateSetHz) {
+    case STATE_SET_HZ_WRITE:
+        qDebug() << "STATE_SET_HZ_WRITE";
+        if (write(jOperation, hz) == COMPLATE) {
+            stateSetHz = STATE_SET_HZ_CMD;
+            QThread::msleep(100);       // Если убрать задержку зависает , не двигается рама но отвечает успешно на комманды
+        }
+        break;
+    case STATE_SET_HZ_CMD:
+        qDebug() << "STATE_SET_HZ_CMD";
+        if (write(jOperation, ControllerSetHz) == COMPLATE) {
+            stateSetHz = STATE_SET_HZ_WRITE;
+            QThread::msleep(100);       // Если убрать задержку зависает , не двигается рама но отвечает успешно на комманды
+            return COMPLATE;
         }
         break;
     }

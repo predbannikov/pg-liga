@@ -13,7 +13,7 @@ LoadFrame::LoadFrame() :
     controller(CtrlLoad0Addr, CtrlLoad0)
 
 {
-    targetPresure = Measurements::Pressure::fromKiloPascals(50.);
+    targetNewtones = Measurements::Force::fromNewtons(50.);
     area.setSiValue(0.004003928);
     timeElapse.start();
 
@@ -161,51 +161,71 @@ RETCODE LoadFrame::next(QJsonObject &jOperation)
     return ret;
 }
 
-RETCODE LoadFrame::setPresure(QJsonObject &jOperation)
+RETCODE LoadFrame::setTarget(QJsonObject &jOperation)
 {
 //    double newtones = 0;
     RETCODE ret = ERROR;
 
-    switch (statePresure) {
-    case STATE_PRESURE_1:
-//        newtones = targetPresure.siValue() * area.siValue();
-        targetPresure = Pressure::fromKiloPascals(jcurStep["pressure"].toString().toDouble());
-        ret = controller.setTarget(jOperation, targetPresure.pascals() * area.siValue());      // 200.19642105368277
-        if (ret == COMPLATE) {
-            statePresure = STATE_PRESURE_2;
-        }
-        else if (ret == ERROR) {
-            statePresure = STATE_PRESURE_1;
+
+    targetNewtones = Force::fromNewtons(jOperation["target"].toDouble());
+    ret = controller.setTarget(jOperation, targetNewtones.newtons());      // 200.19642105368277
+//    if (ret == COMPLATE) {
+//        statePresure = STATE_PRESURE_2;
+//    }
+//    else if (ret == ERROR) {
+//        statePresure = STATE_PRESURE_1;
+////            return ERROR;
+//    }
+
+
+//    switch (statePresure) {
+//    case STATE_PRESURE_1:
+////        newtones = targetPresure.siValue() * area.siValue();
+//        targetNewtones = Force::fromNewtons(jcurStep["target"].toDouble());
+//        ret = controller.setTarget(jOperation, targetNewtones.newtons());      // 200.19642105368277
+//        if (ret == COMPLATE) {
+//            statePresure = STATE_PRESURE_2;
+//        }
+//        else if (ret == ERROR) {
+//            statePresure = STATE_PRESURE_1;
+////            return ERROR;
+//        }
+//        break;
+//    case STATE_PRESURE_2:
+//        ret = statusSensors(jOperation);
+//        if (ret == COMPLATE) {
+//            double diffPressure = abs(Pressure::fromPascals(forceSens.value / area.siValue()).siValue() - targetNewtones.pascals());
+//            qDebug() << "\n### taretPressure =" << targetNewtones.kiloPascals();
+//            qDebug() << "force =" << Force::fromNewtons(forceSens.value).newtons() << "(N)"
+//                     << "\t\tpressure =" << Pressure::fromForce(Force::fromNewtons(forceSens.value), area).kiloPascals() << "(kP)"
+//                     << "\t\tdeform =" << Length::fromMicrometres(deformSens.value).millimetres() << "(mm)"
+//                     << "\t\tstepper pos =" << stepper.position
+//                     << "\t\tstepper_status =" << stepper.status
+//                     << "\t\tcounter =" << counter;
+//            fflush(stderr);
+//            if (diffPressure < Measurements::Pressure::fromKiloPascals(1).siValue()) {
+//                qDebug() << "set" << targetNewtones.kiloPascals() << "kP success";
+//                statePresure = STATE_PRESURE_1;
+////                QThread::currentThread()->msleep(15000);
+//                return COMPLATE;
+//            }
+//            QThread::currentThread()->msleep(100);
+//        }
+//        else if (ret == ERROR) {
+//            statePresure = STATE_PRESURE_1;
 //            return ERROR;
-        }
-        break;
-    case STATE_PRESURE_2:
-        ret = statusSensors(jOperation);
-        if (ret == COMPLATE) {
-            double diffPressure = abs(Pressure::fromPascals(forceSens.value / area.siValue()).siValue() - targetPresure.pascals());
-            qDebug() << "\n### taretPressure =" << targetPresure.kiloPascals();
-            qDebug() << "force =" << Force::fromNewtons(forceSens.value).newtons() << "(N)"
-                     << "\t\tpressure =" << Pressure::fromForce(Force::fromNewtons(forceSens.value), area).kiloPascals() << "(kP)"
-                     << "\t\tdeform =" << Length::fromMicrometres(deformSens.value).millimetres() << "(mm)"
-                     << "\t\tstepper pos =" << stepper.position
-                     << "\t\tstepper_status =" << stepper.status
-                     << "\t\tcounter =" << counter;
-            fflush(stderr);
-            if (diffPressure < Measurements::Pressure::fromKiloPascals(1).siValue()) {
-                qDebug() << "set" << targetPresure.kiloPascals() << "kP success";
-                statePresure = STATE_PRESURE_1;
-//                QThread::currentThread()->msleep(15000);
-                return COMPLATE;
-            }
-            QThread::currentThread()->msleep(100);
-        }
-        else if (ret == ERROR) {
-            statePresure = STATE_PRESURE_1;
-            return ERROR;
-        }
-        break;
-    }
-    return NOERROR;
+//        }
+//        break;
+//    }
+//    return NOERROR;
+    return ret;
+}
+
+RETCODE LoadFrame::setHz(QJsonObject &jOperation)
+{
+    RETCODE ret = ERROR;
+    double hz = jOperation["hz"].toDouble();
+    ret = controller.setHz(jOperation, hz);
 }
 
 RETCODE LoadFrame::statusSensors(QJsonObject &jOperation)
@@ -238,7 +258,8 @@ RETCODE LoadFrame::statusSensors(QJsonObject &jOperation)
             readSensState = READ_SENS_6;
         break;
     case READ_SENS_6:
-        ret = controller.readStatus(jOperation);
+//        ret = controller.readStatus(jOperation);
+        ret = COMPLATE;
         if (ret == COMPLATE) {
             readSensState = READ_SENS_1;
             if (store != nullptr)
@@ -269,7 +290,7 @@ RETCODE LoadFrame::compression(QJsonObject &jOperation)
         }
         break;
     case STATE_INIT:
-        ret = setPresure(jOperation);
+        ret = setTarget(jOperation);
         if (ret == COMPLATE) {
             if (jcurStep["criterion"].toString() == "time") {
                 state_cmprs = STATE_CRITERION_TIME;
@@ -467,11 +488,13 @@ RETCODE LoadFrame::moveFrame(QJsonObject &jobj)
     return stepper.setSpeed(jobj, cur_speed);
 }
 
-void LoadFrame::unlockPID()
+RETCODE LoadFrame::unlockPID(QJsonObject &jobj)
 {
-    if (state != STATE_IDLE)
-        qDebug() << "WARNING experiment reseting!!!";
-    state = STATE_UNLOCK_PID;
+
+//    if (state != STATE_IDLE)
+//        qDebug() << "WARNING experiment reseting!!!";
+//    state = STATE_UNLOCK_PID;
+    return controller.stopPID(jobj);
 }
 
 RETCODE LoadFrame::stopFrame(QJsonObject &jobj)

@@ -17,6 +17,8 @@ ExperimentView::ExperimentView(QWidget *parent) :
     size << 100 << 0;
     ui->splitter->setSizes(size);
     setupPlots();
+
+    connect(&timerIntervalUpdate, &QTimer::timeout, this, &ExperimentView::onReadDataStore);
 }
 
 ExperimentView::~ExperimentView()
@@ -199,7 +201,7 @@ void ExperimentView::onReadyResponse(const QJsonObject &jobj)
                 dataStore.insert(jkey, DataStore());
             }
             QList<QPair<qint64, float>> allList = dataStore[jkey].deSerializeData(jstoreData[jkey].toObject());
-            qDebug() << Q_FUNC_INFO << "allList" << jkey << allList;
+//            qDebug() << Q_FUNC_INFO << "allList" << jkey << allList;
             if (jkey == "VerticalDeform_mm") {
                 dataDeform->append(allList);
             }
@@ -289,8 +291,10 @@ void ExperimentView::on_btnGetSensorValue_clicked()
 
 void ExperimentView::on_btnInitStoreData_clicked()
 {
+    on_btnClearDataStore_clicked();
     QJsonObject jobj;
     jobj["CMD"] = "init_store_data";
+    timerIntervalUpdate.start(3000);
     emit sendRequest(jobj);
 }
 
@@ -307,6 +311,37 @@ void ExperimentView::on_btnSetSettings_clicked()
 
     ui->textEdit->clear();
     ui->textEdit->append(QJsonDocument(jobj).toJson());
+    emit sendRequest(jobj);
+}
+
+
+void ExperimentView::on_btnSetTarget_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "set_target";
+    jobj["target"] = ui->spinTarget->value();
+    emit sendRequest(jobj);
+}
+
+
+void ExperimentView::on_btnClearDataStore_clicked()
+{
+    dataStore.clear();
+
+    dataDeform->clearData();
+    dataDeform->clear();
+    dataPressure->clearData();
+    dataPressure->clear();
+    deformVsTime->m_plot->replot();
+    pressureVsTime->m_plot->replot();
+}
+
+
+void ExperimentView::on_btnSetHz_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "set_hz";
+    jobj["hz"] = ui->spinHz->value();
     emit sendRequest(jobj);
 }
 

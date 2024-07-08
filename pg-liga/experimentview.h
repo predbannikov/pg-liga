@@ -97,6 +97,12 @@ private slots:
 
     void on_btnSetSettings_clicked();
 
+    void on_btnSetTarget_clicked();
+
+    void on_btnClearDataStore_clicked();
+
+    void on_btnSetHz_clicked();
+
 signals:
     void sendRequest(QJsonObject &jobj);
 
@@ -118,6 +124,7 @@ private:
     QJsonObject jRequest;
     Ui::ExperimentView *ui;
     qint64 timeInterval(const QString &date, const QString &format);
+    QTimer timerIntervalUpdate;
 };
 
 #endif // EXPERIMENTVIEW_H

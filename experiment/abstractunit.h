@@ -47,6 +47,8 @@ protected:
         ControllerSetKi  = 0x3300,
         ControllerSetKd  = 0x3400,
         ControllerStatus = 0x3500,
+
+        ControllerSetHz  = 0x5000
     };
     RETCODE ret = ERROR;
     STATE stateRead = STATE_0x10_WRITE;

@@ -7,8 +7,9 @@
 
 class Controller : public AbstractUnit
 {
-    enum STATE_SET { STATE_SET_TARGET_VALUE, STATE_SET_TARGET, STATE_SET_PID_P_VALUE, STATE_SET_PID_P, STATE_SET_PID_D_VALUE, STATE_SET_PID_D, STATE_ACTIVATE_PID_VALUE, STATE_ACTIVATE_PID} stateSet;
+    enum STATE_SET { STATE_SET_TARGET_VALUE, STATE_SET_TARGET, STATE_SET_PID_P_VALUE, STATE_SET_PID_P, STATE_SET_PID_D_VALUE, STATE_SET_PID_D, STATE_ACTIVATE_PID_VALUE, STATE_ACTIVATE_PID};
     enum STATE_UNLOCK {STATE_UNLOCK_START, STATE_UNLOCK_SET_VALUE, STATE_UNLOCK_SET_CMD, STATE_HANDLE_ERROR} stateUnlock = STATE_UNLOCK_SET_VALUE;
+    enum STATE_SET_HZ {STATE_SET_HZ_WRITE, STATE_SET_HZ_CMD};
     struct PIDParameters {
         double p;
         double i;
@@ -30,11 +31,14 @@ public:
 
     RETCODE setKd(QJsonObject &jOperation);
 
+    RETCODE setHz(QJsonObject &jOperation, float hz);
+
 //    RETCODE setPID(StatusOperation &operation, float p, float i, float d);
 
     RETCODE stopPID(QJsonObject &jOperation);
 
-
+    STATE_SET stateSet = STATE_SET_TARGET_VALUE;
+    STATE_SET_HZ stateSetHz = STATE_SET_HZ_WRITE;
 
 
 private:

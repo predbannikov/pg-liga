@@ -5,11 +5,11 @@ SUBDIRS += \
  datastore \
  network \
  experiment \
- experiment-manager \
+# experiment-manager \
 # modbus-server \
- repositarion-server \
+# repositarion-server \
  measurements \
- uploader
+# uploader
 
 enable-gui-client {
   message(gui_client_enabled)
