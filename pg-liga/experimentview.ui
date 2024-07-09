@@ -292,14 +292,7 @@
               <string>GroupBox</string>
              </property>
              <layout class="QGridLayout" name="gridLayout_3">
-              <item row="8" column="3">
-               <widget class="QPushButton" name="btnSetTarget">
-                <property name="text">
-                 <string>setTarget</string>
-                </property>
-               </widget>
-              </item>
-              <item row="10" column="0">
+              <item row="11" column="0">
                <spacer name="verticalSpacer">
                 <property name="orientation">
                  <enum>Qt::Vertical</enum>
@@ -312,76 +305,6 @@
                 </property>
                </spacer>
               </item>
-              <item row="1" column="0">
-               <widget class="QPushButton" name="btnInitStoreData">
-                <property name="text">
-                 <string>initStoreData</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="4">
-               <widget class="QPushButton" name="btnClearDataStore">
-                <property name="text">
-                 <string>clearData</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="4">
-               <widget class="QPushButton" name="btnStart">
-                <property name="text">
-                 <string>Start</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="4">
-               <widget class="QPushButton" name="btnStopStepper">
-                <property name="text">
-                 <string>stop</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="0">
-               <widget class="QPushButton" name="btnCreateGraph">
-                <property name="text">
-                 <string>graph</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="3">
-               <widget class="QPushButton" name="btnMoveDown">
-                <property name="text">
-                 <string>moveDown</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="3">
-               <widget class="QPushButton" name="btnGetStoreData">
-                <property name="text">
-                 <string>getStoreData</string>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="0">
-               <widget class="QPushButton" name="btnGetSensorValue">
-                <property name="text">
-                 <string>getSensorValue</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="0">
-               <widget class="QPushButton" name="btnSetSettings">
-                <property name="text">
-                 <string>setSettings</string>
-                </property>
-               </widget>
-              </item>
-              <item row="8" column="0">
-               <widget class="QPushButton" name="btnUnlockPid">
-                <property name="text">
-                 <string>unlockPID</string>
-                </property>
-               </widget>
-              </item>
               <item row="2" column="3">
                <widget class="QPushButton" name="btnSaveImage">
                 <property name="text">
@@ -393,6 +316,34 @@
                <widget class="QPushButton" name="btnMoveUp">
                 <property name="text">
                  <string>moveUp</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0">
+               <widget class="QPushButton" name="btnSetSettings">
+                <property name="text">
+                 <string>setSettings</string>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="0">
+               <widget class="QPushButton" name="btnGetSensorValue">
+                <property name="text">
+                 <string>getSensorValue</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="5">
+               <widget class="QPushButton" name="btnStopStoreData">
+                <property name="text">
+                 <string>stopStoreData</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="3">
+               <widget class="QPushButton" name="pushButton_2">
+                <property name="text">
+                 <string>setExperiment</string>
                 </property>
                </widget>
               </item>
@@ -440,17 +391,61 @@
                 </item>
                </widget>
               </item>
-              <item row="0" column="3">
-               <widget class="QPushButton" name="pushButton_2">
+              <item row="1" column="0">
+               <widget class="QPushButton" name="btnInitStoreData">
                 <property name="text">
-                 <string>setExperiment</string>
+                 <string>initStoreData</string>
                 </property>
                </widget>
               </item>
-              <item row="8" column="4">
-               <widget class="QDoubleSpinBox" name="spinTarget">
+              <item row="8" column="3">
+               <widget class="QPushButton" name="btnSetTarget">
+                <property name="text">
+                 <string>setTarget</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="3">
+               <widget class="QPushButton" name="btnGetStoreData">
+                <property name="text">
+                 <string>getStoreData</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="3">
+               <widget class="QPushButton" name="btnMoveDown">
+                <property name="text">
+                 <string>moveDown</string>
+                </property>
+               </widget>
+              </item>
+              <item row="9" column="3">
+               <widget class="QDoubleSpinBox" name="spinHz">
+                <property name="minimum">
+                 <double>0.010000000000000</double>
+                </property>
                 <property name="maximum">
-                 <double>9999.000000000000000</double>
+                 <double>5.000000000000000</double>
+                </property>
+                <property name="singleStep">
+                 <double>0.500000000000000</double>
+                </property>
+                <property name="value">
+                 <double>0.500000000000000</double>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="4">
+               <widget class="QPushButton" name="btnClearDataStore">
+                <property name="text">
+                 <string>clearData</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="4">
+               <widget class="QPushButton" name="btnStopStepper">
+                <property name="text">
+                 <string>stop</string>
                 </property>
                </widget>
               </item>
@@ -461,8 +456,49 @@
                 </property>
                </widget>
               </item>
-              <item row="9" column="3">
-               <widget class="QDoubleSpinBox" name="spinHz"/>
+              <item row="8" column="4">
+               <widget class="QDoubleSpinBox" name="spinTarget">
+                <property name="minimum">
+                 <double>100.000000000000000</double>
+                </property>
+                <property name="maximum">
+                 <double>2000.000000000000000</double>
+                </property>
+                <property name="singleStep">
+                 <double>50.000000000000000</double>
+                </property>
+                <property name="value">
+                 <double>500.000000000000000</double>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="4">
+               <widget class="QPushButton" name="btnStart">
+                <property name="text">
+                 <string>Start</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QPushButton" name="btnCreateGraph">
+                <property name="text">
+                 <string>graph</string>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="0">
+               <widget class="QPushButton" name="btnUnlockPid">
+                <property name="text">
+                 <string>unlockPID</string>
+                </property>
+               </widget>
+              </item>
+              <item row="10" column="0">
+               <widget class="QPushButton" name="btnHardReset">
+                <property name="text">
+                 <string>hardReset</string>
+                </property>
+               </widget>
               </item>
              </layout>
             </widget>

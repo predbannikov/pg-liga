@@ -18,6 +18,46 @@
 #include "storedata.h"
 //#include "DataStore/datastore.h"
 
+
+class Plata {
+
+public:
+    enum STATE {STATE_0x10_WRITE, STATE_0x10_CHECK, STATE_0x03_WRITE, STATE_0x03_CHECK, STATE_COMPLATE };
+    quint16 address = 0x0;
+
+
+    RETCODE ret = ERROR;
+    STATE stateRead = STATE_0x10_WRITE;
+    STATE stateWrite = STATE_0x10_WRITE;
+    STATE stateWrite2 = STATE_0x10_WRITE;
+    FunctionCode funCode = ActBase;
+
+
+    RETCODE write(QJsonObject &jOperation, OpCode cmd)
+    {
+        switch (stateWrite) {
+        case STATE_0x03_WRITE:
+            break;
+        case STATE_0x03_CHECK:
+            break;
+        case STATE_COMPLATE:
+            break;
+        case STATE_0x10_WRITE:
+            jOperation["PDU_request"] = QString(Requests::write(cmd, funCode, address));
+            stateWrite = STATE_0x10_CHECK;
+            break;
+        case STATE_0x10_CHECK:
+            stateWrite = STATE_0x10_WRITE;
+            if (jOperation["modbus_error"].toString() == "no_error")
+                return COMPLATE;
+            else
+                return ERROR;
+            break;
+        }
+        return NOERROR;
+    }
+};
+
 class LoadFrame
 {
     enum STATE_PROCESS {PROCESS_IDLE, PROCESS_READ_NEXT_STEP, PROCESS_EXPERIMENT, PROCESS_FINISH} stateProc = PROCESS_FINISH;
@@ -40,6 +80,7 @@ public:
     ~LoadFrame();
 
     bool init();
+    bool deleteData();
 
     bool readNextStep();
 
@@ -68,6 +109,8 @@ public:
     RETCODE moveFrame(QJsonObject &jobj);
     RETCODE unlockPID(QJsonObject &jobj);
     RETCODE stopFrame(QJsonObject &jobj);
+    RETCODE hardReset(QJsonObject &jobj);
+
     void manualNextStep();
     void readSensors(QJsonObject &jobj);
     void sendProtocol(QJsonObject &jobj);
@@ -85,8 +128,11 @@ public:
 
     Sensor forceSens;
     Sensor deformSens;
+
     Stepper stepper;
     Controller controller;
+
+    Plata plata;
 
     StoreData *store = nullptr;
 

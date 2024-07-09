@@ -39,8 +39,18 @@ bool LoadFrame::init()
     sens.append(&forceSens);
     sens.append(&deformSens);
 
+
     store->setSensors(sens);
+    store->setStepper(&stepper);
     return true;
+}
+
+bool LoadFrame::deleteData()
+{
+    if (store != nullptr) {
+        delete store;
+        store = nullptr;
+    }
 }
 
 bool LoadFrame::readNextStep()
@@ -500,6 +510,11 @@ RETCODE LoadFrame::unlockPID(QJsonObject &jobj)
 RETCODE LoadFrame::stopFrame(QJsonObject &jobj)
 {
     return stepper.stop(jobj);
+}
+
+RETCODE LoadFrame::hardReset(QJsonObject &jobj)
+{
+    return plata.write(jobj, HardReset);
 }
 
 void LoadFrame::readSensors(QJsonObject &jobj)

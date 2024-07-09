@@ -48,6 +48,11 @@ void StoreData::setSensors(const QVector<Sensor *> sensors_)
     sensors = sensors_;
 }
 
+void StoreData::setStepper(Stepper *stepper_)
+{
+    stepper = stepper_;
+}
+
 bool StoreData::printFileHeader()
 {
 
@@ -88,6 +93,10 @@ void StoreData::updateData()
             break;
         }
     }
+
+    currentData.insert("Position_mm", stepper->position);
+    data["Position_mm"].append(stepTimeStart, elapseExperimentTimer.elapsed(), stepper->position);
+
     if (period.complate())
         writeToDataFile();
 }

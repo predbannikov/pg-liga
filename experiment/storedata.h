@@ -10,6 +10,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include "sensors.h"
+#include "stepper.h"
 #include <limits>
 #include <QList>
 #include <QElapsedTimer>
@@ -144,6 +145,7 @@ public:
     ~StoreData();
 
     void setSensors(const QVector <Sensor*> sensors_);
+    void setStepper(Stepper *stepper_);
 
     bool printFileHeader();
 
@@ -166,6 +168,7 @@ private:
     QJsonObject jconfig;
     QJsonObject jcurStep;
     QVector <Sensor*> sensors;
+    Stepper *stepper;
 
     InstrumentType type = LIGA_KL0_1T;
     bool writeToDataFile();

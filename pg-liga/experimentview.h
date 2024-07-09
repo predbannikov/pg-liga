@@ -103,6 +103,10 @@ private slots:
 
     void on_btnSetHz_clicked();
 
+    void on_btnStopStoreData_clicked();
+
+    void on_btnHardReset_clicked();
+
 signals:
     void sendRequest(QJsonObject &jobj);
 
@@ -113,12 +117,20 @@ private:
     QMap<QString, DataStore> dataStore;
 
 
+
     QMap<QString, ExperimentData*> m_deformData;
-    QMap<QString, ExperimentData*> m_presureData;
-    DecoratedPlot *deformVsTime = nullptr;
-    DecoratedPlot *pressureVsTime = nullptr;
     ExperimentData *dataDeform = nullptr;
+    DecoratedPlot *deformVsTime = nullptr;
+
+    QMap<QString, ExperimentData*> m_presureData;
     ExperimentData *dataPressure = nullptr;
+    DecoratedPlot *pressureVsTime = nullptr;
+
+
+    QMap<QString, ExperimentData*> m_positionData;
+    ExperimentData *dataPosition = nullptr;
+    DecoratedPlot *positionVsTime = nullptr;
+
 
     QList <QLineEdit*> steps;
     QJsonObject jRequest;

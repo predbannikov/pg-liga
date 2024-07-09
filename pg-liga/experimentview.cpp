@@ -33,9 +33,9 @@ void ExperimentView::setupPlots()
 
     /* First Experiment Plots */
 //    auto deformVsTime = new DecoratedPlot(this);
-    dataDeform = new ExperimentData(this);
 //    QDateTime time = QDateTime::currentDateTime();
 //    data1->append(3, time.addMSecs(0));
+    dataDeform = new ExperimentData(this);
     deformVsTime = new DecoratedPlot(this);
     deformVsTime->addTrace(dataDeform, tr("Время (t, мин)"), tr("Деформация, %1").arg(Strings::mm));
     ui->tabGraphics->addTab(deformVsTime, tr("Вертикальная деформация (t)"));
@@ -44,6 +44,13 @@ void ExperimentView::setupPlots()
     pressureVsTime = new DecoratedPlot(this);
     pressureVsTime->addTrace(dataPressure, tr("Время (t, мин)"), tr("Сила %1").arg(Strings::N));
     ui->tabGraphics->addTab(pressureVsTime, tr("Сила (H)"));
+
+    dataPosition = new ExperimentData(this);
+    positionVsTime = new DecoratedPlot(this);
+    positionVsTime->addTrace(dataPosition, tr("Время (t, мин)"), tr("Позиция, %1").arg(Strings::mm));
+    ui->tabGraphics->addTab(positionVsTime, tr("Позиция"));
+
+
 
 }
 
@@ -208,6 +215,9 @@ void ExperimentView::onReadyResponse(const QJsonObject &jobj)
             if (jkey == "VerticalPressure_kPa") {
                 dataPressure->append(allList);
             }
+            if (jkey == "Position_mm") {
+                dataPosition->append(allList);
+            }
         }
         QJsonObject jsensors = jobj["sensors"].toObject();
         QString out_to_lbl;
@@ -330,10 +340,15 @@ void ExperimentView::on_btnClearDataStore_clicked()
 
     dataDeform->clearData();
     dataDeform->clear();
+    deformVsTime->m_plot->replot();
+
     dataPressure->clearData();
     dataPressure->clear();
-    deformVsTime->m_plot->replot();
     pressureVsTime->m_plot->replot();
+
+    dataPosition->clearData();
+    dataPosition->clear();
+    positionVsTime->m_plot->replot();
 }
 
 
@@ -342,6 +357,23 @@ void ExperimentView::on_btnSetHz_clicked()
     QJsonObject jobj;
     jobj["CMD"] = "set_hz";
     jobj["hz"] = ui->spinHz->value();
+    emit sendRequest(jobj);
+}
+
+
+void ExperimentView::on_btnStopStoreData_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "stop_store_data";
+    timerIntervalUpdate.stop();
+    emit sendRequest(jobj);
+}
+
+
+void ExperimentView::on_btnHardReset_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "hard_reset";
     emit sendRequest(jobj);
 }
 

@@ -80,7 +80,7 @@ void DataStore::append(qint64 start_time, qint64 cur_time, float value, float ep
 //            if (last.first != data[start_time].last().first)
 //                data[start_time].append(last);
         } else {
-            qDebug() << Q_FUNC_INFO << "Значение изменения ещё меньше";
+//            qDebug() << Q_FUNC_INFO << "Значение изменения ещё меньше";
         }
 //        last = {cur_time, value};
     }

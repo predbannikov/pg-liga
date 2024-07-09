@@ -30,7 +30,8 @@ bool Operations::execut()
                 qDebug() << qPrintable(QString("force=%1(N)\t deform=%2(mm)\t stepperPos=%3\t stepperStatus=%4\t controllerStatus=%5\t counter=%6").
                         arg(Force::fromNewtons(loadFrame.forceSens.value).newtons(), 9).
                         arg(Length::fromMicrometres(loadFrame.deformSens.value).millimetres(), 9).
-                        arg((loadFrame.stepper.position * 0.31250)/1000., 9).        // TODO 1:10 на эмуляторе
+//                        arg((loadFrame.stepper.position * 0.31250)/1000., 9).        // TODO 1:10 на эмуляторе
+                        arg(loadFrame.stepper.position).        // TODO 1:10 на эмуляторе
                         arg(loadFrame.stepper.status).
                         arg(loadFrame.controller.status).
                         arg(counter));
@@ -95,9 +96,12 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
         emit sendRequestToClient(jobj);
     } else if (jobj["CMD"].toString() == "get_store_data") {
         loadFrame.sendStoreData(jobj);
-        qDebug() << Q_FUNC_INFO << jobj;
+//        qDebug() << Q_FUNC_INFO << jobj;
         fflush(stderr);
 //        loadFrame.readSensors(jobj);
+        emit sendRequestToClient(jobj);
+    } else if (jobj["CMD"].toString() == "stop_store_data") {
+        loadFrame.deleteData();
         emit sendRequestToClient(jobj);
     } else if (jobj["CMD"].toString() == "move_frame") {
         return loadFrame.moveFrame(jobj);
@@ -109,6 +113,8 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
         return loadFrame.setTarget(jobj);
     } else if (jobj["CMD"].toString() == "set_hz") {
         return loadFrame.setHz(jobj);
+    } else if (jobj["CMD"].toString() == "hard_reset") {
+        return loadFrame.hardReset(jobj);
     }
 
     return COMPLATE;
