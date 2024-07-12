@@ -27,9 +27,7 @@ public:
 
 
     RETCODE ret = ERROR;
-    STATE stateRead = STATE_0x10_WRITE;
     STATE stateWrite = STATE_0x10_WRITE;
-    STATE stateWrite2 = STATE_0x10_WRITE;
     FunctionCode funCode = ActBase;
 
 
