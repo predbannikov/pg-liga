@@ -178,7 +178,8 @@ RETCODE LoadFrame::setTarget(QJsonObject &jOperation)
 
 
     targetNewtones = Force::fromNewtons(jOperation["target"].toDouble());
-    ret = controller.setTarget(jOperation, targetNewtones.newtons());      // 200.19642105368277
+    targetMinNewtones = Force::fromNewtons(jOperation["target_min"].toDouble());
+    ret = controller.setTarget(jOperation, targetMinNewtones.newtons(), targetNewtones.newtons());      // 200.19642105368277
 //    if (ret == COMPLATE) {
 //        statePresure = STATE_PRESURE_2;
 //    }
@@ -231,11 +232,36 @@ RETCODE LoadFrame::setTarget(QJsonObject &jOperation)
     return ret;
 }
 
+RETCODE LoadFrame::setKPID(QJsonObject &jOperation, AbstractUnit::CMD cmd)
+{
+    RETCODE ret = ERROR;
+    float value = jOperation["value"].toDouble();
+    ret = controller.setKPID(jOperation, value, cmd);
+    return ret;
+}
+
+//RETCODE LoadFrame::setPID_D(QJsonObject &jOperation)
+//{
+//    RETCODE ret = ERROR;
+//    float pid_d = jOperation["pid_d"].toDouble();
+//    ret = controller.setKd(jOperation, pid_d);
+//    return ret;
+//}
+
+//RETCODE LoadFrame::setUpPID_P(QJsonObject &jOperation)
+//{
+//    RETCODE ret = ERROR;
+//    float pid_p = jOperation["pid_p"].toDouble();
+//    ret = controller.setKPID(jOperation, pid_p);
+//    return ret;
+//}
+
 RETCODE LoadFrame::setHz(QJsonObject &jOperation)
 {
     RETCODE ret = ERROR;
     double hz = jOperation["hz"].toDouble();
     ret = controller.setHz(jOperation, hz);
+    return ret;
 }
 
 RETCODE LoadFrame::statusSensors(QJsonObject &jOperation)

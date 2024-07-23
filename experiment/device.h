@@ -86,6 +86,12 @@ public:
 
     RETCODE setTarget(QJsonObject &jOperation);
 
+    RETCODE setKPID(QJsonObject &jOperation, AbstractUnit::CMD cmd);
+//    RETCODE setPID_D(QJsonObject &jOperation);
+//    RETCODE setUpPID_P(QJsonObject &jOperation);
+//    RETCODE setUpPID_D(QJsonObject &jOperation);
+
+
     RETCODE setHz(QJsonObject &jOperation);
 
     RETCODE statusSensors(QJsonObject &jOperation);
@@ -117,6 +123,7 @@ public:
 
 
     Measurements::Force targetNewtones;
+    Measurements::Force targetMinNewtones;
     Measurements::Area area;
 
     QJsonArray jsteps;

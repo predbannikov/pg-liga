@@ -5,11 +5,32 @@ RETCODE Controller::readStatus(QJsonObject &jOperation)
     return read(jOperation, ControllerStatus);
 }
 
-RETCODE Controller::setTarget(QJsonObject &jOperation, float newtons)
+RETCODE Controller::setTarget(QJsonObject &jOperation, float newtonsMin, float newtons)
 {
     // 0.0004 метра квадратных
     RETCODE ret = ERROR;
     switch(stateSet) {
+    case STATE_SET_TARGET_MIN_VALUE:
+        ret = write(jOperation, newtonsMin);
+        if (ret == COMPLATE)
+            stateSet = STATE_SET_TARGET_MIN;
+        else if (ret == ERROR) {
+            stateSet = STATE_SET_TARGET_MIN_VALUE;
+            return ERROR;
+        }
+        break;
+    case STATE_SET_TARGET_MIN:
+        ret = write(jOperation, ControllerSetMin);
+        if (ret == COMPLATE)
+            stateSet = STATE_SET_TARGET_VALUE;
+        else if (ret == ERROR) {
+            stateSet = STATE_SET_TARGET_MIN_VALUE;
+            return ERROR;
+        }
+        break;
+/* Если убрать задачу минимальной цели, то нужно stateSet по умолчанию выставить в STATE_SET_TARGET_VALUE и закоментировать код выше
+   и в STATE_ACTIVATE_PID выставить STATE_SET_TARGET_VALUE
+*/
     case STATE_SET_TARGET_VALUE:
         ret = write(jOperation, newtons);
         if (ret == COMPLATE)
@@ -28,43 +49,6 @@ RETCODE Controller::setTarget(QJsonObject &jOperation, float newtons)
             return ERROR;
         }
         break;
-//    case STATE_SET_PID_P_VALUE:
-//        ret = write(jOperation, 7.5);                    // TODO
-//        if (ret == COMPLATE)
-//            stateSet = STATE_SET_PID_P;
-//        else if (ret == ERROR) {
-//            stateSet = STATE_SET_TARGET_VALUE;
-//            return ERROR;
-//        }
-//        break;
-//    case STATE_SET_PID_P:
-//        ret = write(jOperation, ControllerSetKp);
-//        if (ret == COMPLATE)
-//            stateSet = STATE_SET_PID_D_VALUE;
-//        else if (ret == ERROR) {
-//            stateSet = STATE_SET_TARGET_VALUE;
-//            return ERROR;
-//        }
-//        break;
-//    case STATE_SET_PID_D_VALUE:
-//        ret = write(jOperation, 75.);                    // TODO
-//        if (ret == COMPLATE)
-//            stateSet = STATE_SET_PID_D;
-//        else if (ret == ERROR) {
-//            stateSet = STATE_SET_TARGET_VALUE;
-//            return ERROR;
-//        }
-//        break;
-//    case STATE_SET_PID_D:
-//        ret = write(jOperation, ControllerSetKd);
-//        if (ret == COMPLATE) {
-//            stateSet = STATE_ACTIVATE_PID_VALUE;
-//        }
-//        else if (ret == ERROR) {
-//            stateSet = STATE_SET_TARGET_VALUE;
-//            return ERROR;
-//        }
-//        break;
     case STATE_ACTIVATE_PID_VALUE:
         ret = write(jOperation, 1);                      // (0x0 - stop, 0x1 - locked, 0x11 - fast
         if (ret == COMPLATE) {
@@ -78,17 +62,73 @@ RETCODE Controller::setTarget(QJsonObject &jOperation, float newtons)
     case STATE_ACTIVATE_PID:
         ret = write(jOperation, ControllerLock);
         if (ret == COMPLATE) {
-            stateSet = STATE_SET_TARGET_VALUE;
+            stateSet = STATE_SET_TARGET_MIN_VALUE;
             return COMPLATE;
         }
         else if (ret == ERROR) {
-            stateSet = STATE_SET_TARGET_VALUE;
+            stateSet = STATE_SET_TARGET_MIN_VALUE;
             return ERROR;
         }
         break;
     }
     return NOERROR;
 }
+
+RETCODE Controller::setKPID(QJsonObject &jOperation, float value, CMD cmd)
+{
+    RETCODE ret = ERROR;
+    switch (state_pid) {
+    case STATE_SET_PID_VALUE:
+        ret = write(jOperation, value);                    // TODO
+        if (ret == COMPLATE)
+            state_pid = STATE_SET_PID;
+        else if (ret == ERROR) {
+            state_pid = STATE_SET_PID_VALUE;
+            return ERROR;
+        }
+        break;
+    case STATE_SET_PID:
+        ret = write(jOperation, cmd);
+        if (ret == COMPLATE) {
+            state_pid = STATE_SET_PID_VALUE;
+            return COMPLATE;
+        }
+        else if (ret == ERROR) {
+            state_pid = STATE_SET_PID_VALUE;
+            return ERROR;
+        }
+        break;
+    }
+    return NOERROR;
+}
+
+//RETCODE Controller::setKd(QJsonObject &jOperation, float d, CMD cmd)
+//{
+//    RETCODE ret = ERROR;
+//    switch (state_pid_d) {
+//    case STATE_SET_PID_D_VALUE:
+//        ret = write(jOperation, d);                    // TODO
+//        if (ret == COMPLATE)
+//            state_pid_d = STATE_SET_PID_D;
+//        else if (ret == ERROR) {
+//            state_pid_d = STATE_SET_PID_D_VALUE;
+//            return ERROR;
+//        }
+//        break;
+//    case STATE_SET_PID_D:
+//        ret = write(jOperation, cmd);
+//        if (ret == COMPLATE) {
+//            state_pid_d = STATE_SET_PID_D_VALUE;
+//            return COMPLATE;
+//        }
+//        else if (ret == ERROR) {
+//            state_pid_d = STATE_SET_PID_D_VALUE;
+//            return ERROR;
+//        }
+//        break;
+//    }
+//    return NOERROR;
+//}
 
 RETCODE Controller::setHz(QJsonObject &jOperation, float hz)
 {

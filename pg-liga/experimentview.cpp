@@ -329,6 +329,7 @@ void ExperimentView::on_btnSetTarget_clicked()
 {
     QJsonObject jobj;
     jobj["CMD"] = "set_target";
+    jobj["target_min"] = ui->spinTargetMin->value();
     jobj["target"] = ui->spinTarget->value();
     emit sendRequest(jobj);
 }
@@ -374,6 +375,42 @@ void ExperimentView::on_btnHardReset_clicked()
 {
     QJsonObject jobj;
     jobj["CMD"] = "hard_reset";
+    emit sendRequest(jobj);
+}
+
+
+void ExperimentView::on_btnSetPidP_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "set_pid_p";
+    jobj["value"] = ui->spinSetPID_P->value();
+    emit sendRequest(jobj);
+}
+
+
+void ExperimentView::on_btnSetPID_D_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "set_pid_d";
+    jobj["value"] = ui->spinSetPID_D->value();
+    emit sendRequest(jobj);
+}
+
+
+void ExperimentView::on_btnSetUpPidP_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "set_up_pid_p";
+    jobj["value"] = ui->spinSetPID_P->value();
+    emit sendRequest(jobj);
+}
+
+
+void ExperimentView::on_btnSetUpPID_D_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "set_up_pid_d";
+    jobj["value"] = ui->spinSetPID_D->value();
     emit sendRequest(jobj);
 }
 

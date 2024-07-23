@@ -107,6 +107,14 @@ private slots:
 
     void on_btnHardReset_clicked();
 
+    void on_btnSetPidP_clicked();
+
+    void on_btnSetPID_D_clicked();
+
+    void on_btnSetUpPidP_clicked();
+
+    void on_btnSetUpPID_D_clicked();
+
 signals:
     void sendRequest(QJsonObject &jobj);
 

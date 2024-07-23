@@ -7,9 +7,10 @@
 
 class Controller : public AbstractUnit
 {
-    enum STATE_SET { STATE_SET_TARGET_VALUE, STATE_SET_TARGET, STATE_SET_PID_P_VALUE, STATE_SET_PID_P, STATE_SET_PID_D_VALUE, STATE_SET_PID_D, STATE_ACTIVATE_PID_VALUE, STATE_ACTIVATE_PID};
+    enum STATE_SET { STATE_SET_TARGET_MIN_VALUE, STATE_SET_TARGET_MIN, STATE_SET_TARGET_VALUE, STATE_SET_TARGET, STATE_ACTIVATE_PID_VALUE, STATE_ACTIVATE_PID};
     enum STATE_UNLOCK {STATE_UNLOCK_START, STATE_UNLOCK_SET_VALUE, STATE_UNLOCK_SET_CMD, STATE_HANDLE_ERROR} stateUnlock = STATE_UNLOCK_SET_VALUE;
     enum STATE_SET_HZ {STATE_SET_HZ_WRITE, STATE_SET_HZ_CMD};
+    enum STATE_PID {STATE_SET_PID_VALUE, STATE_SET_PID};
     struct PIDParameters {
         double p;
         double i;
@@ -23,13 +24,13 @@ public:
 
     RETCODE readStatus(QJsonObject &jOperation);
 
-    RETCODE setTarget(QJsonObject &jOperation, float newtons);
+    RETCODE setTarget(QJsonObject &jOperation, float newtonsMin, float newtons);
 
-    RETCODE setKp(QJsonObject &jOperation);
+    RETCODE setKPID(QJsonObject &jOperation, float value, CMD cmd);
 
-    RETCODE setKi(QJsonObject &jOperation);
+//    RETCODE setKi(QJsonObject &jOperation);
 
-    RETCODE setKd(QJsonObject &jOperation);
+//    RETCODE setKd(QJsonObject &jOperation, float d, CMD cmd);
 
     RETCODE setHz(QJsonObject &jOperation, float hz);
 
@@ -37,8 +38,9 @@ public:
 
     RETCODE stopPID(QJsonObject &jOperation);
 
-    STATE_SET stateSet = STATE_SET_TARGET_VALUE;
+    STATE_SET stateSet = STATE_SET_TARGET_MIN_VALUE;
     STATE_SET_HZ stateSetHz = STATE_SET_HZ_WRITE;
+    STATE_PID state_pid = STATE_SET_PID_VALUE;
 
 
 private:

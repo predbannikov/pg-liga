@@ -15,7 +15,7 @@ class AbstractUnit
 
     void readValue(const QJsonObject &jOperation);
 
-protected:
+public:
     enum CMD : quint16 {
         OpCodeMask     = 0xff00,
         GetID          = 0xf100,
@@ -48,7 +48,11 @@ protected:
         ControllerSetKd  = 0x3400,
         ControllerStatus = 0x3500,
 
-        ControllerSetHz  = 0x5000
+        ControllerSetHz  = 0x5000,
+        ControllerSetMin = 0x5100,
+        ControllerSetVibroKp = 0x5200,
+        ControllerSetVibroKi = 0x5300,
+        ControllerSetVibroKd = 0x5400
     };
     RETCODE ret = ERROR;
     STATE stateRead = STATE_0x10_WRITE;
