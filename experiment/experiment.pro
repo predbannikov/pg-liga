@@ -53,11 +53,13 @@ INCLUDEPATH += $$PWD/../
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../network/release/ -lnetwork
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../network/debug/ -lnetwork
-else:unix: LIBS += -L$$DESTDIR -lnetwork
+#else:unix: LIBS += -L$$DESTDIR -lnetwork
+else:unix: LIBS += -L$$OUT_PWD/../network -lnetwork
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../datastore/release/ -ldatastore
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../datastore/debug/ -ldatastore
-else:unix: LIBS += -L$$DESTDIR -ldatastore
+#else:unix: LIBS += -L$$DESTDIR -ldatastore
+else:unix: LIBS += -L$$OUT_PWD/../datastore -ldatastore
 
 
 # Default rules for deployment.
