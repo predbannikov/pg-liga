@@ -581,6 +581,22 @@
                 </property>
                </widget>
               </item>
+              <item row="13" column="0">
+               <widget class="QPushButton" name="btnSetState">
+                <property name="text">
+                 <string>set state pid</string>
+                </property>
+               </widget>
+              </item>
+              <item row="13" column="3">
+               <widget class="QComboBox" name="cmbState">
+                <item>
+                 <property name="text">
+                  <string>P_correct</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
              </layout>
             </widget>
            </item>

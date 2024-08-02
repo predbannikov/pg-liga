@@ -19,6 +19,8 @@ ExperimentView::ExperimentView(QWidget *parent) :
     setupPlots();
 
     connect(&timerIntervalUpdate, &QTimer::timeout, this, &ExperimentView::onReadDataStore);
+
+    ui->groupBox_4->setVisible(false);
 }
 
 ExperimentView::~ExperimentView()
@@ -411,6 +413,15 @@ void ExperimentView::on_btnSetUpPID_D_clicked()
     QJsonObject jobj;
     jobj["CMD"] = "set_up_pid_d";
     jobj["value"] = ui->spinSetPID_D->value();
+    emit sendRequest(jobj);
+}
+
+
+void ExperimentView::on_btnSetState_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "set_state";
+    jobj["state_pid"] = ui->cmbState->currentText();
     emit sendRequest(jobj);
 }
 
