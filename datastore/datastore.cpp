@@ -1,4 +1,5 @@
 #include "datastore.h"
+#include "math.h"
 
 DataStore::DataStore() {
 

@@ -223,7 +223,7 @@ bool SerialPort::connectDevice ()
 void SerialPort::init()
 {
     port = new QSerialPort(this);
-    port->setPortName("COM3");
+    port->setPortName("ttyS3");
     port->setFlowControl(QSerialPort::NoFlowControl);
     port->setBaudRate   (QSerialPort::Baud115200);
     port->setParity     (QSerialPort::EvenParity);
