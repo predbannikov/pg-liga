@@ -40,6 +40,7 @@ SOURCES += \
     Settings/settingsdialog.cpp     \
     clientmanager.cpp \
     clientwindow.cpp \
+    customgraph.cpp \
     experimentview.cpp \
 	decoratedplot.cpp \
 	experimentdata.cpp \
@@ -62,6 +63,7 @@ HEADERS += \
     Physics/measurements.h \
     clientmanager.h \
     clientwindow.h \
+    customgraph.h \
     experimentview.h \
 	experimentdata.h \
 	decoratedplot.h \
@@ -74,6 +76,7 @@ HEADERS += \
 
 FORMS += \
     clientwindow.ui \
+    customgraph.ui \
     experimentview.ui \
     mainwindow.ui   \
     Settings/settingsdialog.ui

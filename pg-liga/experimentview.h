@@ -9,9 +9,11 @@
 #include <QJsonArray>
 #include <QDebug>
 
-#include "plotadapter.h"
-#include "experimentdata.h"
-#include "decoratedplot.h"
+#include "customgraph.h"
+
+//#include "plotadapter.h"
+//#include "experimentdata.h"
+//#include "decoratedplot.h"
 
 #include "datastore/datastore.h"
 
@@ -119,6 +121,8 @@ private slots:
 
     void on_btnSensorSetZero_clicked();
 
+    void on_btnResetSensorOffset_clicked();
+
 signals:
     void sendRequest(QJsonObject &jobj);
 
@@ -128,20 +132,20 @@ private:
 
     QMap<QString, DataStore> dataStore;
 
-
-
-    QMap<QString, ExperimentData*> m_deformData;
-    ExperimentData *dataDeform = nullptr;
+    QMap<QString, ExperimentData*> m_experimentData;
+//    ExperimentData *dataDeform = nullptr;
     DecoratedPlot *deformVsTime = nullptr;
 
     QMap<QString, ExperimentData*> m_presureData;
-    ExperimentData *dataPressure = nullptr;
+//    ExperimentData *dataPressure = nullptr;
     DecoratedPlot *pressureVsTime = nullptr;
 
 
     QMap<QString, ExperimentData*> m_positionData;
     ExperimentData *dataPosition = nullptr;
     DecoratedPlot *positionVsTime = nullptr;
+
+    CustomGraph *customPlot = nullptr;
 
 
     QList <QLineEdit*> steps;

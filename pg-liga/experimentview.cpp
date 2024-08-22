@@ -14,7 +14,7 @@ ExperimentView::ExperimentView(QWidget *parent) :
     ui->lblSensors->setFont(font);
 
     QList<int> size;
-    size << 100 << 0;
+    size << 90 << 10;
     ui->splitter->setSizes(size);
     setupPlots();
 
@@ -30,35 +30,29 @@ ExperimentView::~ExperimentView()
 
 void ExperimentView::setupPlots()
 {
-
-
-
-    /* First Experiment Plots */
-//    auto deformVsTime = new DecoratedPlot(this);
-//    QDateTime time = QDateTime::currentDateTime();
-//    data1->append(3, time.addMSecs(0));
-    dataDeform = new ExperimentData(this);
-    deformVsTime = new DecoratedPlot(this);
-    deformVsTime->addTrace(dataDeform, tr("Время (t, мин)"), tr("Деформация, %1").arg(Strings::mm));
-    ui->tabGraphics->addTab(deformVsTime, tr("Вертикальная деформация (t)"));
-
-    dataPressure = new ExperimentData(this);
+    m_experimentData.insert("Сила", new ExperimentData(this));
     pressureVsTime = new DecoratedPlot(this);
-    pressureVsTime->addTrace(dataPressure, tr("Время (t, мин)"), tr("Сила %1").arg(Strings::N));
+    pressureVsTime->addTrace(m_experimentData.value("Сила"), tr("Время (t, мин)"), tr("Сила %1").arg(Strings::N));
     ui->tabGraphics->addTab(pressureVsTime, tr("Сила (H)"));
+
+    m_experimentData.insert("Деформация", new ExperimentData(this));
+    deformVsTime = new DecoratedPlot(this);
+    deformVsTime->addTrace(m_experimentData.value("Деформация"), tr("Время (t, мин)"), tr("Деформация, %1").arg(Strings::mm));
+    ui->tabGraphics->addTab(deformVsTime, tr("Вертикальная деформация (t)"));
 
     dataPosition = new ExperimentData(this);
     positionVsTime = new DecoratedPlot(this);
     positionVsTime->addTrace(dataPosition, tr("Время (t, мин)"), tr("Позиция, %1").arg(Strings::mm));
     ui->tabGraphics->addTab(positionVsTime, tr("Позиция"));
 
-
+    customPlot = new CustomGraph(&m_experimentData, this);
+    ui->tabGraphics->addTab(customPlot, "Кастомный");
 
 }
 
 void ExperimentView::clearData()
 {
-    dataDeform->clearData();
+    m_experimentData.value("Деформация")->clearData();
     dataStore.clear();
     deformVsTime->m_plot->replot();
 }
@@ -183,7 +177,7 @@ void ExperimentView::onReadyResponse(const QJsonObject &jobj)
     QString CMD = jobj["CMD"].toString();
     if (CMD == "get_sensor_value") {
         double value = jobj["value"].toString().toDouble();
-        dataDeform->append(value);
+        m_experimentData.value("Деформация")->append(value);
     }
     if (CMD == "read_sensors") {
         QJsonObject jsensors = jobj["sensors"].toObject();
@@ -212,10 +206,10 @@ void ExperimentView::onReadyResponse(const QJsonObject &jobj)
             QList<QPair<qint64, float>> allList = dataStore[jkey].deSerializeData(jstoreData[jkey].toObject());
 //            qDebug() << Q_FUNC_INFO << "allList" << jkey << allList;
             if (jkey == "VerticalDeform_mm") {
-                dataDeform->append(allList);
+                m_experimentData.value("Деформация")->append(allList);
             }
             if (jkey == "VerticalPressure_kPa") {
-                dataPressure->append(allList);
+                m_experimentData.value("Сила")->append(allList);
             }
             if (jkey == "Position_mm") {
                 dataPosition->append(allList);
@@ -341,12 +335,12 @@ void ExperimentView::on_btnClearDataStore_clicked()
 {
     dataStore.clear();
 
-    dataDeform->clearData();
-    dataDeform->clear();
+    m_experimentData.value("Деформация")->clearData();
+    m_experimentData.value("Деформация")->clear();
     deformVsTime->m_plot->replot();
 
-    dataPressure->clearData();
-    dataPressure->clear();
+    m_experimentData.value("Сила")->clearData();
+    m_experimentData.value("Сила")->clear();
     pressureVsTime->m_plot->replot();
 
     dataPosition->clearData();
