@@ -152,6 +152,28 @@ RETCODE Controller::setHz(QJsonObject &jOperation, float hz)
     return NOERROR;
 }
 
+RETCODE Controller::setStatePidController(QJsonObject &jOperation, int set_state_pid_controller)
+{
+    switch (stateSetStateController) {
+    case STATE_SET_STATE_WRITE:
+        qDebug() << "STATE_SET_STATE_WRITE";
+        if (write(jOperation, set_state_pid_controller) == COMPLATE) {
+            stateSetStateController = STATE_SET_STATE_CMD;
+            QThread::msleep(100);
+        }
+        break;
+    case STATE_SET_STATE_CMD:
+        qDebug() << "STATE_SET_STATE_CMD";
+        if (write(jOperation, ControllerSetStatePID) == COMPLATE) {
+            stateSetStateController = STATE_SET_STATE_WRITE;
+            QThread::msleep(100);
+            return COMPLATE;
+        }
+        break;
+    }
+    return NOERROR;
+}
+
 #define DEBUG_STOP_PID 0
 
 RETCODE Controller::stopPID(QJsonObject &jOperation)

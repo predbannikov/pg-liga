@@ -110,11 +110,10 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
     } else if (jobj["CMD"].toString() == "unlock_PID") {
         return loadFrame.unlockPID(jobj);
     } else if (jobj["CMD"].toString() == "set_target") {
-//        if (loadFrame.setTargetMin(jobj))
         return loadFrame.setTarget(jobj);
     } else if (jobj["CMD"].toString() == "set_hz") {
         return loadFrame.setHz(jobj);
-    } else if (jobj["CMD"].toString() == "set") {
+    } else if (jobj["CMD"].toString() == "hard_reset") {
         return loadFrame.hardReset(jobj);
     } else if (jobj["CMD"].toString() == "set_pid_p") {
         return loadFrame.setKPID(jobj, AbstractUnit::CMD::ControllerSetKp);
@@ -124,6 +123,10 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
         return loadFrame.setKPID(jobj, AbstractUnit::CMD::ControllerSetVibroKp);
     } else if (jobj["CMD"].toString() == "set_up_pid_d") {
         return loadFrame.setKPID(jobj, AbstractUnit::CMD::ControllerSetVibroKd);
+    } else if (jobj["CMD"].toString() == "set_state_pid") {
+        return loadFrame.setStatePid(jobj);
+    } else if (jobj["CMD"].toString() == "set_sensor_zero") {
+        return loadFrame.sensorSetZero(jobj);
     }
 
     return COMPLATE;

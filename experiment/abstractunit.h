@@ -52,7 +52,8 @@ public:
         ControllerSetMin = 0x5100,
         ControllerSetVibroKp = 0x5200,
         ControllerSetVibroKi = 0x5300,
-        ControllerSetVibroKd = 0x5400
+        ControllerSetVibroKd = 0x5400,
+        ControllerSetStatePID = 0x5500,
     };
     RETCODE ret = ERROR;
     STATE stateRead = STATE_0x10_WRITE;

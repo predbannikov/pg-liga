@@ -70,7 +70,22 @@ class LoadFrame
 
     enum READ_SENS {READ_SENS_1, READ_SENS_2, READ_SENS_3, READ_SENS_4, READ_SENS_5, READ_SENS_6} readSensState = READ_SENS_1;
 
+    enum STATE_SET_STATE_PID_CONTROLLER {STATE_SET_STATE_PID_CONTROLLER_DEFAULT, STATE_P_CORRECTION} state_pid = STATE_SET_STATE_PID_CONTROLLER_DEFAULT;
 
+    Sensor &getSensorFromStr(QString strSensorName) {
+        if (strSensorName == "SensLoad0") {
+            return forceSens;
+        } else if (strSensorName == "SensDef0") {
+            return deformSens;
+        } else if (strSensorName == "SensPrs0") {
+
+        } else if (strSensorName == "SensPrs1") {
+
+        } else if (strSensorName == "SensPrs2") {
+
+        }
+        return forceSens;
+    }
 
 
 public:
@@ -94,6 +109,8 @@ public:
 
     RETCODE setHz(QJsonObject &jOperation);
 
+    RETCODE setStatePid(QJsonObject &jOperation);
+
     RETCODE statusSensors(QJsonObject &jOperation);
 
     RETCODE compression(QJsonObject &jOperation);
@@ -114,6 +131,7 @@ public:
     RETCODE unlockPID(QJsonObject &jobj);
     RETCODE stopFrame(QJsonObject &jobj);
     RETCODE hardReset(QJsonObject &jobj);
+    RETCODE sensorSetZero(QJsonObject &jobj);
 
     void manualNextStep();
     void readSensors(QJsonObject &jobj);

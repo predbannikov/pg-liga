@@ -264,6 +264,19 @@ RETCODE LoadFrame::setHz(QJsonObject &jOperation)
     return ret;
 }
 
+RETCODE LoadFrame::setStatePid(QJsonObject &jOperation)
+{
+    RETCODE ret = ERROR;
+    STATE_SET_STATE_PID_CONTROLLER state_pid = STATE_SET_STATE_PID_CONTROLLER_DEFAULT;
+    if (jOperation["state_pid"].toString() == "P_correct") {
+        state_pid = STATE_P_CORRECTION;
+    } else if (jOperation["state_pid"].toString() == "controller_default") {
+        state_pid = STATE_SET_STATE_PID_CONTROLLER_DEFAULT;
+    }
+    ret = controller.setStatePidController(jOperation, state_pid);
+    return ret;
+}
+
 RETCODE LoadFrame::statusSensors(QJsonObject &jOperation)
 {
     RETCODE ret = ERROR;
@@ -541,6 +554,12 @@ RETCODE LoadFrame::stopFrame(QJsonObject &jobj)
 RETCODE LoadFrame::hardReset(QJsonObject &jobj)
 {
     return plata.write(jobj, HardReset);
+}
+
+RETCODE LoadFrame::sensorSetZero(QJsonObject &jobj)
+{
+    Sensor &sensor = getSensorFromStr(jobj["sensor_name"].toString());
+    return sensor.setNull(jobj);
 }
 
 void LoadFrame::readSensors(QJsonObject &jobj)
