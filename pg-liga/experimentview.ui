@@ -572,6 +572,13 @@
                   </widget>
                  </item>
                  <item>
+                  <widget class="QPushButton" name="btnResetSensorOffset">
+                   <property name="text">
+                    <string>Сбросить ноль</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
                   <widget class="QComboBox" name="cmbSensorName">
                    <item>
                     <property name="text">

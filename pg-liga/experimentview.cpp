@@ -434,3 +434,12 @@ void ExperimentView::on_btnSensorSetZero_clicked()
     emit sendRequest(jobj);
 }
 
+
+void ExperimentView::on_btnResetSensorOffset_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "reset_sensor_offset";
+    jobj["sensor_name"] = ui->cmbSensorName->currentText();
+    emit sendRequest(jobj);
+}
+
