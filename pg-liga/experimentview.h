@@ -115,6 +115,10 @@ private slots:
 
     void on_btnSetUpPID_D_clicked();
 
+    void on_btnSetState_clicked();
+
+    void on_btnSensorSetZero_clicked();
+
 signals:
     void sendRequest(QJsonObject &jobj);
 

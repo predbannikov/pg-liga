@@ -420,8 +420,17 @@ void ExperimentView::on_btnSetUpPID_D_clicked()
 void ExperimentView::on_btnSetState_clicked()
 {
     QJsonObject jobj;
-    jobj["CMD"] = "set_state";
+    jobj["CMD"] = "set_state_pid";
     jobj["state_pid"] = ui->cmbState->currentText();
+    emit sendRequest(jobj);
+}
+
+
+void ExperimentView::on_btnSensorSetZero_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "set_sensor_zero";
+    jobj["sensor_name"] = ui->cmbSensorName->currentText();
     emit sendRequest(jobj);
 }
 
