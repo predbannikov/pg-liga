@@ -13,11 +13,15 @@ class ExperimentData;
 
 #include <QPushButton>
 #include <QLabel>
-#include "qwtchartzoom.h"
+//#include "qwtchartzoom.h"
 //#include "qwheelzoomsvc.h"
 //#include "qaxiszoomsvc.h"
 #include <qwt_plot_panner.h>
 #include <qwt_plot_zoomer.h>
+#include <qwt_plot.h>
+#include <qwt_text.h>
+#include <qwt_plot_grid.h>
+#include <qwt_plot_curve.h>
 
 class DecoratedPlot : public QWidget
 {
@@ -36,7 +40,6 @@ public:
 
     void showText(const QString &text);
 
-    void addLegends(QwtLegend *legend, QwtPlot::LegendPosition legendPosition = QwtPlot::RightLegend);
 
     QwtPlot *m_plot;
 private slots:

@@ -57,9 +57,6 @@ SOURCES += \
     models/relaxationloadingmodel.cpp \
     models/steppedloadingmodel.cpp \
     models/steppedpressurisemodel.cpp \
-    qwtchartzoom.cpp \
-    qwheelzoomsvc.cpp \
-    qaxiszoomsvc.cpp \
     plotadapter.cpp \
     plotxyadapter.cpp \
     main.cpp \
@@ -95,9 +92,6 @@ HEADERS += \
     models/relaxationloadingmodel.h \
     models/steppedloadingmodel.h \
     models/steppedpressurisemodel.h \
-    qwtchartzoom.h \
-    qwheelzoomsvc.h \
-    qaxiszoomsvc.h \
     plotadapter.h \
     plotxyadapter.h \
     mainwindow.h \

@@ -4,11 +4,6 @@
 #include "plotxyadapter.h"
 #include "experimentdata.h"
 
-#include <qwt_plot.h>
-#include <qwt_text.h>
-#include <qwt_plot_grid.h>
-#include <qwt_plot_curve.h>
-
 
 #include <QVBoxLayout>
 #include <QPen>
@@ -135,11 +130,6 @@ void DecoratedPlot::removeTrace(ExperimentData *xdata, ExperimentData *ydata)
 void DecoratedPlot::showText(const QString &text)
 {
     m_plot->setTitle(text);
-}
-
-void DecoratedPlot::addLegends(QwtLegend *legend, QwtPlot::LegendPosition legendPosition)
-{
-    m_plot->insertLegend(legend, legendPosition);
 }
 
 void DecoratedPlot::onNewDataAvailable()

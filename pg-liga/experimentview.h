@@ -8,6 +8,7 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QDebug>
+#include <QTimer>
 #include <QScrollArea>
 
 #include "customgraph.h"
