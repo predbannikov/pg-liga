@@ -15,7 +15,7 @@
 //#include "experimentdata.h"
 //#include "decoratedplot.h"
 
-#include "datastore/datastore.h"
+#include "datastore.h"
 
 namespace Strings {
 

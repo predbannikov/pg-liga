@@ -50,5 +50,6 @@
         <file>icons/device_kl0_128.png</file>
         <file>images/ScaleHintVertical_01m.png</file>
         <file>images/ScaleHintVertical_02m.png</file>
+        <file>icons/duplicate.png</file>
     </qresource>
 </RCC>

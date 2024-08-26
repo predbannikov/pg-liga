@@ -8,7 +8,7 @@
 #include <QJsonDocument>
 #include <QDebug>
 
-#include "network/abstractjsonclient.h"
+#include "abstractjsonclient.h"
 
 
 class ClientManager : public AbstractJSONClient

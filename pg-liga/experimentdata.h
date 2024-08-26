@@ -5,7 +5,7 @@
 #include <QVector>
 #include <QDateTime>
 
-#include "measurements/measurements.h"
+#include "measurements.h"
 
 class ExperimentData : public QObject
 {

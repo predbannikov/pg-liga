@@ -13,43 +13,36 @@ unix: DESTDIR=$$DESTDIR_RELEASE
 
 SOURCES += \
         abstractunit.cpp \
-		clientmanager.cpp \
+        clientmanager.cpp \
         controller.cpp \
         device.cpp \
         experiment.cpp \
         interface.cpp \
-#    modbusclient.cpp \
         operations.cpp \
         sensors.cpp \
-#        sequenceexecutor.cpp \
-    serialport.cpp \
+        serialport.cpp \
         server.cpp  \
         main.cpp \
-#        socketclientmodbus.cpp \
         stepper.cpp \
         storedata.cpp
 
 HEADERS += \
-    abstractunit.h \
-	clientmanager.h \
-    controller.h \
-    device.h \
-    experiment.h    \
-    global.h \
-    interface.h \
-#    modbusclient.h \
-    operations.h \
-    sensors.h \
-#    sequenceexecutor.h \
-    measurements.h  \
-    serialport.h \
-    server.h    \
-#    socketclientmodbus.h \
-    stepper.h \
-    storedata.h
+        abstractunit.h \
+        clientmanager.h \
+        controller.h \
+        device.h \
+        experiment.h    \
+        global.h \
+        interface.h \
+        operations.h \
+        sensors.h \
+        serialport.h \
+        server.h    \
+        stepper.h \
+        storedata.h
 
-
-INCLUDEPATH += $$PWD/../
+#INCLUDEPATH += $$PWD/../
+INCLUDEPATH += $$PWD/../measurements/
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../network/release/ -lnetwork
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../network/debug/ -lnetwork
@@ -60,6 +53,11 @@ win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../datastore/release/ 
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../datastore/debug/ -ldatastore
 #else:unix: LIBS += -L$$DESTDIR -ldatastore
 else:unix: LIBS += -L$$OUT_PWD/../datastore -ldatastore
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../measurements/release/ -lmeasurements
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../measurements/debug/ -lmeasurements
+#else:unix: LIBS += -L$$DESTDIR -ldatastore
+else:unix: LIBS += -L$$OUT_PWD/../measurements -lmeasurements
 
 
 # Default rules for deployment.

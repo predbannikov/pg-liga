@@ -4,7 +4,7 @@
 #include <QMap>
 #include <QObject>
 
-#include "measurements/measurements.h"
+#include "measurements.h"
 
 
 

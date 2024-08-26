@@ -15,12 +15,18 @@ ExperimentView::ExperimentView(QWidget *parent) :
 
     QList<int> size;
     size << 90 << 10;
+    ui->splitter_2->setSizes(size);
+    size.clear();
+    size << 10 << 90;
     ui->splitter->setSizes(size);
+
     setupPlots();
 
     connect(&timerIntervalUpdate, &QTimer::timeout, this, &ExperimentView::onReadDataStore);
 
-    ui->groupBox_4->setVisible(false);
+
+
+//    ui->groupBox_4->setVisible(false);
 }
 
 ExperimentView::~ExperimentView()

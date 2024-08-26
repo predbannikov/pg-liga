@@ -30,7 +30,7 @@ public:
     {
         double divider = other.siValue();
         if ((divider < -DIVISION_EPS) || (divider > DIVISION_EPS)) return siValue() / divider;
-        else   {qDebug () << "Measurements: divide by zero #1"; return 0.0;} /// @todo Возвращать код ошибки
+        else   {/*qDebug () << "Measurements: divide by zero #1";*/ return 0.0;} /// @todo Возвращать код ошибки
     }
     bool isValid() const { return !std::isnan(m_siValue); }
     bool isZero() const { return m_siValue == 0; }
@@ -44,7 +44,7 @@ public:
     {
         double divider = factor;
         if ((divider < -DIVISION_EPS) || (divider > DIVISION_EPS)) return T(m_siValue / divider);
-        else   {qDebug () << "Measurements: divide by zero #2"; return 0.0;} /// @todo Возвращать код ошибки
+        else   {/*qDebug () << "Measurements: divide by zero #2";*/ return 0.0;} /// @todo Возвращать код ошибки
     }
 
     void operator +=(const T &other) { m_siValue += other.m_siValue; }
@@ -56,7 +56,7 @@ public:
     {
         double divider = other.m_siValue;
         if ((divider < -DIVISION_EPS) || (divider > DIVISION_EPS)) return m_siValue / divider;
-        else   {qDebug () << "Measurements: divide by zero #3"; return 0.0;} /// @todo Возвращать код ошибки
+        else   {/*qDebug () << "Measurements: divide by zero #3";*/ return 0.0;} /// @todo Возвращать код ошибки
     }
 
     bool operator ==(const T &other) const { return m_siValue == other.m_siValue; }
@@ -107,7 +107,7 @@ public:
     TimeInterval() = default;
 
     static TimeInterval fromHMS(double h, double m, double s) { return TimeInterval(h * 3600.0 + m * 60.0 + s); }
-    static TimeInterval fromString(const QString &str) {
+    static TimeInterval fromStringShort(const QString &str) {
         QStringList splitted = str.split(' ');
 
         if(splitted.count() < 6) {
@@ -148,35 +148,58 @@ class TimeLongInterval : public Quantity<TimeLongInterval> {
 public:
     TimeLongInterval() = default;
 
+    static TimeLongInterval fromHMS(double h, double m, double s) { return TimeLongInterval(h * 3600.0 + m * 60.0 + s); }
     static TimeLongInterval fromDHM(double d, double h, double m) { return TimeLongInterval(d * 86400.0 + h * 3600.0 + m * 60.0); }
     static TimeLongInterval fromDHMS(double d, double h, double m, double s) { return TimeLongInterval(d * 86400.0 + h * 3600.0 + m * 60.0 + s); }
-    static TimeLongInterval fromString(const QString &str) {
+    static TimeLongInterval fromMinuts(double minuts) {
+        int days = minuts / 1440;
+        minuts = int(minuts) % 1440;
+        int hours = minuts / 60;
+        minuts = int(minuts) % 60;
+        return fromDHM(days, hours, minuts);
+    }
+    static TimeLongInterval fromStringLong(const QString &str) {
         QStringList splitted = str.split(' ');
 
         if(splitted.count() < 6) {
             return TimeLongInterval();
 
+        } else if (splitted.count() < 8) {
+            int days = 0;
+            int hours = splitted.at(0).toInt();
+            int minutes = splitted.at(2).toInt();
+            int seconds = splitted.at(4).toInt();
+            return TimeLongInterval::fromDHMS(days, hours, minutes, seconds);
         } else {
             int days = splitted.at(0).toInt();
             int hours = splitted.at(2).toInt();
             int minutes = splitted.at(4).toInt();
-
-            return TimeLongInterval::fromDHM(days, hours, minutes);
+            int seconds = splitted.at(6).toInt();
+            return TimeLongInterval::fromDHMS(days, hours, minutes, seconds);
         }
     }
 
-    QString toString() const { return QString("%1 д %2 ч %3 м").arg(QString::number(day()),   2, '0')
+    QString toString() const { return QString("%1 д %2 ч %3 м %4 c").arg(QString::number(day()),   2, '0')
                                         .arg(QString::number(hour()), 2, '0')
-                                        .arg(QString::number(minute()), 2, '0');
+                                        .arg(QString::number(minute()), 2, '0')
+                                        .arg(QString::number(second()), 2, '0');
     }
 
     double milliseconds() const { return siValue() * 1000.0; }
+    /**
+     * @brief seconds   Возвращает время в секундах, чтобы получить часть содержащую секунды вызвать second()
+     * @return
+     */
     double seconds() const { return siValue(); }
     double minutes() const { return siValue() / 60.0; }
     double hours() const { return siValue() / 3600.0; }
     double days() const { return siValue() / 86400.0; }
     double months() const { return siValue() / 2678400.0; }  // 31 day
 
+    /**
+     * @brief second    Возвращает только часть секунд, чтобы получить время в секундах вызвать seconds()
+     * @return
+     */
     int second() const { return static_cast<int>(seconds()) % 60; }
     int minute() const { return static_cast<int>(minutes()) % 60; }
     int hour() const { return static_cast<int>(hours()) % 24; }
@@ -239,6 +262,7 @@ public:
     static Volume cylinder(Length diameter, Length height) { return Volume(Area::circle(diameter).siValue() * height.siValue()); }
 
     static Volume fromCentimetresCubic(double cm3) { return Volume(cm3 * 1e-6); }
+    static Volume fromMillimetresCubic(double mm3) { return Volume(mm3 * 1e-9); }
 
     double metresCubic() const { return siValue(); }
     double centimetresCubic() const { return siValue() * 1e6; }
@@ -279,7 +303,7 @@ public:
     {
         double divider = area.siValue();
         if ((divider < -DIVISION_EPS) || (divider > DIVISION_EPS)) return Pressure(force.siValue() / divider);
-        else   {qDebug () << "Measurements: divide by zero #4"; return 0.0;} /// @todo Возвращать код ошибки
+        else   {/*qDebug () << "Measurements: divide by zero #4";*/ return 0.0;} /// @todo Возвращать код ошибки
     }
     static Pressure fromPascals(double pa) { return Pressure(pa); }
     static Pressure fromKiloPascals(double kPa) { return Pressure(kPa * 1e3); }
@@ -317,5 +341,6 @@ private:
 Q_DECLARE_METATYPE(Measurements::Pressure)
 Q_DECLARE_METATYPE(Measurements::TimeInterval)
 Q_DECLARE_METATYPE(Measurements::TimeLongInterval)
+Q_DECLARE_METATYPE(Measurements::Volume)
 
 #endif // MEASUREMENTS_H

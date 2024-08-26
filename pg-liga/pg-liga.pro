@@ -2,7 +2,7 @@ QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-CONFIG += c++11
+CONFIG += c++17
 CONFIG += qwt
 win32 {
 #    msvc: LIBS += -LC:\Qwt-6.1.3\lib-msvc-compiller17.9
@@ -34,6 +34,7 @@ DEFINES += VERSION_MAJOR=\\\"$$VERSION_MAJOR\\\" \
 # In order to do so, uncomment the following line.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+
 SOURCES += \
     LogHelper/log_helper.cpp \
     Settings/settingsmanager.cpp \
@@ -42,15 +43,29 @@ SOURCES += \
     clientwindow.cpp \
     customgraph.cpp \
     experimentview.cpp \
-	decoratedplot.cpp \
-	experimentdata.cpp \
-	qwtchartzoom.cpp \
-	qwheelzoomsvc.cpp \
-	qaxiszoomsvc.cpp \
-	plotadapter.cpp \
-	plotxyadapter.cpp \
+    decoratedplot.cpp \
+    experimentdata.cpp \
+    models/advancedkinematicloadingmodel.cpp \
+    models/advancedsaturationmodel.cpp \
+    models/consolidationaltmodel.cpp \
+    models/consolidationmodel.cpp \
+    models/deformmodel.cpp \
+    models/kinematicloadingmodel.cpp \
+    models/kinematicpressurisedloadingmodel.cpp \
+    models/maxdeformmodel.cpp \
+    models/maxpressuremodel.cpp \
+    models/relaxationloadingmodel.cpp \
+    models/steppedloadingmodel.cpp \
+    models/steppedpressurisemodel.cpp \
+    qwtchartzoom.cpp \
+    qwheelzoomsvc.cpp \
+    qaxiszoomsvc.cpp \
+    plotadapter.cpp \
+    plotxyadapter.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    steppedmodeleditor.cpp \
+    viewdelegate.cpp
 
 
 HEADERS += \
@@ -60,26 +75,42 @@ HEADERS += \
     Settings/settingsmanager.h \
     Settings/settingsdialog.h   \
     abstract/abstractjsonclient.h \
-    Physics/measurements.h \
+    appstrings.h \
     clientmanager.h \
     clientwindow.h \
     customgraph.h \
     experimentview.h \
-	experimentdata.h \
-	decoratedplot.h \
-	qwtchartzoom.h \
-	qwheelzoomsvc.h \
-	qaxiszoomsvc.h \
-	plotadapter.h \
-	plotxyadapter.h \
-    mainwindow.h
+    experimentdata.h \
+    decoratedplot.h \
+    models/abstractsteppedmodel.h \
+    models/advancedkinematicloadingmodel.h \
+    models/advancedsaturationmodel.h \
+    models/consolidationaltmodel.h \
+    models/consolidationmodel.h \
+    models/deformmodel.h \
+    models/kinematicloadingmodel.h \
+    models/kinematicpressurisedloadingmodel.h \
+    models/maxdeformmodel.h \
+    models/maxpressuremodel.h \
+    models/relaxationloadingmodel.h \
+    models/steppedloadingmodel.h \
+    models/steppedpressurisemodel.h \
+    qwtchartzoom.h \
+    qwheelzoomsvc.h \
+    qaxiszoomsvc.h \
+    plotadapter.h \
+    plotxyadapter.h \
+    mainwindow.h \
+    steppedmodeleditor.h \
+    viewdelegate.h
 
 FORMS += \
     clientwindow.ui \
     customgraph.ui \
     experimentview.ui \
     mainwindow.ui   \
-    Settings/settingsdialog.ui
+    Settings/settingsdialog.ui \
+    steppedmodeleditor.ui
 
 TRANSLATIONS += \
     pg-liga_ru_RU.ts
@@ -90,7 +121,12 @@ RESOURCES += \
 RC_ICONS += \
     resources/icons/appicon.ico
 
-INCLUDEPATH += $$PWD/../
+INCLUDEPATH += $$PWD/../measurements/
+INCLUDEPATH += $$PWD/../datastore/
+INCLUDEPATH += $$PWD/../network/
+INCLUDEPATH += $$PWD/models/
+
+message($$HEADERS)
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../network/release/ -lnetwork
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../network/debug/ -lnetwork
@@ -99,4 +135,13 @@ else:unix: LIBS += -L$$DESTDIR -lnetwork
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../datastore/release/ -ldatastore
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../datastore/debug/ -ldatastore
 else:unix: LIBS += -L$$DESTDIR -ldatastore
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../measurements/release/ -lmeasurements
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../measurements/debug/ -lmeasurements
+else:unix: LIBS += -L$$OUT_PWD/../measurements -lmeasurements
+
+DISTFILES += \
+    resources/icons/duplicate.png
+
+
 
