@@ -4,6 +4,8 @@
 #include <QWidget>
 #include <QDebug>
 
+#include <qwt_legend.h>
+
 class QwtPlot;
 class QwtPlotPanner;
 class QwtPlotZoomer;
@@ -25,7 +27,7 @@ public:
     DecoratedPlot(QWidget *parent = nullptr);
 
     void addTrace    (ExperimentData *data , const QString &ylabel);
-    void addTrace    (ExperimentData *data , const QString &xlabel, const QString &ylabel, Qt::GlobalColor color = Qt::GlobalColor::darkGreen);
+    void addTrace    (ExperimentData *data , const QString &xlabel, const QString &ylabel, Qt::GlobalColor color = Qt::GlobalColor::darkGreen, QString label = "");
     void addTrace    (ExperimentData *xdata, ExperimentData *ydata, const QString &xlabel, const QString &ylabel);
     void addAuxTrace (ExperimentData *xdata, ExperimentData *ydata, const QColor &color);
 
@@ -34,6 +36,7 @@ public:
 
     void showText(const QString &text);
 
+    void addLegends(QwtLegend *legend, QwtPlot::LegendPosition legendPosition = QwtPlot::RightLegend);
 
     QwtPlot *m_plot;
 private slots:

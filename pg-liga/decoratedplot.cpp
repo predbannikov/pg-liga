@@ -55,12 +55,12 @@ void DecoratedPlot::addTrace(ExperimentData *data, const QString &ylabel)
     addTrace(data, tr("Время, мин"), ylabel);
 }
 
-void DecoratedPlot::addTrace(ExperimentData *data, const QString &xlabel, const QString &ylabel, Qt::GlobalColor color)
+void DecoratedPlot::addTrace(ExperimentData *data, const QString &xlabel, const QString &ylabel, Qt::GlobalColor color, QString label)
 {
     setupLabels(xlabel, ylabel);
 
     auto *adapter = new PlotAdapter(data);
-    auto *curve = new QwtPlotCurve();
+    auto *curve = new QwtPlotCurve(label);
 
     curve->setData(adapter);
     curve->setPen(color, 2.0);
@@ -135,6 +135,11 @@ void DecoratedPlot::removeTrace(ExperimentData *xdata, ExperimentData *ydata)
 void DecoratedPlot::showText(const QString &text)
 {
     m_plot->setTitle(text);
+}
+
+void DecoratedPlot::addLegends(QwtLegend *legend, QwtPlot::LegendPosition legendPosition)
+{
+    m_plot->insertLegend(legend, legendPosition);
 }
 
 void DecoratedPlot::onNewDataAvailable()

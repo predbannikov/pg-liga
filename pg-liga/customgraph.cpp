@@ -11,9 +11,11 @@ CustomGraph::CustomGraph(QMap<QString, ExperimentData *> *data, QWidget *parent)
     ui->cmbData1->addItems(data->keys());
     Qt::GlobalColor color = Qt::darkGreen;
     for (int i = 0; i < ui->cmbData1->count(); ++i) {
-        ui->widget->addTrace(m_data->value(ui->cmbData1->itemText(i)), tr("Время (t, мин)"), tr("%1, %2").arg(ui->cmbData1->itemText(i)).arg("mm"), color);
+        ui->widget->addTrace(m_data->value(ui->cmbData1->itemText(i)), tr("Время (t, мин)"), tr("%1, %2").arg(ui->cmbData1->itemText(i)).arg("mm"), color, ui->cmbData1->itemText(i));
         color = static_cast<Qt::GlobalColor>(color + 2);
     }
+    QwtLegend *legend = new QwtLegend();
+    ui->widget->m_plot->insertLegend(legend, QwtPlot::RightLegend);
 
 }
 

@@ -27,7 +27,6 @@ private:
     Ui::CustomGraph *ui;
 
     QMap<QString, ExperimentData *> *m_data;
-    DecoratedPlot *positionVsTime = nullptr;
 };
 
 #endif // CUSTOMGRAPH_H

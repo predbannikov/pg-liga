@@ -6,6 +6,12 @@
 
 // TODO Unify code with other Step models and thus eliminate the copypasta
 
+class TESTCLASSSSS {
+public:
+    TESTCLASSSSS(){}
+
+};
+
 class SteppedPressuriseModel : public AbstractSteppedModel
 {
     Q_OBJECT
@@ -53,7 +59,7 @@ public:
         }
     };
 
-    SteppedPressuriseModel(Measurements::Pressure overPressureCellVolumeter, Measurements::Pressure overPressurePoreVolumeter, QObject *parent = nullptr);
+    SteppedPressuriseModel(QObject *parent = nullptr);
 
     /* Reimplemented AbstractTestModel functions */
     int rowCount(const QModelIndex &parent) const override;

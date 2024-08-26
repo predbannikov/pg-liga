@@ -2,28 +2,45 @@
 #include "ui_experimentview.h"
 #include "math.h"
 
+#include "steppedpressurisemodel.h"
+
 ExperimentView::ExperimentView(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ExperimentView)
 {
     ui->setupUi(this);
-    ui->dateTimeEdit->setDateTime(QDateTime::fromString("00:00:00"));
     QFont font = ui->lblSensors->font();
     font.setPointSize(42);
     font.setBold(true);
     ui->lblSensors->setFont(font);
 
-    QList<int> size;
-    size << 90 << 10;
-    ui->splitter_2->setSizes(size);
-    size.clear();
-    size << 10 << 90;
-    ui->splitter->setSizes(size);
+//    QList<int> size;
+//    size << 90 << 10;
+//    ui->splitter_2->setSizes(size);
+//     QList<int> size2;
+//    size2.clear();
+//    size2 << 0 << 100;
+//    ui->splitter->setSizes(size2);
 
     setupPlots();
 
     connect(&timerIntervalUpdate, &QTimer::timeout, this, &ExperimentView::onReadDataStore);
 
+//    QVBoxLayout *containerLayout = new QVBoxLayout(ui->wgtContainer );
+
+//    ui->scrollArea->setLayout(containerLayout);
+//    scrollArea->setWidgetResizable(true);
+
+    auto lay = ui->scrollAreaWidgetContents->layout();
+    for (int i = 0; i < 1; i++) {
+
+        SteppedPressuriseModel *model;
+        SteppedModelEditor *wgtStepEdit = new SteppedModelEditor(this);
+        model = new SteppedPressuriseModel(this);
+        wgtStepEdit->setModel(model);
+        lay->addWidget(wgtStepEdit);
+
+    }
 
 
 //    ui->groupBox_4->setVisible(false);
@@ -46,9 +63,9 @@ void ExperimentView::setupPlots()
     deformVsTime->addTrace(m_experimentData.value("Деформация"), tr("Время (t, мин)"), tr("Деформация, %1").arg(Strings::mm));
     ui->tabGraphics->addTab(deformVsTime, tr("Вертикальная деформация (t)"));
 
-    dataPosition = new ExperimentData(this);
+    m_experimentData.insert("Позиция", new ExperimentData(this));
     positionVsTime = new DecoratedPlot(this);
-    positionVsTime->addTrace(dataPosition, tr("Время (t, мин)"), tr("Позиция, %1").arg(Strings::mm));
+    positionVsTime->addTrace(m_experimentData.value("Позиция"), tr("Время (t, мин)"), tr("Позиция, %1").arg(Strings::mm));
     ui->tabGraphics->addTab(positionVsTime, tr("Позиция"));
 
     customPlot = new CustomGraph(&m_experimentData, this);
@@ -76,26 +93,26 @@ void ExperimentView::onCreateJsonObject()
     QJsonDocument jdoc = QJsonDocument::fromJson(ui->textEdit->toPlainText().toUtf8());
 
     jRequest = QJsonObject();
-    jRequest["exp_type"] = "compression";
-    jRequest["pressure"] = QString::number(ui->spinPressure->value());
-    if (ui->comboBox->currentText() == "time") {
-        jRequest["criterion"] = "time";
-        jRequest.remove("criterion_arg2");
-        jRequest.remove("criterion_arg3");
-        jRequest["criterion_arg1"] = QString::number(timeInterval(ui->dateTimeEdit->text(), "hh:mm:ss"));
-    } else if (ui->comboBox->currentText() == "manual") {
-        jRequest["criterion"] = "manual";
-        jRequest.remove("criterion_arg1");
-        jRequest.remove("criterion_arg2");
-        jRequest.remove("criterion_arg3");
-    } else if (ui->comboBox->currentText() == "stabilization") {
-        jRequest["criterion"] = "stabilization";
-        jRequest["criterion_arg3"] = QString::number(ui->spinCriter->value());
-        jRequest["criterion_arg2"] = "VerticalDeform_mm";
-        jRequest["criterion_arg1"] = QString::number(timeInterval(ui->dateTimeEdit->text(), "hh:mm:ss"));
-    }
-    ui->textEdit->clear();
-    ui->textEdit->append(QJsonDocument(jRequest).toJson());
+//    jRequest["exp_type"] = "compression";
+//    jRequest["pressure"] = QString::number(ui->spinPressure->value());
+//    if (ui->comboBox->currentText() == "time") {
+//        jRequest["criterion"] = "time";
+//        jRequest.remove("criterion_arg2");
+//        jRequest.remove("criterion_arg3");
+//        jRequest["criterion_arg1"] = QString::number(timeInterval(ui->dateTimeEdit->text(), "hh:mm:ss"));
+//    } else if (ui->comboBox->currentText() == "manual") {
+//        jRequest["criterion"] = "manual";
+//        jRequest.remove("criterion_arg1");
+//        jRequest.remove("criterion_arg2");
+//        jRequest.remove("criterion_arg3");
+//    } else if (ui->comboBox->currentText() == "stabilization") {
+//        jRequest["criterion"] = "stabilization";
+//        jRequest["criterion_arg3"] = QString::number(ui->spinCriter->value());
+//        jRequest["criterion_arg2"] = "VerticalDeform_mm";
+//        jRequest["criterion_arg1"] = QString::number(timeInterval(ui->dateTimeEdit->text(), "hh:mm:ss"));
+//    }
+//    ui->textEdit->clear();
+//    ui->textEdit->append(QJsonDocument(jRequest).toJson());
 
 }
 
@@ -138,33 +155,33 @@ void ExperimentView::on_dateTimeEdit_timeChanged(const QTime &time)
 
 void ExperimentView::on_btnAddStep_clicked()
 {
-    if (ui->textEdit->toPlainText().isEmpty())
-        onCreateJsonObject();
-    QJsonObject jobj = QJsonDocument::fromJson(ui->textEdit->toPlainText().toUtf8()).object();
-    jobj["step"] = QString::number(steps.size());
-    QLineEdit *le = new QLineEdit(QJsonDocument(jobj).toJson(), this);
-    steps.append(le);
+//    if (ui->textEdit->toPlainText().isEmpty())
+//        onCreateJsonObject();
+//    QJsonObject jobj = QJsonDocument::fromJson(ui->textEdit->toPlainText().toUtf8()).object();
+//    jobj["step"] = QString::number(steps.size());
+//    QLineEdit *le = new QLineEdit(QJsonDocument(jobj).toJson(), this);
+//    steps.append(le);
 
-    ui->layoutSteps->addWidget(le);
+//    ui->layoutSteps->addWidget(le);
 }
 
 void ExperimentView::on_pushButton_2_clicked()
 {
-    QJsonObject jconfig;
-    jconfig["area"] = QString::number(M_PI * pow(ui->spinBoxDiameter->value() / 2., 2) / 100 / 10000);	// 100мм2=1см2, 1см2=10000м2
-    jconfig["name_speciment"] = ui->leNameSpecimen->text();
-    QJsonArray jarr;
-    for (int i = 0; i < steps.size(); i++) {
-        jarr.append(QJsonDocument::fromJson(steps[i]->text().toUtf8()).object());
-    }
-    jconfig["steps"] = jarr;
-    QJsonObject jobj;
-    jobj["CMD"] = "settings";
-    jobj["config"] = jconfig;
+//    QJsonObject jconfig;
+//    jconfig["area"] = QString::number(M_PI * pow(ui->spinBoxDiameter->value() / 2., 2) / 100 / 10000);	// 100мм2=1см2, 1см2=10000м2
+//    jconfig["name_speciment"] = ui->leNameSpecimen->text();
+//    QJsonArray jarr;
+//    for (int i = 0; i < steps.size(); i++) {
+//        jarr.append(QJsonDocument::fromJson(steps[i]->text().toUtf8()).object());
+//    }
+//    jconfig["steps"] = jarr;
+//    QJsonObject jobj;
+//    jobj["CMD"] = "settings";
+//    jobj["config"] = jconfig;
 
-    ui->textEdit->clear();
-    ui->textEdit->append(QJsonDocument(jobj).toJson());
-    emit sendRequest(jobj);
+//    ui->textEdit->clear();
+//    ui->textEdit->append(QJsonDocument(jobj).toJson());
+//    emit sendRequest(jobj);
 
 }
 
@@ -218,7 +235,7 @@ void ExperimentView::onReadyResponse(const QJsonObject &jobj)
                 m_experimentData.value("Сила")->append(allList);
             }
             if (jkey == "Position_mm") {
-                dataPosition->append(allList);
+                m_experimentData.value("Позиция")->append(allList);
             }
         }
         QJsonObject jsensors = jobj["sensors"].toObject();
@@ -237,11 +254,6 @@ void ExperimentView::onReadyResponse(const QJsonObject &jobj)
 //        qDebug() << "stop";
 //        qDebug() << dataStore;
     }
-}
-
-void ExperimentView::on_btnClearLogOut_clicked()
-{
-    ui->textEditLogOut->clear();
 }
 
 void ExperimentView::on_btnClearTextEdit_clicked()
@@ -314,16 +326,16 @@ void ExperimentView::on_btnInitStoreData_clicked()
 void ExperimentView::on_btnSetSettings_clicked()
 {
     QJsonObject jconfig;
-    jconfig["area"] = QString::number(M_PI * pow(ui->spinBoxDiameter->value() / 2., 2) / 100 / 10000);	// 100мм2=1см2, 1см2=10000м2
-    jconfig["name_speciment"] = ui->leNameSpecimen->text();
+//    jconfig["area"] = QString::number(M_PI * pow(ui->spinBoxDiameter->value() / 2., 2) / 100 / 10000);	// 100мм2=1см2, 1см2=10000м2
+//    jconfig["name_speciment"] = ui->leNameSpecimen->text();
 
     QJsonObject jobj;
-    jobj["CMD"] = "settings";
-    jobj["config"] = jconfig;
+//    jobj["CMD"] = "settings";
+//    jobj["config"] = jconfig;
 
     ui->textEdit->clear();
     ui->textEdit->append(QJsonDocument(jobj).toJson());
-    emit sendRequest(jobj);
+//    emit sendRequest(jobj);
 }
 
 
@@ -349,8 +361,8 @@ void ExperimentView::on_btnClearDataStore_clicked()
     m_experimentData.value("Сила")->clear();
     pressureVsTime->m_plot->replot();
 
-    dataPosition->clearData();
-    dataPosition->clear();
+    m_experimentData.value("Позиция")->clearData();
+    m_experimentData.value("Позиция")->clear();
     positionVsTime->m_plot->replot();
 }
 

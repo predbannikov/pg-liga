@@ -8,8 +8,10 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QDebug>
+#include <QScrollArea>
 
 #include "customgraph.h"
+#include "steppedmodeleditor.h"
 
 //#include "plotadapter.h"
 //#include "experimentdata.h"
@@ -77,8 +79,6 @@ private slots:
 
     void on_btnStart_clicked();
 
-    void on_btnClearLogOut_clicked();
-
     void on_btnClearTextEdit_clicked();
 
     void on_btnMoveUp_clicked();
@@ -142,7 +142,7 @@ private:
 
 
     QMap<QString, ExperimentData*> m_positionData;
-    ExperimentData *dataPosition = nullptr;
+//    ExperimentData *dataPosition = nullptr;
     DecoratedPlot *positionVsTime = nullptr;
 
     CustomGraph *customPlot = nullptr;

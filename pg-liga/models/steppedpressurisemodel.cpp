@@ -3,20 +3,13 @@
 #include <QPair>
 #include <QDebug>
 
-SteppedPressuriseModel::SteppedPressuriseModel(Measurements::Pressure overPressureCellVolumeter,
-                                               Measurements::Pressure overPressurePoreVolumeter, QObject *parent):
-    AbstractSteppedModel(parent),
-    m_overPressureCellVolumeter(overPressureCellVolumeter),
-    m_overPressurePoreVolumeter(overPressurePoreVolumeter)
+SteppedPressuriseModel::SteppedPressuriseModel(QObject *parent):
+    AbstractSteppedModel(parent)
 {
-    
-    
 }
 
 int SteppedPressuriseModel::rowCount(const QModelIndex &parent) const
 {
-    
-
     if(parent.isValid()) {
         
         return 0;
@@ -24,8 +17,6 @@ int SteppedPressuriseModel::rowCount(const QModelIndex &parent) const
         
         return m_steps.size();
     }
-
-    
 }
 
 int SteppedPressuriseModel::columnCount(const QModelIndex &parent) const
