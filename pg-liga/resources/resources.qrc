@@ -51,5 +51,6 @@
         <file>images/ScaleHintVertical_01m.png</file>
         <file>images/ScaleHintVertical_02m.png</file>
         <file>icons/duplicate.png</file>
+        <file>icons/vert_dots.png</file>
     </qresource>
 </RCC>

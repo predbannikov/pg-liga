@@ -1,0 +1,123 @@
+#include "operationactions.h"
+#include "ui_operationactions.h"
+
+OperationActions::OperationActions(int numberOperation, QWidget *parent) :
+    QWidget(parent),
+    ui(new Ui::OperationActions),
+    m_numOperation(numberOperation)
+{
+    ui->setupUi(this);
+
+
+    ui->btnMenuActions->setStyleSheet("background-color: #e6f0e6; border: 0px solid; ");
+    currentTextMenu = defaultText;
+    updateTextMenu();
+
+
+    QVBoxLayout *lay = new QVBoxLayout;
+    lay->setSpacing(0);
+    lay->setMargin(0);
+    ui->widget->setLayout(lay);
+
+    ui->groupBox->layout()->setSpacing(0);
+    ui->groupBox->layout()->setMargin(0);
+
+    steppedPressureAct = new QAction("Установка всестороннего давления", this);
+    connect(steppedPressureAct, &QAction::triggered, this, &OperationActions::createSteppedPressureWgt);
+
+    steppedLoadingAct = new QAction("Установка вертикального давления", this);
+    connect(steppedLoadingAct, &QAction::triggered, this, &OperationActions::createSteppedLoadingWgt);
+
+    deleteAct = new QAction("Удалить операцию", this);
+    connect(deleteAct, &QAction::triggered, this, &OperationActions::deleteOperationActions);
+
+    addOperationAct = new QAction("Добавить операцию", this);
+    connect(addOperationAct, &QAction::triggered, this, &OperationActions::addOperationActions);
+
+    moveUpOperationAct = new QAction("Переместить операцию вверх", this);
+    connect(moveUpOperationAct, &QAction::triggered, this, &OperationActions::moveOperationUpActions);
+
+    moveDownOperationAct = new QAction("Переместить операцию вниз", this);
+    connect(moveDownOperationAct, &QAction::triggered, this, &OperationActions::moveOperationDownActions);
+
+}
+
+OperationActions::~OperationActions()
+{
+    delete ui;
+}
+
+void OperationActions::setNumberOperation(int numberOperation)
+{
+    m_numOperation = numberOperation;
+    updateTextMenu();
+}
+
+void OperationActions::contextMenuEvent(QContextMenuEvent *event)
+{
+    Q_UNUSED(event)
+    //    QMenu menu(this);
+//    menu.addAction(setPressureAct);
+//    menu.exec(event->globalPos());
+    createMenu();
+}
+
+void OperationActions::createSteppedPressureWgt()
+{
+    deleteWidget();
+    SteppedModelEditor *wgtStepEdit = new SteppedModelEditor(this);
+    SteppedPressuriseModel *model = new SteppedPressuriseModel(wgtStepEdit);
+    wgtStepEdit->setModel(model);
+    ui->widget->layout()->addWidget(wgtStepEdit);
+    updateTextMenu(steppedPressureAct->text());
+}
+
+void OperationActions::createSteppedLoadingWgt()
+{
+    deleteWidget();
+    SteppedModelEditor *wgtStepEdit = new SteppedModelEditor(this);
+    StaticDeviatorModel *model = new StaticDeviatorModel(wgtStepEdit);
+    wgtStepEdit->setModel(model);
+    ui->widget->layout()->addWidget(wgtStepEdit);
+    updateTextMenu(steppedLoadingAct->text());
+}
+
+void OperationActions::on_btnMenuActions_clicked()
+{
+    createMenu();
+}
+
+void OperationActions::createMenu()
+{
+    QMenu menu(this);
+    QMenu actionsSubMenu("Действия", &menu);
+    actionsSubMenu.addAction(steppedPressureAct);
+    actionsSubMenu.addAction(steppedLoadingAct);
+
+    menu.addAction(addOperationAct);
+    menu.addMenu(&actionsSubMenu);
+    menu.addAction(moveUpOperationAct);
+    menu.addAction(moveDownOperationAct);
+    menu.addAction(deleteAct);
+    menu.exec(QCursor::pos());
+}
+
+void OperationActions::deleteWidget()
+{
+    int count = ui->widget->layout()->count();
+    if (count >= 1)
+        delete ui->widget->layout()->itemAt(0)->widget();
+    currentTextMenu = defaultText;
+    updateTextMenu();
+}
+
+void OperationActions::updateTextMenu(QString text)
+{
+    if (text.isEmpty())
+        ui->lblText->setText(QString("Этап № %1    %2").arg(m_numOperation+1).arg(currentTextMenu));
+    else {
+        currentTextMenu = text;
+        ui->lblText->setText(QString("Эпап № %1    %2").arg(m_numOperation+1).arg(text));
+    }
+}
+

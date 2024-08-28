@@ -57,6 +57,7 @@ SOURCES += \
     models/relaxationloadingmodel.cpp \
     models/steppedloadingmodel.cpp \
     models/steppedpressurisemodel.cpp \
+    operationactions.cpp \
     plotadapter.cpp \
     plotxyadapter.cpp \
     main.cpp \
@@ -92,6 +93,7 @@ HEADERS += \
     models/relaxationloadingmodel.h \
     models/steppedloadingmodel.h \
     models/steppedpressurisemodel.h \
+    operationactions.h \
     plotadapter.h \
     plotxyadapter.h \
     mainwindow.h \
@@ -104,6 +106,7 @@ FORMS += \
     experimentview.ui \
     mainwindow.ui   \
     Settings/settingsdialog.ui \
+    operationactions.ui \
     steppedmodeleditor.ui
 
 TRANSLATIONS += \

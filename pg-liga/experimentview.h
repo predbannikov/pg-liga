@@ -10,9 +10,13 @@
 #include <QDebug>
 #include <QTimer>
 #include <QScrollArea>
+#include <QMenu>
+#include <QAction>
+#include <QIcon>
 
 #include "customgraph.h"
 #include "steppedmodeleditor.h"
+#include "operationactions.h"
 
 //#include "plotadapter.h"
 //#include "experimentdata.h"
@@ -63,6 +67,12 @@ public:
 public slots:
     void onReadyResponse(const QJsonObject &jobj);
     void onReadDataStore();
+
+    void addOperationActions();
+    void updateIndexOperationActions();
+    void moveUpOperation();
+    void moveDownOperation();
+
 
 private slots:
     void onCreateJsonObject();
@@ -130,6 +140,8 @@ signals:
 private:
     void setupPlots();
     void clearData();
+
+
 
     QMap<QString, DataStore> dataStore;
 

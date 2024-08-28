@@ -6,20 +6,53 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>958</width>
-    <height>769</height>
+    <width>929</width>
+    <height>564</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <property name="leftMargin">
+    <number>3</number>
+   </property>
+   <property name="topMargin">
+    <number>3</number>
+   </property>
+   <property name="rightMargin">
+    <number>3</number>
+   </property>
+   <property name="bottomMargin">
+    <number>3</number>
+   </property>
+   <property name="spacing">
+    <number>1</number>
+   </property>
    <item row="0" column="0">
     <widget class="QSplitter" name="splitter">
+     <property name="lineWidth">
+      <number>0</number>
+     </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
      <widget class="QScrollArea" name="scrollArea">
+      <property name="minimumSize">
+       <size>
+        <width>300</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::NoFrame</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Plain</enum>
+      </property>
+      <property name="lineWidth">
+       <number>0</number>
+      </property>
       <property name="widgetResizable">
        <bool>true</bool>
       </property>
@@ -28,11 +61,27 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>69</width>
-         <height>749</height>
+         <width>300</width>
+         <height>558</height>
         </rect>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout"/>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+       </layout>
       </widget>
      </widget>
      <widget class="QTabWidget" name="tabGraphics">

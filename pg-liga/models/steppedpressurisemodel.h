@@ -6,12 +6,6 @@
 
 // TODO Unify code with other Step models and thus eliminate the copypasta
 
-class TESTCLASSSSS {
-public:
-    TESTCLASSSSS(){}
-
-};
-
 class SteppedPressuriseModel : public AbstractSteppedModel
 {
     Q_OBJECT

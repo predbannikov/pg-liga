@@ -14,6 +14,9 @@
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -31,10 +34,22 @@
      <property name="spacing">
       <number>0</number>
      </property>
+     <property name="sizeConstraint">
+      <enum>QLayout::SetNoConstraint</enum>
+     </property>
      <item>
       <widget class="QPushButton" name="btnLeftStepAdd">
-       <property name="text">
+       <property name="maximumSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
         <string>Добавить ступень</string>
+       </property>
+       <property name="text">
+        <string/>
        </property>
        <property name="icon">
         <iconset resource="resources/resources.qrc">
@@ -44,8 +59,17 @@
      </item>
      <item>
       <widget class="QPushButton" name="btnMiddleStepRemove">
-       <property name="text">
+       <property name="maximumSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
         <string>Удалить ступень</string>
+       </property>
+       <property name="text">
+        <string/>
        </property>
        <property name="icon">
         <iconset resource="resources/resources.qrc">
@@ -55,8 +79,17 @@
      </item>
      <item>
       <widget class="QPushButton" name="btnMiddleStepUp">
-       <property name="text">
+       <property name="maximumSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
         <string>Передвинуть выше</string>
+       </property>
+       <property name="text">
+        <string/>
        </property>
        <property name="icon">
         <iconset resource="resources/resources.qrc">
@@ -66,7 +99,13 @@
      </item>
      <item>
       <widget class="QPushButton" name="btnRightStepDown">
-       <property name="text">
+       <property name="maximumSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
         <string>Передвинуть ниже</string>
        </property>
        <property name="icon">
@@ -77,11 +116,14 @@
      </item>
      <item>
       <widget class="QPushButton" name="btnDuplicateStep">
-       <property name="toolTip">
-        <string>Дублировать текущую ступень</string>
+       <property name="maximumSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
        </property>
-       <property name="text">
-        <string>Дублировать</string>
+       <property name="toolTip">
+        <string>Дублировать выбранную ступень</string>
        </property>
        <property name="icon">
         <iconset resource="resources/resources.qrc">
@@ -112,8 +154,17 @@
        <height>150</height>
       </size>
      </property>
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Plain</enum>
+     </property>
+     <property name="lineWidth">
+      <number>0</number>
+     </property>
      <property name="midLineWidth">
-      <number>1</number>
+      <number>0</number>
      </property>
      <property name="showDropIndicator" stdset="0">
       <bool>false</bool>

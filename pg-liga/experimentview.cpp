@@ -14,33 +14,13 @@ ExperimentView::ExperimentView(QWidget *parent) :
     font.setBold(true);
     ui->lblSensors->setFont(font);
 
-//    QList<int> size;
-//    size << 90 << 10;
-//    ui->splitter_2->setSizes(size);
-//     QList<int> size2;
-//    size2.clear();
-//    size2 << 0 << 100;
-//    ui->splitter->setSizes(size2);
 
     setupPlots();
 
     connect(&timerIntervalUpdate, &QTimer::timeout, this, &ExperimentView::onReadDataStore);
 
-//    QVBoxLayout *containerLayout = new QVBoxLayout(ui->wgtContainer );
 
-//    ui->scrollArea->setLayout(containerLayout);
-//    scrollArea->setWidgetResizable(true);
-
-    auto lay = ui->scrollAreaWidgetContents->layout();
-    for (int i = 0; i < 1; i++) {
-
-        SteppedPressuriseModel *model;
-        SteppedModelEditor *wgtStepEdit = new SteppedModelEditor(this);
-        model = new SteppedPressuriseModel(this);
-        wgtStepEdit->setModel(model);
-        lay->addWidget(wgtStepEdit);
-
-    }
+    addOperationActions();
 
 
 //    ui->groupBox_4->setVisible(false);
@@ -78,6 +58,111 @@ void ExperimentView::clearData()
     m_experimentData.value("Деформация")->clearData();
     dataStore.clear();
     deformVsTime->m_plot->replot();
+}
+
+void ExperimentView::addOperationActions()
+{
+
+    QVBoxLayout *lay = qobject_cast<QVBoxLayout *>(ui->scrollAreaWidgetContents->layout());
+    OperationActions *opActions = new OperationActions(lay->count()+1, this);
+    lay->insertWidget(-1, opActions);
+
+//    for (int i = 0; i < lay->count(); i++) {
+//        OperationActions *operAct = qobject_cast<OperationActions *> (lay->itemAt(i)->widget());
+//        if (operAct) {
+//            qDebug() << operAct->numberOperation();
+//        }
+//    }
+
+    connect(opActions, &OperationActions::addOperationActions, this, &ExperimentView::addOperationActions);
+    connect(opActions, &OperationActions::moveOperationUpActions, this, &ExperimentView::moveUpOperation);
+    connect(opActions, &OperationActions::moveOperationDownActions, this, &ExperimentView::moveDownOperation);
+    QTimer::singleShot(10, this, &ExperimentView::updateIndexOperationActions);
+    connect(opActions, &OperationActions::deleteOperationActions, this, [=] () {
+        sender()->deleteLater();
+        int countWgts = lay->count();
+        if (countWgts == 1)
+            this->addOperationActions();
+        else
+            QTimer::singleShot(10, this, &ExperimentView::updateIndexOperationActions);
+    });
+}
+
+void ExperimentView::updateIndexOperationActions()
+{
+    QVBoxLayout *lay = qobject_cast<QVBoxLayout *>(ui->scrollAreaWidgetContents->layout());
+    for (int i = 0; i < lay->count(); i++) {
+        OperationActions *operAct = qobject_cast<OperationActions *> (lay->itemAt(i)->widget());
+        if (operAct) {
+            operAct->setNumberOperation(i);
+            qDebug() << operAct->numberOperation();
+        }
+    }
+    qDebug() << "**********";
+}
+
+void ExperimentView::moveUpOperation()
+{
+    QVBoxLayout *lay = qobject_cast<QVBoxLayout *>(ui->scrollAreaWidgetContents->layout());
+    if (lay->count() < 2)
+        return;
+    QList <QWidget *> wgts;
+    for (int i = 0; i < lay->count(); i++) {
+        QWidget *wgt = lay->itemAt(i)->widget();
+        if (wgt) {
+            wgts.append(wgt);
+        }
+    }
+
+    while (QLayoutItem *item = lay->takeAt(0)) {
+        if (QWidget *widget = item->widget()) {
+            lay->removeWidget(widget);
+        }
+        delete item;
+    }
+
+    for (int i = 0; i < wgts.count(); i++) {
+        if (sender() == wgts[i] && i - 1 >= 0) {
+            wgts.move(i, i - 1);
+            break;
+        }
+    }
+    for (auto wgt: qAsConst(wgts)) {
+        lay->addWidget(wgt);
+    }
+    QTimer::singleShot(10, this, &ExperimentView::updateIndexOperationActions);
+}
+
+void ExperimentView::moveDownOperation()
+{
+    QVBoxLayout *lay = qobject_cast<QVBoxLayout *>(ui->scrollAreaWidgetContents->layout());
+    if (lay->count() < 2)
+        return;
+    QList <QWidget *> wgts;
+    for (int i = 0; i < lay->count(); i++) {
+        QWidget *wgt = lay->itemAt(i)->widget();
+        if (wgt) {
+            wgts.append(wgt);
+        }
+    }
+
+    while (QLayoutItem *item = lay->takeAt(0)) {
+        if (QWidget *widget = item->widget()) {
+            lay->removeWidget(widget);
+        }
+        delete item;
+    }
+
+    for (int i = 0; i < wgts.count(); i++) {
+        if (sender() == wgts[i] && i + 1 < wgts.count()) {
+            wgts.move(i, i + 1);
+            break;
+        }
+    }
+    for (auto wgt: qAsConst(wgts)) {
+        lay->addWidget(wgt);
+    }
+    QTimer::singleShot(10, this, &ExperimentView::updateIndexOperationActions);
 }
 
 qint64 ExperimentView::timeInterval(const QString& date, const QString& format)

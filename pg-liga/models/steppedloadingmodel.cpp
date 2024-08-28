@@ -302,7 +302,8 @@ int SteppedLoadingModel::duplicateStep(const QModelIndex &index)
 {
     if (m_steps.count() <= 0)
         return -1;
-    const auto row = index.row() + 1;
+    if (index.row() < 0)
+        return -1;    const auto row = index.row() + 1;
     beginInsertRows(QModelIndex(), row, row);
     Step step = m_steps.at(index.row());
     m_steps.insert(row, step);
