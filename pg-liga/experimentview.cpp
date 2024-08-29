@@ -19,7 +19,6 @@ ExperimentView::ExperimentView(QWidget *parent) :
 
     connect(&timerIntervalUpdate, &QTimer::timeout, this, &ExperimentView::onReadDataStore);
 
-
     addOperationActions();
 
 
