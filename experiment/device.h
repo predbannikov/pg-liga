@@ -132,6 +132,7 @@ public:
     RETCODE stopFrame(QJsonObject &jobj);
     RETCODE hardReset(QJsonObject &jobj);
     RETCODE sensorSetZero(QJsonObject &jobj);
+    RETCODE resetSensorOffset(QJsonObject &jobj);
 
     void manualNextStep();
     void readSensors(QJsonObject &jobj);

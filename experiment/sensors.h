@@ -19,7 +19,7 @@ public:
 
     RETCODE setNull(QJsonObject &jOperation);
 
-    RETCODE reset(QJsonObject &jOperation);
+    RETCODE resetOffset(QJsonObject &jOperation);
 
 
 private:

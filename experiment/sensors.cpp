@@ -13,7 +13,7 @@ RETCODE Sensor::setNull(QJsonObject &jOperation) {
     return write(jOperation, SensorNull);
 }
 
-RETCODE Sensor::reset(QJsonObject &jOperation)
+RETCODE Sensor::resetOffset(QJsonObject &jOperation)
 {
     return write(jOperation, SensorReset);
 }

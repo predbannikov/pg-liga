@@ -562,6 +562,12 @@ RETCODE LoadFrame::sensorSetZero(QJsonObject &jobj)
     return sensor.setNull(jobj);
 }
 
+RETCODE LoadFrame::resetSensorOffset(QJsonObject &jobj)
+{
+    Sensor &sensor = getSensorFromStr(jobj["sensor_name"].toString());
+    return sensor.resetOffset(jobj);
+}
+
 void LoadFrame::readSensors(QJsonObject &jobj)
 {
     QJsonObject jsensors;

@@ -127,6 +127,8 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
         return loadFrame.setStatePid(jobj);
     } else if (jobj["CMD"].toString() == "set_sensor_zero") {
         return loadFrame.sensorSetZero(jobj);
+    } else if (jobj["CMD"].toString() == "reset_sensor_offset") {
+        return loadFrame.resetSensorOffset(jobj);
     }
 
     return COMPLATE;
