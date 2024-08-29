@@ -8,7 +8,7 @@
 #include <QDebug>
 
 #include "experiment.h"
-#include "network/abstractjsonclient.h"
+#include "abstractjsonclient.h"
 
 class ClientManager : public AbstractJSONClient
 {

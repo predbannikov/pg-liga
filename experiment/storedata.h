@@ -17,7 +17,7 @@
 #include <QDataStream>
 #include <QMap>
 
-#include "datastore/datastore.h"
+#include "datastore.h"
 
 //class Data
 //{

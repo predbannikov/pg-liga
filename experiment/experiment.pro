@@ -43,6 +43,8 @@ HEADERS += \
 
 #INCLUDEPATH += $$PWD/../
 INCLUDEPATH += $$PWD/../measurements/
+INCLUDEPATH += $$PWD/../datastore/
+INCLUDEPATH += $$PWD/../network/
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../network/release/ -lnetwork
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../network/debug/ -lnetwork
