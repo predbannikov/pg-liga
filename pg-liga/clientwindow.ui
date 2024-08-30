@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1090</width>
-    <height>711</height>
+    <width>383</width>
+    <height>290</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,35 +19,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="spacing">
-    <number>0</number>
-   </property>
-   <property name="leftMargin">
-    <number>0</number>
-   </property>
-   <property name="topMargin">
-    <number>0</number>
-   </property>
-   <property name="rightMargin">
-    <number>0</number>
-   </property>
-   <property name="bottomMargin">
-    <number>0</number>
-   </property>
-   <item>
-    <widget class="ExperimentView" name="experimentView" native="true"/>
-   </item>
-  </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>ExperimentView</class>
-   <extends>QWidget</extends>
-   <header>experimentview.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

@@ -83,7 +83,7 @@ void MainWindow::addInstruments()
 {
     auto map = SettingsManager::instance()->getServers();
     auto list = map.keys();
-    for (auto device: list) {
+    for (const auto &device: qAsConst(list)) {
         grid->addInstrument(device);
         connect(grid, &InstrumentGrid::instrumentSelected, this, &MainWindow::onInstrumentSelected);
     }
@@ -116,7 +116,7 @@ void MainWindow::setFirstTab(QWidget *widget, const QString &title)
 
 void MainWindow::onTabCloseRequested(int idx)
 {
-    if(idx != 0) {
+    if(tabWidget->tabText(idx) != "Список") {
         tabWidget->removeTab(idx);
 //        auto *instrument = m_instrumentsInUse.value(tabWidget->clo->widget(idx), nullptr);
 //        if(instrument) {

@@ -23,9 +23,13 @@ ClientWindow::ClientWindow(QString host_, QWidget *parent) :
 //    ui->verticalLayout->setSizeConstraint(QLayout::SetNoConstraint);
     setEnableWidget(false);
 
-    ui->experimentView = new ExperimentView(this);
-    connect(ui->experimentView, &ExperimentView::sendRequest, this, &ClientWindow::on_sendRequest);
-    connect(clnt, &ClientManager::readyReadResponse, ui->experimentView, &ExperimentView::onReadyResponse, Qt::QueuedConnection);
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    this->setLayout(layout);
+
+    experimentView = new ExperimentView(this);
+    layout->addWidget(experimentView);
+    connect(experimentView, &ExperimentView::sendRequest, this, &ClientWindow::on_sendRequest);
+    connect(clnt, &ClientManager::readyReadResponse, experimentView, &ExperimentView::onReadyResponse, Qt::QueuedConnection);
 //    ui->tabWidget->addTab(experimentView, "Стадия номер 1");
 //    ui->splitter->setSizes(sizes);
 }

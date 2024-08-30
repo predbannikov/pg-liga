@@ -44,6 +44,7 @@ private:
 
     Ui::ClientWindow *ui;
     ClientManager *clnt = nullptr;
+    ExperimentView *experimentView = nullptr;
     QTimer timerPollSensors;
 };
 
