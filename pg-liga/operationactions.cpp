@@ -28,6 +28,8 @@ OperationActions::OperationActions(int numberOperation, QWidget *parent) :
     steppedLoadingAct = new QAction("Установка вертикального давления", this);
     connect(steppedLoadingAct, &QAction::triggered, this, &OperationActions::createSteppedLoadingWgt);
 
+
+
     deleteAct = new QAction("Удалить операцию", this);
     connect(deleteAct, &QAction::triggered, this, &OperationActions::deleteOperationActions);
 
@@ -64,22 +66,17 @@ void OperationActions::contextMenuEvent(QContextMenuEvent *event)
 
 void OperationActions::createSteppedPressureWgt()
 {
-    deleteWidget();
-    SteppedModelEditor *wgtStepEdit = new SteppedModelEditor(this);
-    SteppedPressuriseModel *model = new SteppedPressuriseModel(wgtStepEdit);
-    wgtStepEdit->setModel(model);
-    ui->widget->layout()->addWidget(wgtStepEdit);
-    updateTextMenu(steppedPressureAct->text());
+    createSteppedModelEditor()->setModel(new SteppedPressuriseModel);
 }
 
 void OperationActions::createSteppedLoadingWgt()
 {
-    deleteWidget();
-    SteppedModelEditor *wgtStepEdit = new SteppedModelEditor(this);
-    StaticDeviatorModel *model = new StaticDeviatorModel(wgtStepEdit);
-    wgtStepEdit->setModel(model);
-    ui->widget->layout()->addWidget(wgtStepEdit);
-    updateTextMenu(steppedLoadingAct->text());
+    createSteppedModelEditor()->setModel(new StaticDeviatorModel);
+}
+
+void OperationActions::createKinematicPressurisedLoadingWgt()
+{
+//    addWidgetToLayout(new KinematicPressurisedLoadingModel);
 }
 
 void OperationActions::on_btnMenuActions_clicked()
@@ -119,5 +116,14 @@ void OperationActions::updateTextMenu(QString text)
         currentTextMenu = text;
         ui->lblText->setText(QString("Эпап № %1    %2").arg(m_numOperation+1).arg(text));
     }
+}
+
+SteppedModelEditor *OperationActions::createSteppedModelEditor()
+{
+    deleteWidget();
+    SteppedModelEditor *wgtStepEdit = new SteppedModelEditor(this);
+    ui->widget->layout()->addWidget(wgtStepEdit);
+    updateTextMenu(steppedLoadingAct->text());
+    return wgtStepEdit;
 }
 
