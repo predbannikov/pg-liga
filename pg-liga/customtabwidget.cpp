@@ -1,3 +1,7 @@
 #include "customtabwidget.h"
 
-CustomTabWidget::CustomTabWidget(QWidget *parent) : QTabWidget(parent) {}
+CustomTabWidget::CustomTabWidget(QWidget *parent) : QTabWidget(parent)
+{
+    CustomTabBar *tabBar = new CustomTabBar(this);
+    setTabBar(tabBar);
+}

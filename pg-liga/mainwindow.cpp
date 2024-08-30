@@ -32,6 +32,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     grid = new InstrumentGrid;
     tabWidget->insertTab(0, grid, "Список");
+
     QTimer::singleShot(100, this, &MainWindow::addInstruments);
 
     connect(&timerFFlush, &QTimer::timeout, [](){

@@ -20,7 +20,6 @@ ClientWindow::ClientWindow(QString host_, QWidget *parent) :
     timerPollSensors.setInterval(SENSORS_POLLING_INTERVAL_TIMEOUT);
     connect(&timerPollSensors, &QTimer::timeout, this, &ClientWindow::onPollSensorsCurrentPage);
     this->resize(720, 1280);
-//    ui->verticalLayout->setSizeConstraint(QLayout::SetNoConstraint);
     setEnableWidget(false);
 
     QVBoxLayout *layout = new QVBoxLayout(this);
@@ -30,8 +29,6 @@ ClientWindow::ClientWindow(QString host_, QWidget *parent) :
     layout->addWidget(experimentView);
     connect(experimentView, &ExperimentView::sendRequest, this, &ClientWindow::on_sendRequest);
     connect(clnt, &ClientManager::readyReadResponse, experimentView, &ExperimentView::onReadyResponse, Qt::QueuedConnection);
-//    ui->tabWidget->addTab(experimentView, "Стадия номер 1");
-//    ui->splitter->setSizes(sizes);
 }
 
 ClientWindow::~ClientWindow()

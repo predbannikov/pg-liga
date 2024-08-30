@@ -4,6 +4,7 @@
 #include <QTabWidget>
 #include <QWidget>
 #include <QTabBar>
+#include <QDebug>
 #include <QMouseEvent>
 
 class CustomTabBar : public QTabBar
@@ -18,7 +19,13 @@ protected:
     {
         if (event->buttons() & Qt::LeftButton) {
             int tabIndex = tabAt(event->pos());
-            if (tabIndex != 0) { // Первая вкладка неперемещаемая
+            if (tabIndex == 0) {
+                if (abs(x_hold - event->x()) < 25) {
+                    QTabBar::mouseMoveEvent(event);
+                } else
+                    movingFirstTab = true;
+
+            } else if (tabIndex != 0) { // Первая вкладка неперемещаемая
                 QTabBar::mouseMoveEvent(event);
             }
         }
@@ -28,22 +35,44 @@ protected:
     {
         if (event->button() == Qt::LeftButton) {
             int tabIndex = tabAt(event->pos());
-            if (tabIndex != 0) { // Первая вкладка неперемещаемая
+            if (tabIndex == 0) {
+                x_hold = event->x();
+                movingFirstTab = false;
+                QTabBar::mousePressEvent(event);
+            } else if (tabIndex != 0) { // Первая вкладка неперемещаемая, но можно переключиться на нее
                 QTabBar::mousePressEvent(event);
             }
         }
     }
+
+    void mouseReleaseEvent(QMouseEvent *event) override
+    {
+        if (event->button() == Qt::LeftButton) {
+            QTabBar::mouseReleaseEvent(event);
+            if (movingFirstTab) {
+                // Восстанавливаем позицию первой вкладки
+                for (int i = 0; i < count(); i++) {
+                    if (tabText(i) == "Список") {
+                        moveTab(i, 0);
+                        break;
+                    }
+                }
+            }
+            movingFirstTab = false;
+        }
+    }
+
+private:
+    int x_hold = 0;
+    bool movingFirstTab = false;
 };
+
 class CustomTabWidget : public QTabWidget
 {
     Q_OBJECT
 public:
     CustomTabWidget(QWidget *parent = nullptr);
-//protected:
-    QTabBar *createTabBar()
-    {
-        return new CustomTabBar(this);
-    }
+
 };
 
 #endif // CUSTOMTABWIDGET_H
