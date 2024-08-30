@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ServerWindow</class>
- <widget class="QWidget" name="ServerWindow">
+ <class>ClientWindow</class>
+ <widget class="QWidget" name="ClientWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -19,7 +19,10 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_3">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -32,33 +35,19 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
-   <property name="spacing">
-    <number>0</number>
-   </property>
-   <item row="0" column="0">
-    <widget class="QTabWidget" name="tabWidget">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="currentIndex">
-      <number>-1</number>
-     </property>
-     <property name="usesScrollButtons">
-      <bool>true</bool>
-     </property>
-     <property name="tabsClosable">
-      <bool>true</bool>
-     </property>
-     <property name="tabBarAutoHide">
-      <bool>false</bool>
-     </property>
-    </widget>
+   <item>
+    <widget class="ExperimentView" name="experimentView" native="true"/>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ExperimentView</class>
+   <extends>QWidget</extends>
+   <header>experimentview.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

@@ -17,7 +17,7 @@
    <property name="layoutDirection">
     <enum>Qt::LeftToRight</enum>
    </property>
-   <layout class="QGridLayout" name="gridLayout">
+   <layout class="QVBoxLayout" name="verticalLayout">
     <property name="leftMargin">
      <number>1</number>
     </property>
@@ -30,26 +30,6 @@
     <property name="bottomMargin">
      <number>1</number>
     </property>
-    <property name="spacing">
-     <number>1</number>
-    </property>
-    <item row="0" column="0" colspan="2">
-     <layout class="QVBoxLayout" name="mainLayout">
-      <property name="spacing">
-       <number>0</number>
-      </property>
-      <property name="sizeConstraint">
-       <enum>QLayout::SetDefaultConstraint</enum>
-      </property>
-      <item>
-       <widget class="QTabWidget" name="tabWidget">
-        <property name="currentIndex">
-         <number>-1</number>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">

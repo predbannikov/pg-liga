@@ -42,6 +42,7 @@ SOURCES += \
     clientmanager.cpp \
     clientwindow.cpp \
     customgraph.cpp \
+    customtabwidget.cpp \
     experimentview.cpp \
     decoratedplot.cpp \
     experimentdata.cpp \
@@ -77,6 +78,7 @@ HEADERS += \
     clientmanager.h \
     clientwindow.h \
     customgraph.h \
+    customtabwidget.h \
     experimentview.h \
     experimentdata.h \
     decoratedplot.h \

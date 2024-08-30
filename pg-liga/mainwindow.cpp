@@ -13,16 +13,25 @@ MainWindow::MainWindow(QWidget *parent)
     if(!isOperational) {
         qDebug() << Q_FUNC_INFO << tr("Не удалось загрузить настройки");
     }
-//    connect(ui->tabMain, &QTabWidget::tabCloseRequested, this, &MainWindow::onTabCloseRequested);
 //    this->resize(1280, 768);
 
     qDebug() << tr("Версия: <b>%1.%2</b> Ревизия: <b>%3</b>").arg(VERSION_MAJOR, VERSION_MINOR, VERSION_BUILD);
 
     this->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
 
-    grid = new InstrumentGrid(this);
-    ui->mainLayout->addWidget(grid);
-    ui->tabWidget->insertTab(0, grid, "Список");
+
+
+    tabWidget = new CustomTabWidget(this);
+    tabWidget->setMovable(true);
+    tabWidget->setTabsClosable(true);
+    connect(tabWidget, &QTabWidget::tabCloseRequested, this, &MainWindow::onTabCloseRequested);
+//    QVBoxLayout *layout = new QVBoxLayout(this);
+//    this->setLayout(layout);
+
+    this->setCentralWidget(tabWidget);
+
+    grid = new InstrumentGrid;
+    tabWidget->insertTab(0, grid, "Список");
     QTimer::singleShot(100, this, &MainWindow::addInstruments);
 
     connect(&timerFFlush, &QTimer::timeout, [](){
@@ -39,22 +48,22 @@ MainWindow::~MainWindow()
 void MainWindow::onInstrumentSelected(QString name)
 {
     QWidget *tab = nullptr;
-    for (int i = 0; i < ui->tabWidget->count(); i++) {
-        if (ui->tabWidget->tabText(i) == name) {
-            tab = ui->tabWidget->widget(i);
+    for (int i = 0; i < tabWidget->count(); i++) {
+        if (tabWidget->tabText(i) == name) {
+            tab = tabWidget->widget(i);
         }
     }
 
     if (tab == nullptr) {
         tab = new ClientWindow(name);
-        ui->tabWidget->addTab(tab, name);
+        tabWidget->addTab(tab, name);
     }
-    ui->tabWidget->setCurrentWidget(tab);
+    tabWidget->setCurrentWidget(tab);
 }
 
 void MainWindow::on_actExit_triggered()
 {
-    qDebug() << "on_actExit_triggered";
+    qDebug() << Q_FUNC_INFO;
     exitWindow();
 }
 
@@ -95,46 +104,21 @@ void MainWindow::exitWindow()
 
 void MainWindow::setFirstTab(QWidget *widget, const QString &title)
 {
-//   if(ui->tabMain->count() == 0) {
-//        ui->tabMain->addTab(widget, title);
-//    } else {
-//        auto *oldWidget = ui->tabMain->widget(0);
-//        ui->tabMain->removeTab(0);
-//        ui->tabMain->insertTab(0, widget, title);
+    //   if(ui->tabMain->count() == 0) {
+    //        ui->tabMain->addTab(widget, title);
+    //    } else {
+    //        auto *oldWidget = ui->tabMain->widget(0);
+    //        ui->tabMain->removeTab(0);
+    //        ui->tabMain->insertTab(0, widget, title);
 //        oldWidget->deleteLater();
     //    }
-}
-
-void MainWindow::addServersWindow(const QMap<QString, QVariant> map)
-{
-
-
-    for (const QString &serverName: map.keys()) {
-
-//        InstrumentButton *instrBtn = new InstrumentButton(serverName, this);
-//        instrBtn->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-//    //                instrBtn->resize(150, 128);
-//    //                instrBtn->setText("INSTR:" + item.toString());
-//    //                QPushButton *btn = new QPushButton("INSTR:" + item.toString(), this);
-//    //                for (auto &item: ui->verticalLayout->children()) {
-//    //                    QPushButton *childBtn = qobject_cast<QPushButton *>(item);
-//    //                    if (childBtn != nullptr)
-//    //                        if (childBtn->text() == btn->text()
-
-//    //                }
-//        ui->mainLayout->addWidget(instrBtn);
-//        connect(instrBtn, &InstrumentButton::clicked, this, &ServerWindow::clickBtnNumInstr);
-
-        auto *pServer = new ClientWindow(serverName, this);
-        ui->mainLayout->addWidget(pServer);
-//        pServer->
-    }
 }
 
 void MainWindow::onTabCloseRequested(int idx)
 {
     if(idx != 0) {
-//        auto *instrument = m_instrumentsInUse.value(ui->tabMain->widget(idx), nullptr);
+        tabWidget->removeTab(idx);
+//        auto *instrument = m_instrumentsInUse.value(tabWidget->clo->widget(idx), nullptr);
 //        if(instrument) {
 //            if(instrument->state() == Instrument::Experiment) {
 //                const auto reply = QMessageBox::question(this, tr("Закрыть вкладку"),
@@ -275,6 +259,8 @@ QSize FlowLayout::buildLayout(const QRect &r) const
     const auto dy = itemSizeHint.height() + m_vspace;
 
     const auto columns = qMin(m_items.size(), effectiveRect.size().width() / dx);
+    if (columns == 0)
+        return QSize();
     const auto rows = (m_items.size() + columns - 1) / columns; /* Rounding the integer division up, e.g. 3 / 2 = 2 */
 
 
@@ -349,33 +335,3 @@ QString InstrumentButton::getSN()
 {
     return m_SN;
 }
-
-//QString InstrumentButton::getIconName(int type)
-//{
-
-
-//    QString iconPath;
-
-//    switch(type){
-//    case Instrument::LIGA_KL0_1T:{}
-//    case Instrument::LIGA_KL0_5T:{}
-//    case Instrument::LIGA_KL0_25T:{}
-//    case Instrument::LIGA_KL0S_1T:
-//        iconPath = ":/icons/device_kl0_128.png";
-//        break;
-//    case Instrument::LIGA_KL1_1Vol_1T:
-//    case Instrument::LIGA_KL1_2Vol_1T:
-//    case Instrument::LIGA_KL1_1Vol_5T:
-//    case Instrument::LIGA_KL1_2Vol_5T:
-//    case Instrument::LIGA_KL1_1Vol_25T:
-//    case Instrument::LIGA_KL1S_2Vol_1T:
-//    case Instrument::LIGA_KL0S_2Load_1T:
-//        iconPath = ":/icons/device_medium.png";
-//        break;
-//    }
-
-
-
-//    return iconPath;
-//}
-

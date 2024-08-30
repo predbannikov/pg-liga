@@ -6,10 +6,14 @@
 #include <QLayout>
 #include <QLabel>
 #include <QTimer>
+#include <QMouseEvent>
+#include <QTabBar>
 #include <QPushButton>
 #include "Settings/settingsmanager.h"
 #include "Settings/settingsdialog.h"
 #include "clientwindow.h"
+#include "customtabwidget.h"
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -41,13 +45,13 @@ private slots:
 private:
     void setFirstTab(QWidget *widget, const QString &title);
 
-    void addServersWindow(const QMap<QString, QVariant> map);
-
+    CustomTabWidget *tabWidget = nullptr;
     InstrumentGrid *grid = nullptr;
     Ui::MainWindow *ui;
 
     QTimer timerFFlush;
 };
+
 
 class FlowLayout : public QLayout
 {

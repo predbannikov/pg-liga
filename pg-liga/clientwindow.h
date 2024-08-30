@@ -11,7 +11,7 @@
 #include "clientmanager.h"
 
 namespace Ui {
-class ServerWindow;
+class ClientWindow;
 }
 
 class ClientWindow : public QWidget
@@ -25,7 +25,6 @@ public:
 public slots:
     void on_readBtn();
     void clientConnected();
-    void onReadyReadResponse(const QJsonObject &jresponse);
     void clickBtnNumInstr();
 private slots:
     void onPollSensorsCurrentPage();
@@ -43,11 +42,9 @@ private:
 
     void setEnableWidget(bool enable);
 
-    Ui::ServerWindow *ui;
-    QMap <QString, ExperimentView*> openTabs;
+    Ui::ClientWindow *ui;
     ClientManager *clnt = nullptr;
     QTimer timerPollSensors;
-    ExperimentView *experimentView = nullptr;
 };
 
 #endif // SERVERWINDOW_H
