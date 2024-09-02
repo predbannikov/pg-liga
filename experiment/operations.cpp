@@ -80,9 +80,6 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
     } else if (jobj["CMD"].toString() == "scan") {
         loadFrame.readSensors(jobj);
         emit sendRequestToClient(jobj);
-    } else if (jobj["CMD"].toString() == "start") {
-        loadFrame.readConfig();
-        loadFrame.startProcess();
     } else if (jobj["CMD"].toString() == "read_config") {
         loadFrame.readConfig();
     } else if (jobj["CMD"].toString() == "read_sensors") {

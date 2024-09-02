@@ -25,7 +25,7 @@ class LoadFrame
 
     enum STATE_PRESURE {STATE_PRESURE_1, STATE_PRESURE_2, STATE_PRESURE_3} statePresure = STATE_PRESURE_1;
 
-    enum STATE {STATE_IDLE, STATE_START, STATE_INIT, STATE_READ_NEXT_STEP, STATE_EXPERIMENT, STATE_COMPLATION,
+    enum STATE {STATE_IDLE, STATE_START, STATE_INIT, STATE_COMPLATION,
                 STATE_MOVE_FRAME, STATE_STOP_FRAME,
                 STATE_UNLOCK_PID,
                 STATE_FINISH,
@@ -58,8 +58,6 @@ public:
     bool init();
     bool deleteData();
 
-    bool readNextStep();
-
     RETCODE next(QJsonObject &jOperation);
 
     RETCODE setTarget(QJsonObject &jOperation);
@@ -76,10 +74,6 @@ public:
 
     RETCODE statusSensors(QJsonObject &jOperation);
 
-    RETCODE compression(QJsonObject &jOperation);
-
-    RETCODE criterionTime(QJsonObject &jOperation);
-
     RETCODE criterionStabilization(QJsonObject &jOperation);
 
     RETCODE criterionManual(QJsonObject &jOperation);
@@ -89,11 +83,9 @@ public:
 
     void readConfig();
     RETCODE writeConfig(QJsonObject &jobj);
-    void startProcess();
     RETCODE moveFrame(QJsonObject &jobj);
     RETCODE unlockPID(QJsonObject &jobj);
     RETCODE stopFrame(QJsonObject &jobj);
-//    RETCODE hardReset(QJsonObject &jobj);
     RETCODE sensorSetZero(QJsonObject &jobj);
     RETCODE resetSensorOffset(QJsonObject &jobj);
 
@@ -106,10 +98,7 @@ public:
 
     Measurements::Force targetNewtones;
     Measurements::Force targetMinNewtones;
-    Measurements::Area area;
 
-    QJsonArray jsteps;
-    QJsonObject jcurStep;
     QJsonObject jconfig;
     quint8 address = 0;
 
@@ -125,8 +114,6 @@ public:
     QElapsedTimer timeElapse;
     QElapsedTimer criterionElapseTime;
 
-
-    bool compressionManual = false;
     qint32 cur_speed = 0;
     bool togle = false;
     quint64 counter = 0;
