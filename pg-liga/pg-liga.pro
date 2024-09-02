@@ -46,6 +46,8 @@ SOURCES += \
     experimentview.cpp \
     decoratedplot.cpp \
     experimentdata.cpp \
+    modelEditors/kinematicloadingmodeleditor.cpp \
+    modelEditors/steppedmodeleditor.cpp \
     models/advancedkinematicloadingmodel.cpp \
     models/advancedsaturationmodel.cpp \
     models/consolidationaltmodel.cpp \
@@ -63,7 +65,6 @@ SOURCES += \
     plotxyadapter.cpp \
     main.cpp \
     mainwindow.cpp \
-    steppedmodeleditor.cpp \
     viewdelegate.cpp
 
 
@@ -82,6 +83,8 @@ HEADERS += \
     experimentview.h \
     experimentdata.h \
     decoratedplot.h \
+    modelEditors/kinematicloadingmodeleditor.h \
+    modelEditors/steppedmodeleditor.h \
     models/abstractsteppedmodel.h \
     models/advancedkinematicloadingmodel.h \
     models/advancedsaturationmodel.h \
@@ -99,7 +102,6 @@ HEADERS += \
     plotadapter.h \
     plotxyadapter.h \
     mainwindow.h \
-    steppedmodeleditor.h \
     viewdelegate.h
 
 FORMS += \
@@ -108,8 +110,9 @@ FORMS += \
     experimentview.ui \
     mainwindow.ui   \
     Settings/settingsdialog.ui \
-    operationactions.ui \
-    steppedmodeleditor.ui
+    modelEditors/kinematicloadingmodeleditor.ui \
+    modelEditors/steppedmodeleditor.ui \
+    operationactions.ui
 
 TRANSLATIONS += \
     pg-liga_ru_RU.ts

@@ -48,9 +48,7 @@ public:
     void contextMenuEvent(QContextMenuEvent *event);
 
 public slots:
-    void createSteppedPressureWgt();
-    void createSteppedLoadingWgt();
-    void createKinematicPressurisedLoadingWgt();
+
 
 private slots:
     void on_btnMenuActions_clicked();
@@ -64,13 +62,15 @@ private:
     void createMenu();
     void deleteWidget();
     void updateTextMenu(QString text = "");
-    SteppedModelEditor *createSteppedModelEditor();
+    SteppedModelEditor *createSteppedModelEditor(QString text);
 
     Ui::OperationActions *ui;
 
-    QAction *steppedPressureAct = nullptr;
-    QAction *steppedLoadingAct = nullptr;
-    QAction *kinematicPressurisedLoadingAct = nullptr;
+    QList <QAction *> actions;
+//    QAction *steppedPressureAct = nullptr;
+//    QAction *steppedLoadingAct = nullptr;
+//    QAction *steppdDeviatorAct = nullptr;
+//    QAction *kinematicPressurisedLoadingAct = nullptr;
 
     QAction *deleteAct = nullptr;
     QAction *addOperationAct = nullptr;

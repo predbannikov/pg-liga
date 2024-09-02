@@ -22,12 +22,20 @@ OperationActions::OperationActions(int numberOperation, QWidget *parent) :
     ui->groupBox->layout()->setSpacing(0);
     ui->groupBox->layout()->setMargin(0);
 
-    steppedPressureAct = new QAction("Установка всестороннего давления", this);
-    connect(steppedPressureAct, &QAction::triggered, this, &OperationActions::createSteppedPressureWgt);
-
-    steppedLoadingAct = new QAction("Установка вертикального давления", this);
-    connect(steppedLoadingAct, &QAction::triggered, this, &OperationActions::createSteppedLoadingWgt);
-
+    {
+        {
+            actions.append(new QAction("Установка всестороннего давления", this));
+            connect(actions.last(), &QAction::triggered, this, [=](){ createSteppedModelEditor(actions.last()->text())->setModel(new SteppedPressuriseModel); });
+        }
+        {
+            actions.append(new QAction("Установка вертикального давления", this));
+            connect(actions.last(), &QAction::triggered, this, [=](){ createSteppedModelEditor(actions.last()->text())->setModel(new StaticCompressionModel); });
+        }
+        {
+            actions.append(new QAction("Установка осевого напряжения", this));
+            connect(actions.last(), &QAction::triggered, this, [=](){ createSteppedModelEditor(actions.last()->text())->setModel(new StaticDeviatorModel); });
+        }
+    }
 
 
     deleteAct = new QAction("Удалить операцию", this);
@@ -64,21 +72,6 @@ void OperationActions::contextMenuEvent(QContextMenuEvent *event)
     createMenu();
 }
 
-void OperationActions::createSteppedPressureWgt()
-{
-    createSteppedModelEditor()->setModel(new SteppedPressuriseModel);
-}
-
-void OperationActions::createSteppedLoadingWgt()
-{
-    createSteppedModelEditor()->setModel(new StaticDeviatorModel);
-}
-
-void OperationActions::createKinematicPressurisedLoadingWgt()
-{
-//    addWidgetToLayout(new KinematicPressurisedLoadingModel);
-}
-
 void OperationActions::on_btnMenuActions_clicked()
 {
     createMenu();
@@ -88,9 +81,7 @@ void OperationActions::createMenu()
 {
     QMenu menu(this);
     QMenu actionsSubMenu("Действия", &menu);
-    actionsSubMenu.addAction(steppedPressureAct);
-    actionsSubMenu.addAction(steppedLoadingAct);
-
+    actionsSubMenu.addActions(actions);
     menu.addAction(addOperationAct);
     menu.addMenu(&actionsSubMenu);
     menu.addAction(moveUpOperationAct);
@@ -118,12 +109,12 @@ void OperationActions::updateTextMenu(QString text)
     }
 }
 
-SteppedModelEditor *OperationActions::createSteppedModelEditor()
+SteppedModelEditor *OperationActions::createSteppedModelEditor(QString text)
 {
     deleteWidget();
     SteppedModelEditor *wgtStepEdit = new SteppedModelEditor(this);
     ui->widget->layout()->addWidget(wgtStepEdit);
-    updateTextMenu(steppedLoadingAct->text());
+    updateTextMenu(text);
     return wgtStepEdit;
 }
 

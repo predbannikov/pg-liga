@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>923</width>
+    <width>925</width>
     <height>504</height>
    </rect>
   </property>
@@ -224,27 +224,6 @@
                 </property>
                </widget>
               </item>
-              <item row="3" column="0">
-               <widget class="QPushButton" name="btnMoveUp">
-                <property name="text">
-                 <string>moveUp</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="1">
-               <widget class="QPushButton" name="btnMoveDown">
-                <property name="text">
-                 <string>moveDown</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="2">
-               <widget class="QPushButton" name="btnStopStepper">
-                <property name="text">
-                 <string>stop</string>
-                </property>
-               </widget>
-              </item>
               <item row="5" column="0">
                <widget class="QPushButton" name="btnUnlockPid">
                 <property name="text">
@@ -421,75 +400,120 @@
                </spacer>
               </item>
               <item row="4" column="0" colspan="4">
-               <widget class="QGroupBox" name="groupBox">
+               <widget class="QGroupBox" name="grpLoadFrame">
                 <property name="title">
-                 <string>сенсоры</string>
+                 <string>Силовая рама</string>
                 </property>
-                <layout class="QHBoxLayout" name="horizontalLayout_3">
+                <layout class="QVBoxLayout" name="verticalLayout_5">
                  <item>
-                  <widget class="QPushButton" name="btnGetSensorValue">
-                   <property name="text">
-                    <string>getSensorValue</string>
-                   </property>
-                  </widget>
+                  <layout class="QHBoxLayout" name="horizontalLayout_2">
+                   <item>
+                    <widget class="QPushButton" name="btnGetSensorValue">
+                     <property name="text">
+                      <string>getSensorValue</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btnSensorSetZero">
+                     <property name="text">
+                      <string>Выставить в ноль</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btnResetSensorOffset">
+                     <property name="text">
+                      <string>Сбросить ноль</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QComboBox" name="cmbSensorName">
+                     <item>
+                      <property name="text">
+                       <string>SensLoad0</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>SensLoad1</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>SensDef0</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>SensDef1</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>SensPrs2</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>SensPrs1</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>SensPrs0</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>SensBase</string>
+                      </property>
+                     </item>
+                    </widget>
+                   </item>
+                  </layout>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="btnSensorSetZero">
-                   <property name="text">
-                    <string>Выставить в ноль</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="btnResetSensorOffset">
-                   <property name="text">
-                    <string>Сбросить ноль</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QComboBox" name="cmbSensorName">
+                  <layout class="QHBoxLayout" name="horizontalLayout">
                    <item>
-                    <property name="text">
-                     <string>SensLoad0</string>
-                    </property>
+                    <widget class="QSlider" name="sliderLoadFrameSpeed">
+                     <property name="maximum">
+                      <number>150</number>
+                     </property>
+                     <property name="sliderPosition">
+                      <number>50</number>
+                     </property>
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="tickPosition">
+                      <enum>QSlider::NoTicks</enum>
+                     </property>
+                    </widget>
                    </item>
                    <item>
-                    <property name="text">
-                     <string>SensLoad1</string>
-                    </property>
+                    <widget class="QPushButton" name="btnLoadFrameMoveUp">
+                     <property name="text">
+                      <string>moveUp</string>
+                     </property>
+                    </widget>
                    </item>
                    <item>
-                    <property name="text">
-                     <string>SensDef0</string>
-                    </property>
+                    <widget class="QPushButton" name="btnLoadFrameMoveDown">
+                     <property name="text">
+                      <string>moveDown</string>
+                     </property>
+                    </widget>
                    </item>
                    <item>
-                    <property name="text">
-                     <string>SensDef1</string>
-                    </property>
+                    <widget class="QPushButton" name="btnLoadFrameStopStepper">
+                     <property name="text">
+                      <string>stop</string>
+                     </property>
+                    </widget>
                    </item>
-                   <item>
-                    <property name="text">
-                     <string>SensPrs2</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>SensPrs1</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>SensPrs0</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>SensBase</string>
-                    </property>
-                   </item>
-                  </widget>
+                  </layout>
                  </item>
                 </layout>
                </widget>
