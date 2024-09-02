@@ -114,7 +114,9 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
     } else if (jobj["CMD"].toString() == "set_hz") {
         return loadFrame.setHz(jobj);
     } else if (jobj["CMD"].toString() == "hard_reset") {
-        return loadFrame.hardReset(jobj);
+        return plata.write(jobj, HardReset);
+
+//        return loadFrame.hardReset(jobj);
     } else if (jobj["CMD"].toString() == "set_pid_p") {
         return loadFrame.setKPID(jobj, AbstractUnit::CMD::ControllerSetKp);
     } else if (jobj["CMD"].toString() == "set_pid_d") {
