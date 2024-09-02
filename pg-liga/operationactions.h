@@ -67,10 +67,6 @@ private:
     Ui::OperationActions *ui;
 
     QList <QAction *> actions;
-//    QAction *steppedPressureAct = nullptr;
-//    QAction *steppedLoadingAct = nullptr;
-//    QAction *steppdDeviatorAct = nullptr;
-//    QAction *kinematicPressurisedLoadingAct = nullptr;
 
     QAction *deleteAct = nullptr;
     QAction *addOperationAct = nullptr;

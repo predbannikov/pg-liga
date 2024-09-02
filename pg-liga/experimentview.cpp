@@ -9,11 +9,12 @@ ExperimentView::ExperimentView(QWidget *parent) :
     ui(new Ui::ExperimentView)
 {
     ui->setupUi(this);
-    QFont font = ui->lblSensors->font();
-    font.setPointSize(42);
-    font.setBold(true);
-    ui->lblSensors->setFont(font);
+//    QFont font = ui->lblSensors->font();
+//    font.setPointSize(42);
+//    font.setBold(true);
+//    ui->lblSensors->setFont(font);
 
+    initServicePanel();
 
     setupPlots();
 
@@ -23,6 +24,11 @@ ExperimentView::ExperimentView(QWidget *parent) :
 
 
 //    ui->groupBox_4->setVisible(false);
+}
+
+void ExperimentView::initServicePanel()
+{
+    ui->lblLoadFrameSpeed->setNum(ui->sliderLoadFrameSpeed->value());
 }
 
 ExperimentView::~ExperimentView()
@@ -94,10 +100,10 @@ void ExperimentView::updateIndexOperationActions()
         OperationActions *operAct = qobject_cast<OperationActions *> (lay->itemAt(i)->widget());
         if (operAct) {
             operAct->setNumberOperation(i);
-            qDebug() << operAct->numberOperation();
+//            qDebug() << operAct->numberOperation();
         }
     }
-    qDebug() << "**********";
+//    qDebug() << "**********";
 }
 
 void ExperimentView::moveUpOperation()
@@ -175,29 +181,7 @@ qint64 ExperimentView::timeInterval(const QString& date, const QString& format)
 void ExperimentView::onCreateJsonObject()
 {
     QJsonDocument jdoc = QJsonDocument::fromJson(ui->textEdit->toPlainText().toUtf8());
-
     jRequest = QJsonObject();
-//    jRequest["exp_type"] = "compression";
-//    jRequest["pressure"] = QString::number(ui->spinPressure->value());
-//    if (ui->comboBox->currentText() == "time") {
-//        jRequest["criterion"] = "time";
-//        jRequest.remove("criterion_arg2");
-//        jRequest.remove("criterion_arg3");
-//        jRequest["criterion_arg1"] = QString::number(timeInterval(ui->dateTimeEdit->text(), "hh:mm:ss"));
-//    } else if (ui->comboBox->currentText() == "manual") {
-//        jRequest["criterion"] = "manual";
-//        jRequest.remove("criterion_arg1");
-//        jRequest.remove("criterion_arg2");
-//        jRequest.remove("criterion_arg3");
-//    } else if (ui->comboBox->currentText() == "stabilization") {
-//        jRequest["criterion"] = "stabilization";
-//        jRequest["criterion_arg3"] = QString::number(ui->spinCriter->value());
-//        jRequest["criterion_arg2"] = "VerticalDeform_mm";
-//        jRequest["criterion_arg1"] = QString::number(timeInterval(ui->dateTimeEdit->text(), "hh:mm:ss"));
-//    }
-//    ui->textEdit->clear();
-//    ui->textEdit->append(QJsonDocument(jRequest).toJson());
-
 }
 
 void ExperimentView::onReadDataStore()
@@ -235,46 +219,6 @@ void ExperimentView::on_comboBox_activated(const QString &arg1)
 void ExperimentView::on_dateTimeEdit_timeChanged(const QTime &time)
 {
     onCreateJsonObject();
-}
-
-void ExperimentView::on_btnAddStep_clicked()
-{
-//    if (ui->textEdit->toPlainText().isEmpty())
-//        onCreateJsonObject();
-//    QJsonObject jobj = QJsonDocument::fromJson(ui->textEdit->toPlainText().toUtf8()).object();
-//    jobj["step"] = QString::number(steps.size());
-//    QLineEdit *le = new QLineEdit(QJsonDocument(jobj).toJson(), this);
-//    steps.append(le);
-
-//    ui->layoutSteps->addWidget(le);
-}
-
-void ExperimentView::on_pushButton_2_clicked()
-{
-//    QJsonObject jconfig;
-//    jconfig["area"] = QString::number(M_PI * pow(ui->spinBoxDiameter->value() / 2., 2) / 100 / 10000);	// 100мм2=1см2, 1см2=10000м2
-//    jconfig["name_speciment"] = ui->leNameSpecimen->text();
-//    QJsonArray jarr;
-//    for (int i = 0; i < steps.size(); i++) {
-//        jarr.append(QJsonDocument::fromJson(steps[i]->text().toUtf8()).object());
-//    }
-//    jconfig["steps"] = jarr;
-//    QJsonObject jobj;
-//    jobj["CMD"] = "settings";
-//    jobj["config"] = jconfig;
-
-//    ui->textEdit->clear();
-//    ui->textEdit->append(QJsonDocument(jobj).toJson());
-//    emit sendRequest(jobj);
-
-}
-
-void ExperimentView::on_btnStart_clicked()
-{
-    QJsonObject jobj;
-    jobj["CMD"] = "start";
-    clearData();
-    emit sendRequest(jobj);
 }
 
 void ExperimentView::onReadyResponse(const QJsonObject &jobj)
@@ -338,34 +282,6 @@ void ExperimentView::onReadyResponse(const QJsonObject &jobj)
 //        qDebug() << "stop";
 //        qDebug() << dataStore;
     }
-}
-
-void ExperimentView::on_btnClearTextEdit_clicked()
-{
-    ui->textEdit->clear();
-}
-
-void ExperimentView::on_btnMoveUp_clicked()
-{
-    QJsonObject jobj;
-    jobj["CMD"] = "move_frame";
-    jobj["speed"] = "-100";
-    emit sendRequest(jobj);
-}
-
-void ExperimentView::on_btnMoveDown_clicked()
-{
-    QJsonObject jobj;
-    jobj["CMD"] = "move_frame";
-    jobj["speed"] = "100";
-    emit sendRequest(jobj);
-}
-
-void ExperimentView::on_btnStopStepper_clicked()
-{
-    QJsonObject jobj;
-    jobj["CMD"] = "stop_frame";
-    emit sendRequest(jobj);
 }
 
 void ExperimentView::on_btnUnlockPid_clicked()
@@ -536,6 +452,32 @@ void ExperimentView::on_btnResetSensorOffset_clicked()
     QJsonObject jobj;
     jobj["CMD"] = "reset_sensor_offset";
     jobj["sensor_name"] = ui->cmbSensorName->currentText();
+    emit sendRequest(jobj);
+}
+
+
+void ExperimentView::on_btnLoadFrameMoveUp_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "move_frame";
+    jobj["speed"] = QString::number(-ui->sliderLoadFrameSpeed->value());
+    emit sendRequest(jobj);
+}
+
+
+void ExperimentView::on_btnLoadFrameMoveDown_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "move_frame";
+    jobj["speed"] = QString::number(ui->sliderLoadFrameSpeed->value());
+    emit sendRequest(jobj);
+}
+
+
+void ExperimentView::on_btnLoadFrameStopStepper_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "stop_frame";
     emit sendRequest(jobj);
 }
 

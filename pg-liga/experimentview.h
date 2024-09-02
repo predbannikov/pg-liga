@@ -75,6 +75,9 @@ public slots:
 
 
 private slots:
+
+    void initServicePanel();
+
     void onCreateJsonObject();
 
 
@@ -83,20 +86,6 @@ private slots:
     void on_comboBox_activated(const QString &arg1);
 
     void on_dateTimeEdit_timeChanged(const QTime &time);
-
-    void on_btnAddStep_clicked();
-
-    void on_pushButton_2_clicked();
-
-    void on_btnStart_clicked();
-
-    void on_btnClearTextEdit_clicked();
-
-    void on_btnMoveUp_clicked();
-
-    void on_btnMoveDown_clicked();
-
-    void on_btnStopStepper_clicked();
 
     void on_btnUnlockPid_clicked();
 
@@ -133,6 +122,12 @@ private slots:
     void on_btnSensorSetZero_clicked();
 
     void on_btnResetSensorOffset_clicked();
+
+    void on_btnLoadFrameMoveUp_clicked();
+
+    void on_btnLoadFrameMoveDown_clicked();
+
+    void on_btnLoadFrameStopStepper_clicked();
 
 signals:
     void sendRequest(QJsonObject &jobj);

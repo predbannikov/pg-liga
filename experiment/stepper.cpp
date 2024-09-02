@@ -12,7 +12,7 @@ RETCODE Stepper::readPos(QJsonObject &jOperation) {
 
 RETCODE Stepper::setSpeed(QJsonObject &jOperation, qint16 speed_)
 {
-    if (speed_ > 100 || speed_ < -100) {
+    if (speed_ > 200 || speed_ < -200) {
         qDebug() << "speed " << speed_ << "overflow";
         return ERROR;
     }
