@@ -102,34 +102,6 @@ RETCODE Controller::setKPID(QJsonObject &jOperation, float value, CMD cmd)
     return NOERROR;
 }
 
-//RETCODE Controller::setKd(QJsonObject &jOperation, float d, CMD cmd)
-//{
-//    RETCODE ret = ERROR;
-//    switch (state_pid_d) {
-//    case STATE_SET_PID_D_VALUE:
-//        ret = write(jOperation, d);                    // TODO
-//        if (ret == COMPLATE)
-//            state_pid_d = STATE_SET_PID_D;
-//        else if (ret == ERROR) {
-//            state_pid_d = STATE_SET_PID_D_VALUE;
-//            return ERROR;
-//        }
-//        break;
-//    case STATE_SET_PID_D:
-//        ret = write(jOperation, cmd);
-//        if (ret == COMPLATE) {
-//            state_pid_d = STATE_SET_PID_D_VALUE;
-//            return COMPLATE;
-//        }
-//        else if (ret == ERROR) {
-//            state_pid_d = STATE_SET_PID_D_VALUE;
-//            return ERROR;
-//        }
-//        break;
-//    }
-//    return NOERROR;
-//}
-
 RETCODE Controller::setHz(QJsonObject &jOperation, float hz)
 {
     switch (stateSetHz) {

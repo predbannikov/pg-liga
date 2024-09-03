@@ -62,7 +62,7 @@ public:
 
 public:
     AbstractUnit(quint16 addr_, FunctionCode funCode_) :address(addr_), funCode(funCode_) {}
-    ~AbstractUnit() {}
+    virtual ~AbstractUnit() {}
 
 
     RETCODE read(QJsonObject &jOperation, CMD cmd);

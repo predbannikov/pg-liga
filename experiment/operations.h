@@ -11,40 +11,15 @@
 #include "device.h"
 
 
-class Plata {
+class Plata : public AbstractUnit {
 
 public:
-    enum STATE {STATE_0x10_WRITE, STATE_0x10_CHECK, STATE_0x03_WRITE, STATE_0x03_CHECK, STATE_COMPLATE };
-    quint16 address = 0x0;
+    Plata(quint16 addr_, FunctionCode funCode_) : AbstractUnit(addr_, funCode_){}
+    ~Plata(){}
 
-
-    RETCODE ret = ERROR;
-    STATE stateWrite = STATE_0x10_WRITE;
-    FunctionCode funCode = ActBase;
-
-
-    RETCODE write(QJsonObject &jOperation, OpCode cmd)
-    {
-        switch (stateWrite) {
-        case STATE_0x03_WRITE:
-            break;
-        case STATE_0x03_CHECK:
-            break;
-        case STATE_COMPLATE:
-            break;
-        case STATE_0x10_WRITE:
-            jOperation["PDU_request"] = QString(Requests::write(cmd, funCode, address));
-            stateWrite = STATE_0x10_CHECK;
-            break;
-        case STATE_0x10_CHECK:
-            stateWrite = STATE_0x10_WRITE;
-            if (jOperation["modbus_error"].toString() == "no_error")
-                return COMPLATE;
-            else
-                return ERROR;
-            break;
-        }
-        return NOERROR;
+    void setValue(quint16 *data, AbstractUnit::CMD cmd) override {
+    Q_UNUSED(data);
+    Q_UNUSED(cmd);
     }
 };
 

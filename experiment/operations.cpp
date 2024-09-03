@@ -4,9 +4,8 @@
 using namespace Measurements;
 
 
-#define DEBUG 1
-
-Operations::Operations(quint8 addr) : Interface(addr)
+Operations::Operations(quint8 addr) : Interface(addr),
+    plata(0, ActBase)
 {
     loadFrame.address = addr;
 }

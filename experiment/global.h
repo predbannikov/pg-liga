@@ -17,22 +17,22 @@
 
 enum RETCODE {NOERROR, COMPLATE, ERROR};
 
-static QString retcodeToStr(RETCODE code) {
-    switch (code) {
-    case NOERROR:
-        return "NOERROR";
-    case COMPLATE:
-        return "COMPLATE";
-    case ERROR:
-        return "ERROR";
-    }
-}
+// static QString retcodeToStr(RETCODE code) {
+//     switch (code) {
+//     case RETCODE::NOERROR:
+//         return QString("NOERROR");
+//     case RETCODE::COMPLATE:
+//         return QString("COMPLATE");
+//     case RETCODE::ERROR:
+//         return QString("ERROR");
+//     }
+//     return QString();
+// }
 
 enum PDU_COMMAND {
     PDU_COMMAND_0x03 = 0x03,
     PDU_COMMAND_0x10 = 0x10
 };
-
 
 enum FunctionCode {
     ActBase   = 0,
@@ -94,7 +94,6 @@ enum CommandRegisterAddr : quint16 {
     RegisterEndAddr = 36,
 };
 
-
 enum OpCode : quint16 {
     OpCodeMask     = 0xff00,
     GetID          = 0xf100,
@@ -128,15 +127,9 @@ enum OpCode : quint16 {
     ControllerStatus = 0x3500,
 };
 
-//struct StatusOperation {
-//    QByteArray request;
-//    QByteArray response;
-//    QString strError;
-//};
-
-
 struct Requests {
     static QByteArray write(quint16 cmd, quint8 funcNum, quint16 addr) {
+        Q_UNUSED(addr);
         QByteArray arr;
         QDataStream str(&arr, QIODevice::ReadWrite);
         str.setVersion(QDataStream::Qt_5_11);
@@ -214,9 +207,5 @@ struct Requests {
     }
 
 };
-
-
-
-
 
 #endif // GLOBAL_H
