@@ -13,7 +13,6 @@ LoadFrame::LoadFrame() :
 {
     targetNewtones = Measurements::Force::fromNewtons(50.);
     timeElapse.start();
-
 }
 
 LoadFrame::~LoadFrame()
@@ -24,6 +23,7 @@ LoadFrame::~LoadFrame()
 bool LoadFrame::init()
 {
     qDebug() << Q_FUNC_INFO;
+    fflush(stderr);
     if (store != nullptr)
         delete store;
 
@@ -44,75 +44,12 @@ bool LoadFrame::init()
 
 bool LoadFrame::deleteData()
 {
+    qDebug() << Q_FUNC_INFO;
+    fflush(stderr);
     if (store != nullptr) {
         delete store;
         store = nullptr;
     }
-}
-
-RETCODE LoadFrame::next(QJsonObject &jOperation)
-{
-    RETCODE ret = ERROR;
-    switch (state) {
-    case STATE_IDLE:
-        ret = statusSensors(jOperation);
-        if (ret == COMPLATE) {
-            counter++;
-            if (counter % 10 == 0) {
-                qDebug() << qPrintable(QString("force=%1(N)\t deform=%2(mm)\t stepperPos=%3\t stepperStatus=%4\t controllerStatus=%5\t counter=%6").
-                        arg(Force::fromNewtons(forceSens.value).newtons(), 9).
-                        arg(Length::fromMicrometres(deformSens.value).millimetres(), 9).
-                        arg((stepper.position * 0.31250)/1000., 9).        // TODO 1:10 на эмуляторе
-                        arg(stepper.status).
-                        arg(controller.status).
-                        arg(counter));
-            }
-            fflush(stderr);
-        }
-        break;
-    case STATE_START:
-        init();
-        state = STATE_INIT;
-        break;
-    case STATE_INIT:
-        break;
-    case STATE_COMPLATION:
-        ret = controller.stopPID(jOperation);
-        if (ret == COMPLATE) {
-            qDebug() << "PID stoped";
-            state = STATE_FINISH;
-            store->fixUpdateData();
-        }
-        break;
-    case STATE_MOVE_FRAME:
-        ret = stepper.setSpeed(jOperation, cur_speed);
-        if(ret == COMPLATE) {
-            qDebug() << "stepper stop";
-            state = STATE_FINISH;
-        }
-        break;
-    case STATE_STOP_FRAME:
-        ret = stepper.stop(jOperation);
-        if(ret == COMPLATE) {
-            qDebug() << "stepper stop";
-            state = STATE_FINISH;
-        }
-        break;
-    case STATE_UNLOCK_PID:
-        state = STATE_COMPLATION;
-        break;
-    case STATE_FINISH:
-//        delete store;
-//        store = nullptr;
-        qDebug() << "\n#STATE_FINISH";
-        cur_speed = 0;
-        state = STATE_IDLE;
-        jconfig = QJsonObject();
-
-        state = STATE_IDLE;
-        break;
-    }
-    return ret;
 }
 
 RETCODE LoadFrame::setTarget(QJsonObject &jOperation)
@@ -315,9 +252,4 @@ void LoadFrame::sendStoreData(QJsonObject &jobj)
     } else {
         jobj["store_data"] = QString(QByteArray("no experiment has been launched yet").toBase64());
     }
-}
-
-void LoadFrame::switchToServiceMode(QJsonObject &jobj)
-{
-
 }

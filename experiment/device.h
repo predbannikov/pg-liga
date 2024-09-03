@@ -16,8 +16,6 @@
 #include "stepper.h"
 #include "controller.h"
 #include "storedata.h"
-//#include "DataStore/datastore.h"
-
 
 class LoadFrame
 {
@@ -58,15 +56,9 @@ public:
     bool init();
     bool deleteData();
 
-    RETCODE next(QJsonObject &jOperation);
-
     RETCODE setTarget(QJsonObject &jOperation);
 
     RETCODE setKPID(QJsonObject &jOperation, AbstractUnit::CMD cmd);
-//    RETCODE setPID_D(QJsonObject &jOperation);
-//    RETCODE setUpPID_P(QJsonObject &jOperation);
-//    RETCODE setUpPID_D(QJsonObject &jOperation);
-
 
     RETCODE setHz(QJsonObject &jOperation);
 
@@ -93,8 +85,6 @@ public:
     void readSensors(QJsonObject &jobj);
     void sendProtocol(QJsonObject &jobj);
     void sendStoreData(QJsonObject &jobj);
-    void switchToServiceMode(QJsonObject &jobj);
-
 
     Measurements::Force targetNewtones;
     Measurements::Force targetMinNewtones;

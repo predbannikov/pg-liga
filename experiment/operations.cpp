@@ -133,11 +133,6 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
     return COMPLATE;
 }
 
-RETCODE Operations::next()
-{
-    return loadFrame.next(jStatusOperation);
-}
-
 void Operations::resetCommunicationState()
 {
     loadFrame.resetStateModeBusCommunication();

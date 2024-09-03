@@ -62,7 +62,6 @@ public:
     ~Operations();
 //    virtual RETCODE next() = 0;
 //    virtual void resetCommunicationState() = 0;
-    RETCODE next();
     void resetCommunicationState();
 
     bool execut();
