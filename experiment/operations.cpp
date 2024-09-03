@@ -64,10 +64,7 @@ bool Operations::execut()
 RETCODE Operations::execCMD(QJsonObject &jobj)
 {
 //    qDebug().noquote() << Q_FUNC_INFO << jobj;
-    if (jobj["CMD"].toString() == "settings") {
-        loadFrame.writeConfig(jobj);
-        loadFrame.readConfig();
-    } else if (jobj["CMD"].toString() == "get_sensor_value") {
+    if (jobj["CMD"].toString() == "get_sensor_value") {
         QString arg1 = jobj["arg1"].toString();
         double value = -1;
         if (arg1 == "SensLoad0") {
@@ -80,9 +77,7 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
     } else if (jobj["CMD"].toString() == "scan") {
         loadFrame.readSensors(jobj);
         emit sendRequestToClient(jobj);
-    } else if (jobj["CMD"].toString() == "read_config") {
-        loadFrame.readConfig();
-    } else if (jobj["CMD"].toString() == "read_sensors") {
+     } else if (jobj["CMD"].toString() == "read_sensors") {
         loadFrame.readSensors(jobj);
         emit sendRequestToClient(jobj);
     } else if (jobj["CMD"].toString() == "get_protocol") {
@@ -93,9 +88,6 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
         emit sendRequestToClient(jobj);
     } else if (jobj["CMD"].toString() == "get_store_data") {
         loadFrame.sendStoreData(jobj);
-//        qDebug() << Q_FUNC_INFO << jobj;
-        fflush(stderr);
-//        loadFrame.readSensors(jobj);
         emit sendRequestToClient(jobj);
     } else if (jobj["CMD"].toString() == "stop_store_data") {
         loadFrame.deleteData();
@@ -112,8 +104,6 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
         return loadFrame.setHz(jobj);
     } else if (jobj["CMD"].toString() == "hard_reset") {
         return plata.write(jobj, HardReset);
-
-//        return loadFrame.hardReset(jobj);
     } else if (jobj["CMD"].toString() == "set_pid_p") {
         return loadFrame.setKPID(jobj, AbstractUnit::CMD::ControllerSetKp);
     } else if (jobj["CMD"].toString() == "set_pid_d") {

@@ -6,6 +6,7 @@
 .qtc_clangd/
 debug/
 release/
+build/
 ui_*.h
 Makefile*
 object_script*

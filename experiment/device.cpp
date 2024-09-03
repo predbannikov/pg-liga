@@ -1,7 +1,4 @@
 #include "device.h"
-#include <QRandomGenerator>
-
-using namespace Measurements;
 
 LoadFrame::LoadFrame() :
     /// первая рама
@@ -9,10 +6,8 @@ LoadFrame::LoadFrame() :
     deformSens(SensDeform0Addr, SensDef0),
     stepper(ActLoad0Addr, ActLoad0),
     controller(CtrlLoad0Addr, CtrlLoad0)
-
 {
     targetNewtones = Measurements::Force::fromNewtons(50.);
-    timeElapse.start();
 }
 
 LoadFrame::~LoadFrame()
@@ -22,8 +17,6 @@ LoadFrame::~LoadFrame()
 
 bool LoadFrame::init()
 {
-    qDebug() << Q_FUNC_INFO;
-    fflush(stderr);
     if (store != nullptr)
         delete store;
 
@@ -36,7 +29,6 @@ bool LoadFrame::init()
     sens.append(&forceSens);
     sens.append(&deformSens);
 
-
     store->setSensors(sens);
     store->setStepper(&stepper);
     return true;
@@ -44,8 +36,6 @@ bool LoadFrame::init()
 
 bool LoadFrame::deleteData()
 {
-    qDebug() << Q_FUNC_INFO;
-    fflush(stderr);
     if (store != nullptr) {
         delete store;
         store = nullptr;
@@ -55,8 +45,8 @@ bool LoadFrame::deleteData()
 RETCODE LoadFrame::setTarget(QJsonObject &jOperation)
 {
     RETCODE ret = ERROR;
-    targetNewtones = Force::fromNewtons(jOperation["target"].toDouble());
-    targetMinNewtones = Force::fromNewtons(jOperation["target_min"].toDouble());
+    targetNewtones = Measurements::Force::fromNewtons(jOperation["target"].toDouble());
+    targetMinNewtones = Measurements::Force::fromNewtons(jOperation["target_min"].toDouble());
     ret = controller.setTarget(jOperation, targetMinNewtones.newtons(), targetNewtones.newtons());      // 200.19642105368277
     return ret;
 }
@@ -120,13 +110,10 @@ RETCODE LoadFrame::statusSensors(QJsonObject &jOperation)
             readSensState = READ_SENS_6;
         break;
     case READ_SENS_6:
-//        ret = controller.readStatus(jOperation);
         ret = COMPLATE;
-        if (ret == COMPLATE) {
-            readSensState = READ_SENS_1;
-            if (store != nullptr)
-                store->updateData();
-        }
+        readSensState = READ_SENS_1;
+        if (store != nullptr)
+            store->updateData();
         break;
     }
     return ret;
@@ -140,39 +127,10 @@ void LoadFrame::resetStateModeBusCommunication()
     stepper.resetState();
 }
 
-void LoadFrame::readConfig()
-{
-    QFile file;
-    file.setFileName("config.json");
-    if (!file.open(QIODevice::ReadOnly)) {
-        qDebug() << "file not open" << Q_FUNC_INFO;
-        return;
-    }
-
-    QJsonDocument jdoc = QJsonDocument::fromJson(file.readAll());
-    file.close();
-    qDebug() << jdoc;
-    jconfig = jdoc.object();
-}
-
-RETCODE LoadFrame::writeConfig(QJsonObject &jobj)
-{
-    QFile file;
-    file.setFileName("config.json");
-    if (!file.open(QIODevice::WriteOnly)) {
-        qDebug() << "file not open";
-        return ERROR;
-    }
-    qDebug() << "write new config" << QJsonDocument(jobj["config"].toObject());
-    file.write(QJsonDocument(jobj["config"].toObject()).toJson());
-    file.close();
-    return COMPLATE;
-}
-
 RETCODE LoadFrame::moveFrame(QJsonObject &jobj)
 {
-    cur_speed = jobj["speed"].toString().toInt();
-    return stepper.setSpeed(jobj, cur_speed);
+    int speed = jobj["speed"].toString().toInt();
+    return stepper.setSpeed(jobj, speed);
 }
 
 RETCODE LoadFrame::unlockPID(QJsonObject &jobj)
@@ -218,35 +176,6 @@ void LoadFrame::sendProtocol(QJsonObject &jobj)
 
 void LoadFrame::sendStoreData(QJsonObject &jobj)
 {
-//#define DEBUG_TEST_SERIALIZE_STORE_DATA
-#ifdef DEBUG_TEST_SERIALIZE_STORE_DATA
-    static bool test_serialize_store_data = true;
-    if (test_serialize_store_data) {
-        init();
-        test_serialize_store_data = false;
-    }
-    auto generData = [this]() {
-        static int counter = 0;
-        float test_float = 0.1;
-        DataStore dataStore;
-        for (int j = 0; j < 10; j++) {
-            QList<QPair<qint64, float> > list;
-            int tmp = counter;
-            for (int i = 1; i < 10; i++) {
-                list.append({counter++, test_float});
-                test_float += 0.05;
-            }
-            dataStore.data.insert(tmp, list);
-            test_float += 1.0;
-        }
-        store->data.insert("deform", dataStore);
-        store->data.insert("force", dataStore);
-    };
-    generData();
-
-#endif
-
-
     if (store != nullptr) {
         store->sendStoreData(jobj);
     } else {
