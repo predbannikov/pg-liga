@@ -28,12 +28,12 @@ bool Operations::execut()
             counter++;
             if (counter % 10 == 0) {
                 qDebug() << qPrintable(QString("force=%1(N)\t deform=%2(mm)\t stepperPos=%3\t stepperStatus=%4\t controllerStatus=%5\t counter=%6").
-                        arg(Force::fromNewtons(loadFrame.forceSens.value).newtons(), 9).
-                        arg(Length::fromMicrometres(loadFrame.deformSens.value).millimetres(), 9).
+                        arg(Force::fromNewtons(loadFrame.forceSens->value).newtons(), 9).
+                        arg(Length::fromMicrometres(loadFrame.deformSens->value).millimetres(), 9).
 //                        arg((loadFrame.stepper.position * 0.31250)/1000., 9).        // TODO 1:10 на эмуляторе
-                        arg(loadFrame.stepper.position).        // TODO 1:10 на эмуляторе
-                        arg(loadFrame.stepper.status).
-                        arg(loadFrame.controller.status).
+                        arg(loadFrame.stepper->position).        // TODO 1:10 на эмуляторе
+                        arg(loadFrame.stepper->status).
+                        arg(loadFrame.controller->status).
                         arg(counter));
             }
             fflush(stderr);
@@ -68,9 +68,9 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
         QString arg1 = jobj["arg1"].toString();
         double value = -1;
         if (arg1 == "SensLoad0") {
-            value = loadFrame.forceSens.value;
+            value = loadFrame.forceSens->value;
         } else if (arg1 == "SensDef0") {
-            value = loadFrame.deformSens.value;
+            value = loadFrame.deformSens->value;
         }
         jobj["value"] = QString::number(value);
         emit sendRequestToClient(jobj);

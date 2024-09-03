@@ -3,7 +3,7 @@
 
 using namespace Measurements;
 
-StoreData::StoreData(quint8 addr, const QJsonObject &conf)
+StoreData::StoreData(quint8 addr, const QJsonObject &conf, QObject *parent) : QObject(parent)
 {
     jconfig = conf;
     address = addr;
@@ -17,6 +17,7 @@ StoreData::StoreData(quint8 addr, const QJsonObject &conf)
 StoreData::~StoreData()
 {
     qDebug() << Q_FUNC_INFO;
+    fflush(stderr);
 }
 
 void StoreData::createFileProtocol()

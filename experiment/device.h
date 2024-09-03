@@ -3,10 +3,8 @@
 
 #include <QDataStream>
 #include <QJsonDocument>
-#include <QElapsedTimer>
 #include <QJsonObject>
 #include <QJsonArray>
-#include <QElapsedTimer>
 #include "global.h"
 #include "sensors.h"
 #include "stepper.h"
@@ -19,7 +17,7 @@ class LoadFrame
 
     enum STATE_SET_STATE_PID_CONTROLLER {STATE_SET_STATE_PID_CONTROLLER_DEFAULT, STATE_P_CORRECTION} state_pid = STATE_SET_STATE_PID_CONTROLLER_DEFAULT;
 
-    Sensor &getSensorFromStr(QString strSensorName) {
+    Sensor *getSensorFromStr(QString strSensorName) {
         if (strSensorName == "SensLoad0") {
             return forceSens;
         } else if (strSensorName == "SensDef0") {
@@ -57,10 +55,10 @@ public:
     QJsonObject jconfig;
     quint8 address = 0;
 
-    Sensor forceSens;
-    Sensor deformSens;
-    Stepper stepper;
-    Controller controller;
+    Sensor *forceSens = nullptr;
+    Sensor *deformSens = nullptr;
+    Stepper *stepper = nullptr;
+    Controller *controller = nullptr;
 
     StoreData *store = nullptr;
 

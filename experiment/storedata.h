@@ -101,7 +101,7 @@ private:
     QElapsedTimer elapsePeriod;
 };
 
-class StoreData
+class StoreData : public QObject
 {
 
 
@@ -141,7 +141,7 @@ class StoreData
     void createFileProtocol();
 
 public:
-    StoreData(quint8 addr, const QJsonObject &conf);
+    StoreData(quint8 addr, const QJsonObject &conf, QObject *parent = nullptr);
     ~StoreData();
 
     void setSensors(const QVector <Sensor*> sensors_);
