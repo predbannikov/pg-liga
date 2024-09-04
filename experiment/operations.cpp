@@ -37,8 +37,8 @@ bool Operations::execut()
                         arg(queueRequest.size()));
             }
             fflush(stderr);
-            experimentParser();
             // Тут нужно запустить парсер нашего эксперимента
+            parser();
         }
         break;
     case Operations::STATE_MODE_EXECCMD:
@@ -88,7 +88,7 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
             stateExperiment = STATE_EXPERIMENT_PROCESS;
     } else if (jobj["CMD"].toString() == "pause_experiment") {
         if (stateExperiment == STATE_EXPERIMENT_PROCESS)
-            stateExperiment = STATE_EXPERIMENT_IDLE;
+            stateExperiment = STATE_EXPERIMENT_PAUSE;
     } else if (jobj["CMD"].toString() == "scan") {
         loadFrame.readSensors(jobj);
         emit sendRequestToClient(jobj);

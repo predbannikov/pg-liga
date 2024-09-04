@@ -10,13 +10,14 @@ class Experiment : public Operations
 public:
     Experiment(quint8 addr);
     ~Experiment();
-    void experimentParser() override;
+    void parser() override;
 
 public slots:
     void doWork();
 
 
 private:
+    void experimentParser();
 
 };
 

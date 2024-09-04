@@ -39,7 +39,7 @@ public:
 
     void resetCommunicationState();
     bool execut();
-    virtual void experimentParser() = 0;
+    virtual void parser() = 0;
 
     QJsonObject jStatusOperation;
     int counter = 0;

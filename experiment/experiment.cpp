@@ -18,12 +18,20 @@ void Experiment::doWork()
 
 void Experiment::experimentParser()
 {
+    /** Мы можем читать датчики, но задавать целевые значения и передвижение
+        шаговиков, необходимо выполнять через queueRequest (очередь команд)
+    */
+}
+
+void Experiment::parser()
+{
     switch (stateExperiment) {
     case Experiment::STATE_EXPERIMENT_IDLE:
         qDebug() << "STATE_EXPERIMENT_IDLE";
         break;
     case Experiment::STATE_EXPERIMENT_PROCESS:
         qDebug() << "STATE_EXPERIMENT_PROCESS";
+        experimentParser();
         break;
     case Experiment::STATE_EXPERIMENT_PAUSE:
         qDebug() << "STATE_EXPERIMENT_PAUSE";
