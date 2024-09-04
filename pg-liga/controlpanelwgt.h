@@ -25,15 +25,14 @@ signals:
     void btnStop();
     void btnPause();
     void btnContinue();
-//    void stateToWork();
 
 private:
 
 
     Ui::ControlPanelWgt *ui;
 
-    QState *workState = nullptr;
-    QState *stopState = nullptr;
+    QState *experimentState = nullptr;
+    QState *idleState = nullptr;
     QState *pauseState = nullptr;
 
     QStateMachine *machine = nullptr;

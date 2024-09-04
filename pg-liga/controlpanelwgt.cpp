@@ -12,16 +12,16 @@ ControlPanelWgt::ControlPanelWgt(QWidget *parent) :
     machine = new QStateMachine(this);
 
     // Создаем состояния
-    workState = new QState();
-    QObject::connect(workState, &QState::entered, this, [this]() {
+    experimentState = new QState();
+    QObject::connect(experimentState, &QState::entered, this, [this]() {
         ui->btnStartExperiment->setVisible(false);
         ui->btnStopExperiment->setVisible(true);
         ui->btnPauseExperiment->setVisible(true);
         ui->btnContinueExperiment->setVisible(false);
     });
 
-    stopState = new QState();
-    QObject::connect(stopState, &QState::entered, this, [this]() {
+    idleState = new QState();
+    QObject::connect(idleState, &QState::entered, this, [this]() {
         ui->btnStartExperiment->setVisible(true);
         ui->btnStopExperiment->setVisible(false);
         ui->btnPauseExperiment->setVisible(false);
@@ -38,21 +38,21 @@ ControlPanelWgt::ControlPanelWgt(QWidget *parent) :
 
 
     // Добавляем состояния в машину
-    machine->addState(workState);
-    machine->addState(stopState);
+    machine->addState(experimentState);
+    machine->addState(idleState);
     machine->addState(pauseState);
 
     // Устанавливаем начальное состояние
-    machine->setInitialState(workState);
+    machine->setInitialState(idleState);
 
     // Добавляем переходы между состояниями
-    workState->addTransition(ui->btnStopExperiment, &QToolButton::clicked, stopState);
-    workState->addTransition(ui->btnPauseExperiment, &QToolButton::clicked, pauseState);
+    experimentState->addTransition(ui->btnStopExperiment, &QToolButton::clicked, idleState);
+    experimentState->addTransition(ui->btnPauseExperiment, &QToolButton::clicked, pauseState);
 
-    stopState->addTransition(ui->btnStartExperiment, &QToolButton::clicked, workState);
+    idleState->addTransition(ui->btnStartExperiment, &QToolButton::clicked, experimentState);
 
-    pauseState->addTransition(ui->btnStopExperiment, &QToolButton::clicked, stopState);
-    pauseState->addTransition(ui->btnContinueExperiment, &QToolButton::clicked, workState);
+    pauseState->addTransition(ui->btnStopExperiment, &QToolButton::clicked, idleState);
+    pauseState->addTransition(ui->btnContinueExperiment, &QToolButton::clicked, experimentState);
 
     connect(ui->btnStartExperiment, &QToolButton::clicked, this, &ControlPanelWgt::btnStart);
     connect(ui->btnStopExperiment, &QToolButton::clicked, this, &ControlPanelWgt::btnStop);

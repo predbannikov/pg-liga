@@ -1,6 +1,10 @@
 #ifndef EXPERIMENT_H
 #define EXPERIMENT_H
 
+#include <QState>
+#include <QStateMachine>
+#include <QFinalState>
+
 #include "operations.h"
 
 
@@ -19,6 +23,12 @@ public slots:
 private:
 
     void state_machine_experiment();
+
+    QStateMachine *machine = nullptr;
+
+    QState *experimentState = nullptr;
+    QState *pauseState = nullptr;
+    QState *idleState = nullptr;
 
 };
 
