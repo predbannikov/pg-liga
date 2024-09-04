@@ -20,7 +20,6 @@ class Interface : public QObject
     QWaitCondition notEmpty;
     /// json объект из очереди комманд
     QJsonObject jobjTaked;
-    QQueue <QJsonObject> queueRequest;
     bool abort = false;
 
 
@@ -39,6 +38,7 @@ public:
 
     SerialPort *modbus = nullptr;
 
+    QQueue <QJsonObject> queueRequest;
 
 signals:
     /// send to modbus

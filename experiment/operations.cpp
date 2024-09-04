@@ -19,23 +19,26 @@ Operations::~Operations()
  */
 bool Operations::execut()
 {
-    RETCODE ret;    // = next();
+    RETCODE ret;    // Переключает состояния если возврат не равно NOERROR
     switch(state) {
     case Operations::STATE_IDLE:
         ret = loadFrame.statusSensors(jStatusOperation);
         if (ret == COMPLATE) {
             counter++;
             if (counter % 10 == 0) {
-                qDebug() << qPrintable(QString("force=%1(N)\t deform=%2(mm)\t stepperPos=%3\t stepperStatus=%4\t controllerStatus=%5\t counter=%6").
+                qDebug() << qPrintable(QString("force=%1(N)\t deform=%2(mm)\t stepperPos=%3\t stepperStatus=%4\t controllerStatus=%5\t counter=%6\t sizeQueue=%7 ").
                         arg(Force::fromNewtons(loadFrame.forceSens->value).newtons(), 9).
                         arg(Length::fromMicrometres(loadFrame.deformSens->value).millimetres(), 9).
 //                        arg((loadFrame.stepper.position * 0.31250)/1000., 9).        // TODO 1:10 на эмуляторе
                         arg(loadFrame.stepper->position).        // TODO 1:10 на эмуляторе
                         arg(loadFrame.stepper->status).
                         arg(loadFrame.controller->status).
-                        arg(counter));
+                        arg(counter).
+                        arg(queueRequest.size()));
             }
             fflush(stderr);
+            experimentParser();
+            // Тут нужно запустить парсер нашего эксперимента
         }
         break;
     case Operations::STATE_PROCESS:

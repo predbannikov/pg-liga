@@ -13,6 +13,7 @@ public:
     ~Experiment();
 public slots:
     void doWork();
+    void experimentParser() override;
 
 
 private:

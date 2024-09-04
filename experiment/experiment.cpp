@@ -2,6 +2,7 @@
 
 Experiment::Experiment(quint8 addr) : Operations(addr)
 {
+
 }
 
 Experiment::~Experiment()
@@ -17,6 +18,12 @@ void Experiment::doWork()
     modbus->init();
 
     state_machine_experiment();
+}
+
+void Experiment::experimentParser()
+{
+
+
 }
 
 void Experiment::state_machine_experiment()

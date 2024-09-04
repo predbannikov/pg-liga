@@ -28,30 +28,26 @@ class Operations : public Interface
 {
 
     enum STATE {STATE_IDLE, STATE_PROCESS} state = STATE_IDLE;
-    int sequencer = 0;
-    LoadFrame loadFrame;
-    Plata plata;
+
 
 public:
     Operations(quint8 addr);
     ~Operations();
-//    virtual RETCODE next() = 0;
-//    virtual void resetCommunicationState() = 0;
-    void resetCommunicationState();
 
+    void resetCommunicationState();
     bool execut();
+    virtual void experimentParser() = 0;
 
 
     QJsonObject jStatusOperation;
     int counter = 0;
-
+    LoadFrame loadFrame;
+    Plata plata;
     RETCODE execCMD(QJsonObject &jobj);
 
 
 private:
 
-
-private:
 
 };
 
