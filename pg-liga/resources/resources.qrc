@@ -53,5 +53,9 @@
         <file>icons/duplicate.png</file>
         <file>icons/vert_dots.png</file>
         <file>images/splitter-vertical.png</file>
+        <file>icons/pause_exp.png</file>
+        <file>icons/play_exp.png</file>
+        <file>icons/skip_exp.png</file>
+        <file>icons/stop_exp.png</file>
     </qresource>
 </RCC>
