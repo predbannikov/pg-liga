@@ -63,15 +63,15 @@ bool Operations::execut()
 RETCODE Operations::execCMD(QJsonObject &jobj)
 {
 //    qDebug().noquote() << Q_FUNC_INFO << jobj;
-    if (jobj["CMD"].toString() == "get_sensor_value") {
-        QString arg1 = jobj["arg1"].toString();
-        double value = -1;
-        if (arg1 == "SensLoad0") {
-            value = loadFrame.forceSens->value;
-        } else if (arg1 == "SensDef0") {
-            value = loadFrame.deformSens->value;
-        }
-        jobj["value"] = QString::number(value);
+    if (jobj["CMD"].toString() == "get_status_device") {
+        QJsonObject jObj({{"Сила", loadFrame.forceSens->value},
+                          {"Деформация", loadFrame.deformSens->value}});
+        // if (arg1 == "SensLoad0") {
+        //     value = loadFrame.forceSens->value;
+        // } else if (arg1 == "SensDef0") {
+        //     value = loadFrame.deformSens->value;
+        // }
+        jobj["sensors"] = jObj;
         emit sendRequestToClient(jobj);
     } else if (jobj["CMD"].toString() == "scan") {
         loadFrame.readSensors(jobj);
