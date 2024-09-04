@@ -20,8 +20,8 @@ Operations::~Operations()
 bool Operations::execut()
 {
     RETCODE ret;    // Переключает состояния если возврат не равно NOERROR
-    switch(state) {
-    case Operations::STATE_IDLE:
+    switch(state_mode) {
+    case Operations::STATE_MODE_IDLE:
         ret = loadFrame.statusSensors(jStatusOperation);
         if (ret == COMPLATE) {
             counter++;
@@ -41,7 +41,7 @@ bool Operations::execut()
             // Тут нужно запустить парсер нашего эксперимента
         }
         break;
-    case Operations::STATE_PROCESS:
+    case Operations::STATE_MODE_EXECCMD:
         ret = execCMD(jStatusOperation);
         break;
     }
@@ -52,9 +52,9 @@ bool Operations::execut()
 //        qDebug() << "Читаем следующую команду из списка если она есть, меняем состояние на выполнение" << retcodeToStr(ret);
         read(jStatusOperation);
         if (jStatusOperation.isEmpty())
-            state = STATE_IDLE;
+            state_mode = STATE_MODE_IDLE;
         else
-            state = STATE_PROCESS;
+            state_mode = STATE_MODE_EXECCMD;
     } else {
         if (jStatusOperation["PDU_request"].toString().isEmpty())
             return true;
@@ -75,7 +75,20 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
         //     value = loadFrame.deformSens->value;
         // }
         jobj["sensors"] = jObj;
+        jobj["status_experiment"] = getStateExperiment();
         emit sendRequestToClient(jobj);
+    } else if (jobj["CMD"].toString() == "start_experiment") {
+        if (stateExperiment == STATE_EXPERIMENT_IDLE)
+            stateExperiment = STATE_EXPERIMENT_PROCESS;
+    } else if (jobj["CMD"].toString() == "stop_experiment") {
+        if (stateExperiment == STATE_EXPERIMENT_PROCESS || stateExperiment == STATE_EXPERIMENT_PAUSE)
+            stateExperiment = STATE_EXPERIMENT_IDLE;
+    } else if (jobj["CMD"].toString() == "continue_experiment") {
+        if (stateExperiment == STATE_EXPERIMENT_PAUSE)
+            stateExperiment = STATE_EXPERIMENT_PROCESS;
+    } else if (jobj["CMD"].toString() == "pause_experiment") {
+        if (stateExperiment == STATE_EXPERIMENT_PROCESS)
+            stateExperiment = STATE_EXPERIMENT_IDLE;
     } else if (jobj["CMD"].toString() == "scan") {
         loadFrame.readSensors(jobj);
         emit sendRequestToClient(jobj);
@@ -123,6 +136,18 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
     }
 
     return COMPLATE;
+}
+
+QString Operations::getStateExperiment()
+{
+    switch(stateExperiment) {
+    case Operations::STATE_EXPERIMENT_IDLE:
+        return QString("STATE_EXPERIMENT_IDLE");
+    case Operations::STATE_EXPERIMENT_PROCESS:
+        return QString("STATE_EXPERIMENT_PROCESS");
+    case Operations::STATE_EXPERIMENT_PAUSE:
+        return QString("STATE_EXPERIMENT_PAUSE");
+    }
 }
 
 void Operations::resetCommunicationState()

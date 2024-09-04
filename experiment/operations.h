@@ -27,7 +27,10 @@ public:
 class Operations : public Interface
 {
 
-    enum STATE {STATE_IDLE, STATE_PROCESS} state = STATE_IDLE;
+    enum STATE_MODE { STATE_MODE_IDLE, STATE_MODE_EXECCMD } state_mode = STATE_MODE_IDLE;
+
+protected:
+    enum STATE_EXPERIMENT { STATE_EXPERIMENT_IDLE, STATE_EXPERIMENT_PROCESS, STATE_EXPERIMENT_PAUSE } stateExperiment = STATE_EXPERIMENT_IDLE;
 
 
 public:
@@ -38,7 +41,6 @@ public:
     bool execut();
     virtual void experimentParser() = 0;
 
-
     QJsonObject jStatusOperation;
     int counter = 0;
     LoadFrame loadFrame;
@@ -47,8 +49,7 @@ public:
 
 
 private:
-
-
+    QString getStateExperiment();
 };
 
 #endif // OPERATIONS_H
