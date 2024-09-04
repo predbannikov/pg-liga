@@ -287,7 +287,6 @@ void ExperimentView::onReadyResponse(const QJsonObject &jobj)
 void ExperimentView::on_btnUnlockPid_clicked()
 {
     QJsonObject jobj;
-    jobj["type"] = "client";
     jobj["CMD"] = "unlock_PID";
     emit sendRequest(jobj);
 }

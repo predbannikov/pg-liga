@@ -60,9 +60,19 @@ signals:
     void moveOperationDownActions();
 private:
     void createMenu();
+
+    /**
+     * @brief deleteWidget      Удаляет виджет, необходимо удалить виджет прежде чем
+     *                          добавить его в операцию ( в операции должен быть только один виджет)
+     */
     void deleteWidget();
+
+    /**
+     * @brief updateTextMenu    Обновляет индексы операций, в случае их перемещения
+     * @param text
+     */
     void updateTextMenu(QString text = "");
-    SteppedModelEditor *createSteppedModelEditor(QString text);
+    SteppedModelEditor *createSteppedModelEditor();
 
     Ui::OperationActions *ui;
 

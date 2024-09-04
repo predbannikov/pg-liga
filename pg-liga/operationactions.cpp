@@ -25,15 +25,15 @@ OperationActions::OperationActions(int numberOperation, QWidget *parent) :
     {
         {
             actions.append(new QAction("Установка всестороннего давления", this));
-            connect(actions.last(), &QAction::triggered, this, [=](){ createSteppedModelEditor(actions.last()->text())->setModel(new SteppedPressuriseModel); });
+            connect(actions.last(), &QAction::triggered, this, [=](){ createSteppedModelEditor()->setModel(new SteppedPressuriseModel); });
         }
         {
             actions.append(new QAction("Установка вертикального давления", this));
-            connect(actions.last(), &QAction::triggered, this, [=](){ createSteppedModelEditor(actions.last()->text())->setModel(new StaticCompressionModel); });
+            connect(actions.last(), &QAction::triggered, this, [=](){ createSteppedModelEditor()->setModel(new StaticCompressionModel); });
         }
         {
             actions.append(new QAction("Установка осевого напряжения", this));
-            connect(actions.last(), &QAction::triggered, this, [=](){ createSteppedModelEditor(actions.last()->text())->setModel(new StaticDeviatorModel); });
+            connect(actions.last(), &QAction::triggered, this, [=](){ createSteppedModelEditor()->setModel(new StaticDeviatorModel); });
         }
     }
 
@@ -109,12 +109,12 @@ void OperationActions::updateTextMenu(QString text)
     }
 }
 
-SteppedModelEditor *OperationActions::createSteppedModelEditor(QString text)
+SteppedModelEditor *OperationActions::createSteppedModelEditor()
 {
     deleteWidget();
     SteppedModelEditor *wgtStepEdit = new SteppedModelEditor(this);
     ui->widget->layout()->addWidget(wgtStepEdit);
-    updateTextMenu(text);
+    updateTextMenu(qobject_cast<QAction *>(sender())->text());
     return wgtStepEdit;
 }
 
