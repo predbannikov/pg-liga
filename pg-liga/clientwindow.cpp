@@ -20,7 +20,6 @@ ClientWindow::ClientWindow(QString host_, QWidget *parent) :
     timerPollSensors.setInterval(SENSORS_POLLING_INTERVAL_TIMEOUT);
     connect(&timerPollSensors, &QTimer::timeout, this, &ClientWindow::onPollSensorsCurrentPage);
     this->resize(720, 1280);
-    setEnableWidget(false);
 
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->setSpacing(0);
@@ -47,14 +46,14 @@ void ClientWindow::on_readBtn()
 void ClientWindow::onDisconnectClient()
 {
 //    ui->textEditLogout->append("Client disconnected:\n" + clnt->clientLastError);
-    setEnableWidget(false);
+    experimentView->clientSetConnectedState(false);
 }
 
 void ClientWindow::clientConnected()
 {
 //    ui->textEditLogout->append("Client connected:");
     qDebug() << Q_FUNC_INFO;
-    setEnableWidget(true);
+    experimentView->clientSetConnectedState(true);
 }
 
 void ClientWindow::clickBtnNumInstr()
@@ -102,12 +101,6 @@ void ClientWindow::on_sendRequest(QJsonObject &jobj)
 {
     qDebug() << jobj;
     clnt->sendReadyRequest(jobj);
-}
-
-void ClientWindow::setEnableWidget(bool enable)
-{
-//    ui->scrollArea->setEnabled(enable);
-
 }
 
 void ClientWindow::on_tabWidget_tabCloseRequested(int index)

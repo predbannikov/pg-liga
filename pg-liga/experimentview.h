@@ -1,6 +1,18 @@
 #ifndef EXPERIMENTVIEW_H
 #define EXPERIMENTVIEW_H
 
+/**
+ *      Логика состояния соединения:
+ *          ClientWindow после подключение к серверу, получает сигнал и вызывает clientSetConnectedState(state)
+ *          При создании ExperimentView в конструкторе запускается clientSetConnectedState(false)
+ *          Дальше состояние соединения управляется ClientWindow
+ *
+ *      Логика управляющих кнопок запуска, останова, сброса и продолжения эксперимента:
+ *          При создании ExperimentView в конструкторе
+ *
+ *
+ */
+
 #include <QWidget>
 #include <QJsonObject>
 #include <QLineEdit>
@@ -17,6 +29,7 @@
 #include "customgraph.h"
 #include "steppedmodeleditor.h"
 #include "operationactions.h"
+#include "controlpanelwgt.h"
 
 //#include "plotadapter.h"
 //#include "experimentdata.h"
@@ -64,6 +77,8 @@ public:
     explicit ExperimentView(QWidget *parent = nullptr);
     ~ExperimentView();
 
+    void clientSetConnectedState(bool state);
+
 public slots:
     void onReadyResponse(const QJsonObject &jobj);
     void onReadDataStore();
@@ -72,6 +87,7 @@ public slots:
     void updateIndexOperationActions();
     void moveUpOperation();
     void moveDownOperation();
+
 
 
 private slots:

@@ -40,8 +40,6 @@ private slots:
 
 private:
 
-    void setEnableWidget(bool enable);
-
     Ui::ClientWindow *ui;
     ClientManager *clnt = nullptr;
     ExperimentView *experimentView = nullptr;

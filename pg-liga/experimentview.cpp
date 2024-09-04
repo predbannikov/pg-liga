@@ -11,22 +11,38 @@ ExperimentView::ExperimentView(QWidget *parent) :
     timerUpdateStatus(new QTimer(this))
 {
     ui->setupUi(this);
-//    const QFont &font = ui->lblSensors->font();
-//    font.setFamily("Consolas"); // устанавливаем моноширинный шрифт
-//    font.setPointSize(42);
-////    font.setPixelSize(12);
-//    font.setBold(true);
-//    ui->lblSensors->setFont(font);
-
+    clientSetConnectedState(false);
     initServicePanel();
 
     setupPlots();
+
+    connect (ui->controlPanelWgt, &ControlPanelWgt::btnStart, [this]() {
+        QJsonObject jobj;
+        jobj["CMD"] = "start_experiment";
+        emit sendRequest(jobj);
+    });
+    connect (ui->controlPanelWgt, &ControlPanelWgt::btnStop, [this]() {
+        QJsonObject jobj;
+        jobj["CMD"] = "stop_experiment";
+        emit sendRequest(jobj);
+    });
+    connect (ui->controlPanelWgt, &ControlPanelWgt::btnContinue, [this]() {
+        QJsonObject jobj;
+        jobj["CMD"] = "continue_experiment";
+        emit sendRequest(jobj);
+    });
+    connect (ui->controlPanelWgt, &ControlPanelWgt::btnPause, [this]() {
+        QJsonObject jobj;
+        jobj["CMD"] = "pause_experiment";
+        emit sendRequest(jobj);
+    });
+
 
     connect(timerUpdateDataStore, &QTimer::timeout, this, &ExperimentView::onReadDataStore);
 
 
     connect(timerUpdateStatus, &QTimer::timeout, this, &ExperimentView::onUpdateStatus);
-    timerUpdateStatus->start(500);
+    timerUpdateStatus->start(5000);
 
 
 
@@ -44,6 +60,11 @@ void ExperimentView::initServicePanel()
 ExperimentView::~ExperimentView()
 {
     delete ui;
+}
+
+void ExperimentView::clientSetConnectedState(bool state)
+{
+    ui->controlPanelWgt->setEnabled(state);
 }
 
 void ExperimentView::setupPlots()

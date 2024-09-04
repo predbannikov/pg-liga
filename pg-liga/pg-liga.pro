@@ -41,6 +41,7 @@ SOURCES += \
     Settings/settingsdialog.cpp     \
     clientmanager.cpp \
     clientwindow.cpp \
+    controlpanelwgt.cpp \
     customgraph.cpp \
     customtabwidget.cpp \
     experimentview.cpp \
@@ -78,6 +79,7 @@ HEADERS += \
     appstrings.h \
     clientmanager.h \
     clientwindow.h \
+    controlpanelwgt.h \
     customgraph.h \
     customtabwidget.h \
     experimentview.h \
@@ -106,6 +108,7 @@ HEADERS += \
 
 FORMS += \
     clientwindow.ui \
+    controlpanelwgt.ui \
     customgraph.ui \
     experimentview.ui \
     mainwindow.ui   \
