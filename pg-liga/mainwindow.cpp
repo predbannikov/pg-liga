@@ -118,6 +118,7 @@ void MainWindow::setFirstTab(QWidget *widget, const QString &title)
 void MainWindow::onTabCloseRequested(int idx)
 {
     if(tabWidget->tabText(idx) != "Список") {
+        tabWidget->widget(idx)->deleteLater();
         tabWidget->removeTab(idx);
 //        auto *instrument = m_instrumentsInUse.value(tabWidget->clo->widget(idx), nullptr);
 //        if(instrument) {

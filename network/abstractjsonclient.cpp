@@ -2,13 +2,15 @@
 
 AbstractJSONClient::AbstractJSONClient(QString endPoint, QObject *parent) : QObject(parent), host(endPoint.split(':')[0]), port(endPoint.split(':')[1].toInt())
 {
-    QHostInfo hostInfo = QHostInfo::fromName(endPoint.split(':')[0]);
-
-    if (hostInfo.error() != QHostInfo::NoError) {
-        qDebug() << Q_FUNC_INFO << hostInfo.errorString();
-        return;
+    if (false) {
+        QHostInfo hostInfo = QHostInfo::fromName(endPoint.split(':')[0]);
+        if (hostInfo.error() != QHostInfo::NoError) {
+            qDebug() << Q_FUNC_INFO << hostInfo.errorString();
+            return;
+        }
+        host = hostInfo.addresses().first();
     }
-    host = hostInfo.addresses().first();
+
     type = CLIENT;
     socket = new QTcpSocket(this);
 

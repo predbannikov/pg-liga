@@ -76,12 +76,18 @@ public slots:
 
 private slots:
 
+
+    /**
+     *  Обновление статуса о плате, датчики, состояния и т.д.
+     */
+    void onUpdateStatus();
+
+
+
     void initServicePanel();
 
     void onCreateJsonObject();
 
-
-    void onReadSensors();
 
     void on_comboBox_activated(const QString &arg1);
 
@@ -137,20 +143,16 @@ private:
     void clearData();
 
 
-
     QMap<QString, DataStore> dataStore;
 
     QMap<QString, ExperimentData*> m_experimentData;
-//    ExperimentData *dataDeform = nullptr;
     DecoratedPlot *deformVsTime = nullptr;
 
     QMap<QString, ExperimentData*> m_presureData;
-//    ExperimentData *dataPressure = nullptr;
     DecoratedPlot *pressureVsTime = nullptr;
 
 
     QMap<QString, ExperimentData*> m_positionData;
-//    ExperimentData *dataPosition = nullptr;
     DecoratedPlot *positionVsTime = nullptr;
 
     CustomGraph *customPlot = nullptr;
@@ -160,7 +162,8 @@ private:
     QJsonObject jRequest;
     Ui::ExperimentView *ui;
     qint64 timeInterval(const QString &date, const QString &format);
-    QTimer timerIntervalUpdate;
+    QTimer *timerUpdateDataStore = nullptr;
+    QTimer *timerUpdateStatus = nullptr;
 };
 
 #endif // EXPERIMENTVIEW_H

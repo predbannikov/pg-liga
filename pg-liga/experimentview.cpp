@@ -6,11 +6,15 @@
 
 ExperimentView::ExperimentView(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::ExperimentView)
+    ui(new Ui::ExperimentView),
+    timerUpdateDataStore(new QTimer(this)),
+    timerUpdateStatus(new QTimer(this))
 {
     ui->setupUi(this);
-//    QFont font = ui->lblSensors->font();
+//    const QFont &font = ui->lblSensors->font();
+//    font.setFamily("Consolas"); // устанавливаем моноширинный шрифт
 //    font.setPointSize(42);
+////    font.setPixelSize(12);
 //    font.setBold(true);
 //    ui->lblSensors->setFont(font);
 
@@ -18,12 +22,18 @@ ExperimentView::ExperimentView(QWidget *parent) :
 
     setupPlots();
 
-    connect(&timerIntervalUpdate, &QTimer::timeout, this, &ExperimentView::onReadDataStore);
+    connect(timerUpdateDataStore, &QTimer::timeout, this, &ExperimentView::onReadDataStore);
+
+
+    connect(timerUpdateStatus, &QTimer::timeout, this, &ExperimentView::onUpdateStatus);
+    timerUpdateStatus->start(500);
+
+
 
     addOperationActions();
 
 
-//    ui->groupBox_4->setVisible(false);
+
 }
 
 void ExperimentView::initServicePanel()
@@ -63,6 +73,13 @@ void ExperimentView::clearData()
     m_experimentData.value("Деформация")->clearData();
     dataStore.clear();
     deformVsTime->m_plot->replot();
+}
+
+void ExperimentView::onUpdateStatus()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "get_status_device";
+    emit sendRequest(jobj);
 }
 
 void ExperimentView::addOperationActions()
@@ -205,12 +222,6 @@ void ExperimentView::onReadDataStore()
     emit sendRequest(jobj);
 }
 
-void ExperimentView::onReadSensors()
-{
-    QJsonObject jobj;
-    jobj["CMD"] = "read_sensors";
-}
-
 void ExperimentView::on_comboBox_activated(const QString &arg1)
 {
     onCreateJsonObject();
@@ -223,39 +234,31 @@ void ExperimentView::on_dateTimeEdit_timeChanged(const QTime &time)
 
 void ExperimentView::onReadyResponse(const QJsonObject &jobj)
 {
-//    qDebug() << Q_FUNC_INFO << jobj;
-//    ui->textEditLogOut->append(QString(QJsonDocument(jobj).toJson()).replace('\n', ' '));
+    //    qDebug() << Q_FUNC_INFO << jobj;
+    //    ui->textEditLogOut->append(QString(QJsonDocument(jobj).toJson()).replace('\n', ' '));
     QString CMD = jobj["CMD"].toString();
-    if (CMD == "get_sensor_value") {
-        double value = jobj["value"].toString().toDouble();
-        m_experimentData.value("Деформация")->append(value);
-    }
-    if (CMD == "read_sensors") {
-        QJsonObject jsensors = jobj["sensors"].toObject();
+    if (CMD == "get_status_device") {
         QString out_to_lbl;
-        QStringList keys = jsensors.keys();
-        for (auto &key: keys) {
-            if (key == "deform") {
-                float deform = jsensors[key].toString().toDouble() / 1000.;
-                out_to_lbl.append(QString("%1:\t\t%2\n").arg(key).arg(deform));
-//                data1->append(deform, QDateTime::currentDateTime());
-            } else if (key == "force") {
-                out_to_lbl.append(QString("%1:\t\t%2\n").arg(key).arg(jsensors[key].toString()));
-            }
-        }
+        auto jSensors = jobj["sensors"].toObject();
+        for (QJsonObject::iterator iter = jSensors.begin(); iter != jSensors.end(); ++iter)
+            out_to_lbl.append(QString("%1:%2\n").arg(iter.key(), 15).arg(QString::number(iter.value().toDouble(), 'f', 7) ));
+        if (out_to_lbl.size() < 5)
+            qDebug() << "stop";
         ui->lblSensors->setText(out_to_lbl);
+
     } else if (CMD == "get_protocol") {
         ui->textEdit->append(QByteArray::fromBase64(jobj["protocol"].toString().toUtf8()));
+
     } else if (CMD == "get_store_data") {
         QJsonObject jstoreData = QJsonDocument::fromJson(QByteArray::fromBase64(jobj["store_data"].toString().toUtf8())).object();
-//        qDebug() << Q_FUNC_INFO << "jstoreData" << jstoreData;
+        //        qDebug() << Q_FUNC_INFO << "jstoreData" << jstoreData;
         for (const auto &jkey: jstoreData.keys()) {
             if (!dataStore.contains(jkey)) {
-//                qDebug() << QString("key%1    value%2").arg(jkey).arg(QJsonDocument::fromJson(QByteArray::fromBase64(jstoreData.value(jkey).toString().toUtf8())).object());
+                //                qDebug() << QString("key%1    value%2").arg(jkey).arg(QJsonDocument::fromJson(QByteArray::fromBase64(jstoreData.value(jkey).toString().toUtf8())).object());
                 dataStore.insert(jkey, DataStore());
             }
             QList<QPair<qint64, float>> allList = dataStore[jkey].deSerializeData(jstoreData[jkey].toObject());
-//            qDebug() << Q_FUNC_INFO << "allList" << jkey << allList;
+            //            qDebug() << Q_FUNC_INFO << "allList" << jkey << allList;
             if (jkey == "VerticalDeform_mm") {
                 m_experimentData.value("Деформация")->append(allList);
             }
@@ -266,21 +269,6 @@ void ExperimentView::onReadyResponse(const QJsonObject &jobj)
                 m_experimentData.value("Позиция")->append(allList);
             }
         }
-        QJsonObject jsensors = jobj["sensors"].toObject();
-        QString out_to_lbl;
-        QStringList keys = jsensors.keys();
-        for (auto &key: keys) {
-            if (key == "deform") {
-                float deform = jsensors[key].toString().toDouble() / 1000.;
-                out_to_lbl.append(QString("%1:\t\t%2\n").arg(key).arg(deform));
-//                data1->append(deform, QDateTime::currentDateTime());
-            } else if (key == "force") {
-                out_to_lbl.append(QString("%1:\t\t%2\n").arg(key).arg(jsensors[key].toString()));
-            }
-        }
-        ui->lblSensors->setText(out_to_lbl);
-//        qDebug() << "stop";
-//        qDebug() << dataStore;
     }
 }
 
@@ -317,7 +305,7 @@ void ExperimentView::on_btnInitStoreData_clicked()
     on_btnClearDataStore_clicked();
     QJsonObject jobj;
     jobj["CMD"] = "init_store_data";
-    timerIntervalUpdate.start(3000);
+    timerUpdateDataStore->start(3000);
     emit sendRequest(jobj);
 }
 
@@ -379,7 +367,7 @@ void ExperimentView::on_btnStopStoreData_clicked()
 {
     QJsonObject jobj;
     jobj["CMD"] = "stop_store_data";
-    timerIntervalUpdate.stop();
+    timerUpdateDataStore->stop();
     emit sendRequest(jobj);
 }
 

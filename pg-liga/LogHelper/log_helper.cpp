@@ -268,7 +268,7 @@ void LogHelper :: removeNotUsedFiles ()
     dir.setFilter  (QDir::Files | QDir::Hidden | QDir::NoSymLinks);   // устанавливаем фильтр выводимых файлов/папок (см ниже)
     dir.setSorting (QDir::Name  | QDir::Reversed);   // устанавливаем сортировку "от меньшего к большему"
     QFileInfoList all_files_in_dir_list = dir.entryInfoList ();       // получаем список файлов директории
-    std::cout << "     Bytes Filename" << std::endl;   //выводим заголовок
+//    std::cout << "     Bytes Filename" << std::endl;   //выводим заголовок
 
     for (int i = 0; i < all_files_in_dir_list.size(); ++i)    // цикл по всем файлам, находящимся в директории лог-а
     {
@@ -277,7 +277,7 @@ void LogHelper :: removeNotUsedFiles ()
         if (dt.isValid())
         {
             // в цикле выводим сведения о файлах
-            std::cout << dt.toString("dd/MM/yyyy hh:mm:ss").toStdString () << std::endl;
+//            std::cout << dt.toString("dd/MM/yyyy hh:mm:ss").toStdString () << std::endl;
             // находим "давность" - разницу времени создания этого файла и времени создания текущего активного файла
             qint64 delta_t = dt.secsTo (dt_current_file);
             // заносим описание log-файла в список

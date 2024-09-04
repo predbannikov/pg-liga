@@ -23,6 +23,8 @@ ClientWindow::ClientWindow(QString host_, QWidget *parent) :
     setEnableWidget(false);
 
     QVBoxLayout *layout = new QVBoxLayout(this);
+    layout->setSpacing(0);
+    layout->setMargin(1);
     this->setLayout(layout);
 
     experimentView = new ExperimentView(this);
