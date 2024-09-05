@@ -37,6 +37,7 @@ DEFINES += VERSION_MAJOR=\\\"$$VERSION_MAJOR\\\" \
 
 SOURCES += \
     LogHelper/log_helper.cpp \
+    QtWaitingSpinner/waitingspinnerwidget.cpp \
     Settings/settingsmanager.cpp \
     Settings/settingsdialog.cpp     \
     clientmanager.cpp \
@@ -72,6 +73,7 @@ SOURCES += \
 HEADERS += \
     LogHelper/log_helper.h \
     LogHelper/log_helper_cfg.h \
+    QtWaitingSpinner/waitingspinnerwidget.h \
     Settings/instrumentparameters.h \
     Settings/settingsmanager.h \
     Settings/settingsdialog.h   \
@@ -130,6 +132,7 @@ INCLUDEPATH += $$PWD/../measurements/
 INCLUDEPATH += $$PWD/../datastore/
 INCLUDEPATH += $$PWD/../network/
 INCLUDEPATH += $$PWD/models/
+INCLUDEPATH += $$PWD/QtWaitingSpinner/
 
 message($$HEADERS)
 
@@ -146,7 +149,14 @@ else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../measurements/deb
 else:unix: LIBS += -L$$OUT_PWD/../measurements -lmeasurements
 
 DISTFILES += \
+    QtWaitingSpinner/.gitignore \
+    QtWaitingSpinner/LICENSE \
+    QtWaitingSpinner/README.md \
+    QtWaitingSpinner/qtwaitingspinner.pri \
     resources/icons/duplicate.png
+
+SUBDIRS += \
+    QtWaitingSpinner/qtwaitingspinner.pro
 
 
 

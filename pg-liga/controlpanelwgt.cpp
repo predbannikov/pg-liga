@@ -6,16 +6,38 @@
 #include "controlpanelwgt.h"
 #include "ui_controlpanelwgt.h"
 
+#include "waitingspinnerwidget.h"
+
 ControlPanelWgt::ControlPanelWgt(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ControlPanelWgt)
 {
     ui->setupUi(this);
 
+//    WaitingSpinnerWidget* spinner = new WaitingSpinnerWidget(this);
+
+     ui->widget->setRoundness(70.0);
+     ui->widget->setMinimumTrailOpacity(15.0);
+     ui->widget->setTrailFadePercentage(70.0);
+     ui->widget->setNumberOfLines(10);
+     ui->widget->setLineLength(5);
+     ui->widget->setLineWidth(3);
+     ui->widget->setInnerRadius(6);
+     ui->widget->setRevolutionsPerSecond(1);
+     ui->widget->setColor(QColor(81, 4, 71));
+     ui->widget->start(); // gets the show on the road!
 
     machine = new QStateMachine(this);
 
     // Создаем состояния
+    startState = new QState();
+    QObject::connect(experimentState, &QState::entered, this, [this]() {
+        ui->btnStartExperiment->setVisible(true);
+        ui->btnStopExperiment->setVisible(true);
+        ui->btnPauseExperiment->setVisible(true);
+        ui->btnContinueExperiment->setVisible(true);
+    });
+
     experimentState = new QState();
     QObject::connect(experimentState, &QState::entered, this, [this]() {
         ui->btnStartExperiment->setVisible(false);
@@ -42,14 +64,21 @@ ControlPanelWgt::ControlPanelWgt(QWidget *parent) :
 
 
     // Добавляем состояния в машину
+    machine->addState(startState);
     machine->addState(experimentState);
     machine->addState(idleState);
     machine->addState(pauseState);
 
     // Устанавливаем начальное состояние
-    machine->setInitialState(idleState);
+    machine->setInitialState(startState);
 
     // Добавляем переходы между состояниями
+
+
+    startState->addTransition(this, &ControlPanelWgt::transitToIdle, idleState);
+    startState->addTransition(this, &ControlPanelWgt::transitToPause, pauseState);
+    startState->addTransition(this, &ControlPanelWgt::transitToProcess, experimentState);
+
     experimentState->addTransition(this, &ControlPanelWgt::transitToIdle, idleState);
     experimentState->addTransition(this, &ControlPanelWgt::transitToPause, pauseState);
 
@@ -58,10 +87,22 @@ ControlPanelWgt::ControlPanelWgt(QWidget *parent) :
     pauseState->addTransition(this, &ControlPanelWgt::transitToIdle, idleState);
     pauseState->addTransition(this, &ControlPanelWgt::transitToProcess, experimentState);
 
-    connect(ui->btnStartExperiment, &QToolButton::clicked, this, &ControlPanelWgt::btnStart);
-    connect(ui->btnStopExperiment, &QToolButton::clicked, this, &ControlPanelWgt::btnStop);
-    connect(ui->btnPauseExperiment, &QToolButton::clicked, this, &ControlPanelWgt::btnPause);
-    connect(ui->btnContinueExperiment, &QToolButton::clicked, this, &ControlPanelWgt::btnContinue);
+    connect(ui->btnStartExperiment, &QToolButton::clicked, [=](){
+        emit btnStart();
+        ui->widget->start();
+    });
+    connect(ui->btnStopExperiment, &QToolButton::clicked, [=](){
+        emit btnStop();
+        ui->widget->start();
+    });
+    connect(ui->btnPauseExperiment, &QToolButton::clicked, [=](){
+        emit btnPause();
+        ui->widget->start();
+    });
+    connect(ui->btnContinueExperiment, &QToolButton::clicked, [=](){
+        emit btnContinue();
+        ui->widget->start();
+    });
 
 
     // Запускаем машину
@@ -82,4 +123,5 @@ void ControlPanelWgt::changeButtons(QString newState)
     } else if (newState == "STATE_EXPERIMENT_PAUSE") {
         emit transitToPause();
     }
+    ui->widget->stop();
 }

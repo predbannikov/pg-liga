@@ -22,7 +22,7 @@ public:
     void changeButtons(QString newState);
 
 signals:
-    void stopToFinal();
+//    void startState();
     void btnStart();
     void btnStop();
     void btnPause();
@@ -37,6 +37,8 @@ private:
 
     Ui::ControlPanelWgt *ui;
 
+
+    QState *startState = nullptr;
     QState *experimentState = nullptr;
     QState *idleState = nullptr;
     QState *pauseState = nullptr;
