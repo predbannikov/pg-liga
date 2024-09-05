@@ -3,6 +3,7 @@
 #include "math.h"
 
 #include "steppedpressurisemodel.h"
+#include "clientwindow.h"
 
 ExperimentView::ExperimentView(QWidget *parent) :
     QWidget(parent),
@@ -11,8 +12,9 @@ ExperimentView::ExperimentView(QWidget *parent) :
     timerUpdateStatus(new QTimer(this))
 {
     ui->setupUi(this);
-    clientSetConnectedState(false);
-    initServicePanel();
+
+    QMetaObject::invokeMethod(this, "initServicePanel", Qt::QueuedConnection);
+    QMetaObject::invokeMethod(this, "initControlPanel", Qt::QueuedConnection);
 
     setupPlots();
 
@@ -57,6 +59,12 @@ void ExperimentView::initServicePanel()
     ui->lblLoadFrameSpeed->setNum(ui->sliderLoadFrameSpeed->value());
 }
 
+void ExperimentView::initControlPanel()
+{
+    ClientWindow *clntWgt = qobject_cast<ClientWindow *> (parent());
+    clientSetConnectedState(clntWgt->getStatusConnection());
+}
+
 ExperimentView::~ExperimentView()
 {
     delete ui;
@@ -64,7 +72,7 @@ ExperimentView::~ExperimentView()
 
 void ExperimentView::clientSetConnectedState(bool state)
 {
-    ui->controlPanelWgt->setEnabled(state);
+    ui->controlPanelWgt->setConnectionState(state);
 }
 
 void ExperimentView::setupPlots()

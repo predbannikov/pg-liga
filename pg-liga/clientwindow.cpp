@@ -110,5 +110,10 @@ void ClientWindow::on_tabWidget_tabCloseRequested(int index)
 
 void ClientWindow::on_pushButton_3_clicked()
 {
-//    ui->textEditLogout->clear();
+    //    ui->textEditLogout->clear();
+}
+
+bool ClientWindow::getStatusConnection()
+{
+    return clnt->getStatusConnection();
 }

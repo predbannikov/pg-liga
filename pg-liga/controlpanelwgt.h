@@ -20,14 +20,16 @@ public:
     ~ControlPanelWgt();
 
     void changeButtons(QString newState);
+    void setConnectionState(bool state);
 
 signals:
-//    void startState();
     void btnStart();
     void btnStop();
     void btnPause();
     void btnContinue();
 
+    void transitToConnect();
+    void transitToDisconnect();
     void transitToIdle();
     void transitToProcess();
     void transitToPause();
@@ -39,6 +41,8 @@ private:
 
 
     QState *startState = nullptr;
+    QState *connectionState = nullptr;
+    QState *disctonnectState = nullptr;
     QState *experimentState = nullptr;
     QState *idleState = nullptr;
     QState *pauseState = nullptr;

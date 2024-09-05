@@ -21,6 +21,7 @@ class ClientWindow : public QWidget
 public:
     explicit ClientWindow(QString host_, QWidget *parent = nullptr);
     ~ClientWindow();
+    bool getStatusConnection();
 
 public slots:
     void on_readBtn();
@@ -37,6 +38,8 @@ private slots:
     void on_tabWidget_tabCloseRequested(int index);
 
     void on_pushButton_3_clicked();
+
+protected:
 
 private:
 

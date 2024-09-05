@@ -101,6 +101,7 @@ private slots:
 
 
     void initServicePanel();
+    void initControlPanel();
 
     void onCreateJsonObject();
 
