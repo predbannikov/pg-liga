@@ -7,6 +7,11 @@
 
 #include "operations.h"
 
+/**
+ *  Вынести действия в отдельные классы
+ *  добавить переходные состояния для паузы
+ *
+ */
 
 
 class Action : public QObject
@@ -22,22 +27,17 @@ public:
 
     virtual bool update() = 0;
     virtual void init() = 0;
-    virtual void finished() = 0;
+    virtual void finishing() = 0;
 
-    void initialization(QJsonObject jAct, LoadFrame *lf, Plata *plt) {
-        loadFrame = lf;
-        plata = plt;
-        jAction = jAct;
-        jAction["status"] = "process";
-        init();
-        Interface *interface = qobject_cast<Interface *>(parent());
-        QObject::connect(this, &Action::sendCmd, interface, &Interface::put, Qt::QueuedConnection);
+    void initialization(QJsonObject jAct, LoadFrame *lf, Plata *plt);
 
+    void finish() {
+        jAction["status"] = "complate";
+        finishing();
     }
 
-    void finishing() {
-        jAction["status"] = "complate";
-        finished();
+    void putQueue(QJsonObject &jObj) {
+        qobject_cast<Operations *>(parent())->put(jObj);
     }
 
     LoadFrame *loadFrame = nullptr;
@@ -59,37 +59,13 @@ public:
     ActionMoveOfTime(QObject *parent = nullptr) : Action(parent) {}
     ~ActionMoveOfTime() { qDebug() << Q_FUNC_INFO; }
 
-    bool update() override {
-        switch(trans) {
-        case ActionMoveOfTime::TRANS_2:
-            qDebug() << elapseTime.remainingTime();
-            if (!elapseTime.isActive()) {
-                qDebug() << "timer remaining";
-                return true;
-            }
-            break;
-        case ActionMoveOfTime::TRANS_1:
-            QJsonObject jobj;
-            jobj["CMD"] = "move_frame";
-            jobj["speed"] = QString::number(speed);
-
-            emit sendCmd(jobj);
-            // qobject_cast<Interface *>(parent())->put(jobj);
-            elapseTime.start();
-            trans = TRANS_2;
-            break;
-        }
-        return false;
-    }
+    bool update() override;
     void init() override {
         speed = jAction["speed"].toString().toInt();
         elapseTime.setSingleShot(true);
         elapseTime.setInterval(jAction["time_ms"].toString().toInt());
-        qDebug() << "interval" << elapseTime.interval();
     }
-    void finished() override {
-
-    }
+    void finishing() override;
 };
 
 
@@ -137,8 +113,8 @@ private:
 
         case Experiment::TRANSITION_2:
             for (QJsonObject::iterator iter = jExperiment.begin(); iter != jExperiment.end(); ++iter) {
-                qDebug() << "key=" << iter.key() << "    curAction=" << curAction;
                 if (iter.key().toInt() == curAction) {
+                    qDebug() << "key=" << iter.key() << "    curAction=" << curAction;
                     action = new ActionMoveOfTime(this);
                     action->initialization(iter.value().toObject(), &loadFrame, &plata);
                     transition = TRANSITION_3;
@@ -149,7 +125,7 @@ private:
             break;
         case Experiment::TRANSITION_3:
             if (action->update()) {
-                action->finishing();
+                action->finish();
                 jExperiment[QString::number(curAction)] = action->jAction;
                 curAction++;
                 delete action;
