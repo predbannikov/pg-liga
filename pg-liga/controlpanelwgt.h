@@ -19,12 +19,18 @@ public:
     explicit ControlPanelWgt(QWidget *parent = nullptr);
     ~ControlPanelWgt();
 
+    void changeButtons(QString newState);
+
 signals:
     void stopToFinal();
     void btnStart();
     void btnStop();
     void btnPause();
     void btnContinue();
+
+    void transitToIdle();
+    void transitToProcess();
+    void transitToPause();
 
 private:
 

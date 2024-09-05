@@ -57,5 +57,6 @@
         <file>icons/play_exp.png</file>
         <file>icons/skip_exp.png</file>
         <file>icons/stop_exp.png</file>
+        <file>images/animation_loading.gif</file>
     </qresource>
 </RCC>

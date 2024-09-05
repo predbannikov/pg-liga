@@ -1,4 +1,7 @@
 #include <QDebug>
+#include <QMovie>
+#include <QBuffer>
+#include <QPixmap>
 
 #include "controlpanelwgt.h"
 #include "ui_controlpanelwgt.h"
@@ -8,6 +11,7 @@ ControlPanelWgt::ControlPanelWgt(QWidget *parent) :
     ui(new Ui::ControlPanelWgt)
 {
     ui->setupUi(this);
+
 
     machine = new QStateMachine(this);
 
@@ -46,13 +50,13 @@ ControlPanelWgt::ControlPanelWgt(QWidget *parent) :
     machine->setInitialState(idleState);
 
     // Добавляем переходы между состояниями
-    experimentState->addTransition(ui->btnStopExperiment, &QToolButton::clicked, idleState);
-    experimentState->addTransition(ui->btnPauseExperiment, &QToolButton::clicked, pauseState);
+    experimentState->addTransition(this, &ControlPanelWgt::transitToIdle, idleState);
+    experimentState->addTransition(this, &ControlPanelWgt::transitToPause, pauseState);
 
-    idleState->addTransition(ui->btnStartExperiment, &QToolButton::clicked, experimentState);
+    idleState->addTransition(this, &ControlPanelWgt::transitToProcess, experimentState);
 
-    pauseState->addTransition(ui->btnStopExperiment, &QToolButton::clicked, idleState);
-    pauseState->addTransition(ui->btnContinueExperiment, &QToolButton::clicked, experimentState);
+    pauseState->addTransition(this, &ControlPanelWgt::transitToIdle, idleState);
+    pauseState->addTransition(this, &ControlPanelWgt::transitToProcess, experimentState);
 
     connect(ui->btnStartExperiment, &QToolButton::clicked, this, &ControlPanelWgt::btnStart);
     connect(ui->btnStopExperiment, &QToolButton::clicked, this, &ControlPanelWgt::btnStop);
@@ -67,4 +71,15 @@ ControlPanelWgt::ControlPanelWgt(QWidget *parent) :
 ControlPanelWgt::~ControlPanelWgt()
 {
     delete ui;
+}
+
+void ControlPanelWgt::changeButtons(QString newState)
+{
+    if (newState == "STATE_EXPERIMENT_IDLE") {
+        emit transitToIdle();
+    } else if (newState == "STATE_EXPERIMENT_PROCESS") {
+        emit transitToProcess();
+    } else if (newState == "STATE_EXPERIMENT_PAUSE") {
+        emit transitToPause();
+    }
 }

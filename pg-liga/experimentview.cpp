@@ -266,6 +266,7 @@ void ExperimentView::onReadyResponse(const QJsonObject &jobj)
         if (out_to_lbl.size() < 5)
             qDebug() << "stop";
         ui->lblSensors->setText(out_to_lbl);
+        ui->controlPanelWgt->changeButtons(jobj["status_experiment"].toString());
 
     } else if (CMD == "get_protocol") {
         ui->textEdit->append(QByteArray::fromBase64(jobj["protocol"].toString().toUtf8()));
