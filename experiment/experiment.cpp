@@ -25,7 +25,7 @@ void Experiment::parser()
         qDebug() << "STATE_EXPERIMENT_IDLE";
         break;
     case Experiment::STATE_EXPERIMENT_PROCESS:
-        qDebug() << "STATE_EXPERIMENT_PROCESS";
+        // qDebug() << "STATE_EXPERIMENT_PROCESS";
         if (perform()) {
             stateExperiment = STATE_EXPERIMENT_IDLE;
         }

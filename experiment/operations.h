@@ -26,6 +26,7 @@ public:
 
 class Operations : public Interface
 {
+    Q_OBJECT
 
     enum STATE_MODE { STATE_MODE_IDLE, STATE_MODE_EXECCMD } state_mode = STATE_MODE_IDLE;
 
