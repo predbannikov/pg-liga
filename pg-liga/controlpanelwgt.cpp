@@ -14,8 +14,6 @@ ControlPanelWgt::ControlPanelWgt(QWidget *parent) :
 {
     ui->setupUi(this);
 
-//    WaitingSpinnerWidget* spinner = new WaitingSpinnerWidget(this);
-
      ui->widget->setRoundness(70.0);
      ui->widget->setMinimumTrailOpacity(15.0);
      ui->widget->setTrailFadePercentage(70.0);
@@ -32,7 +30,7 @@ ControlPanelWgt::ControlPanelWgt(QWidget *parent) :
     // Создаем состояния
     startState = new QState();
     QObject::connect(startState, &QState::entered, this, [this]() {
-        qDebug() << "startState";
+        qDebug() << Q_FUNC_INFO << "startState";
         ui->btnStartExperiment->setVisible(false);
         ui->btnStopExperiment->setVisible(false);
         ui->btnPauseExperiment->setVisible(false);
@@ -41,12 +39,12 @@ ControlPanelWgt::ControlPanelWgt(QWidget *parent) :
 
     disctonnectState = new QState();
     QObject::connect(disctonnectState, &QState::entered, this, [this]() {
-        qDebug() << "disctonnectState";
+        qDebug() << Q_FUNC_INFO << "disctonnectState";
         setEnabled(false);
     });
     connectionState = new QState();
     QObject::connect(connectionState, &QState::entered, this, [this]() {
-        qDebug() << "connectionState";
+        qDebug() << Q_FUNC_INFO << "connectionState";
         setEnabled(true);
     });
 
@@ -159,6 +157,5 @@ void ControlPanelWgt::setConnectionState(bool state)
     } else {
         ui->widget->start();
         emit transitToDisconnect();
-        qDebug() << "emit transitToDisconnect();";
     }
 }

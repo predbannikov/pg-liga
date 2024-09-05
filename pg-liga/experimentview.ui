@@ -504,6 +504,13 @@
                 </layout>
                </widget>
               </item>
+              <item row="1" column="2">
+               <widget class="QPushButton" name="btnTest">
+                <property name="text">
+                 <string>test</string>
+                </property>
+               </widget>
+              </item>
              </layout>
             </widget>
            </item>
@@ -566,7 +573,7 @@
   <customwidget>
    <class>ControlPanelWgt</class>
    <extends>QWidget</extends>
-   <header location="global">controlpanelwgt.h</header>
+   <header>controlpanelwgt.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

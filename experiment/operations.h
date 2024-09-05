@@ -42,6 +42,7 @@ public:
     virtual void parser() = 0;
 
     QJsonObject jStatusOperation;
+    QJsonObject jExperiment;
     int counter = 0;
     LoadFrame loadFrame;
     Plata plata;

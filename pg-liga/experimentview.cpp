@@ -44,7 +44,7 @@ ExperimentView::ExperimentView(QWidget *parent) :
 
 
     connect(timerUpdateStatus, &QTimer::timeout, this, &ExperimentView::onUpdateStatus);
-    timerUpdateStatus->start(5000);
+    timerUpdateStatus->start(1000);
 
 
 
@@ -117,13 +117,6 @@ void ExperimentView::addOperationActions()
     QVBoxLayout *lay = qobject_cast<QVBoxLayout *>(ui->scrollAreaWidgetContents->layout());
     OperationActions *opActions = new OperationActions(lay->count()+1, this);
     lay->insertWidget(-1, opActions);
-
-//    for (int i = 0; i < lay->count(); i++) {
-//        OperationActions *operAct = qobject_cast<OperationActions *> (lay->itemAt(i)->widget());
-//        if (operAct) {
-//            qDebug() << operAct->numberOperation();
-//        }
-//    }
 
     connect(opActions, &OperationActions::addOperationActions, this, &ExperimentView::addOperationActions);
     connect(opActions, &OperationActions::moveOperationUpActions, this, &ExperimentView::moveUpOperation);
@@ -495,6 +488,36 @@ void ExperimentView::on_btnLoadFrameStopStepper_clicked()
 {
     QJsonObject jobj;
     jobj["CMD"] = "stop_frame";
+    emit sendRequest(jobj);
+}
+
+
+void ExperimentView::on_btnTest_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "set_experiment";
+    QJsonObject statOp;
+    statOp["status"] = "";
+    QJsonObject jExp;
+    for (int i = 0; i < 10; i+=2) {
+        QJsonObject jAction;
+        jAction["name"] = "move_of_time";
+        jAction["speed"] = QString::number(10 * (i+1));
+        jAction["time_ms"] = "1000";
+        jAction["status"] = "";
+        jExp[QString::number(i)] = jAction;
+
+        QJsonObject jAction2;
+        jAction2["name"] = "move_of_time";
+        jAction2["speed"] = QString::number(-10 * (i+1));
+        jAction2["time_ms"] = "1000";
+        jAction2["status"] = "";
+        jExp[QString::number(i+1)] = jAction2;
+    }
+    jExp["curAction"] = "0";
+    jobj["experiment"] = jExp;
+    qDebug().noquote() << QJsonDocument(jExp).toJson(QJsonDocument::Indented);
+
     emit sendRequest(jobj);
 }
 

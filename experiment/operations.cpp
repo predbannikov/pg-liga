@@ -69,14 +69,11 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
     if (jobj["CMD"].toString() == "get_status_device") {
         QJsonObject jObj({{"Сила", loadFrame.forceSens->value},
                           {"Деформация", loadFrame.deformSens->value}});
-        // if (arg1 == "SensLoad0") {
-        //     value = loadFrame.forceSens->value;
-        // } else if (arg1 == "SensDef0") {
-        //     value = loadFrame.deformSens->value;
-        // }
         jobj["sensors"] = jObj;
         jobj["status_experiment"] = getStateExperiment();
         emit sendRequestToClient(jobj);
+    } else if (jobj["CMD"].toString() == "set_experiment") {
+        jExperiment = jobj["experiment"].toObject();
     } else if (jobj["CMD"].toString() == "start_experiment") {
         if (stateExperiment == STATE_EXPERIMENT_IDLE)
             stateExperiment = STATE_EXPERIMENT_PROCESS;

@@ -152,6 +152,8 @@ private slots:
 
     void on_btnLoadFrameStopStepper_clicked();
 
+    void on_btnTest_clicked();
+
 signals:
     void sendRequest(QJsonObject &jobj);
 
