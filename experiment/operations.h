@@ -40,7 +40,7 @@ public:
 
     void resetCommunicationState();
     bool execut();
-    virtual void parser() = 0;
+    virtual void stateSwitch() = 0;
 
     QJsonObject jStatusOperation;
     QJsonObject jExperiment;

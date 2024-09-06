@@ -38,7 +38,7 @@ bool Operations::execut()
             }
             fflush(stderr);
             // Тут нужно запустить парсер нашего эксперимента
-            parser();
+            stateSwitch();
         }
         break;
     case Operations::STATE_MODE_EXECCMD:

@@ -13,6 +13,9 @@ unix: DESTDIR=$$DESTDIR_RELEASE
 
 SOURCES += \
         abstractunit.cpp \
+        actions/adjustloadframe.cpp \
+        actions/movebytimeloadframe.cpp \
+        baseaction.cpp \
         clientmanager.cpp \
         controller.cpp \
         device.cpp \
@@ -28,6 +31,9 @@ SOURCES += \
 
 HEADERS += \
         abstractunit.h \
+        actions/adjustloadframe.h \
+        actions/movebytimeloadframe.h \
+        baseaction.h \
         clientmanager.h \
         controller.h \
         device.h \
@@ -45,6 +51,7 @@ HEADERS += \
 INCLUDEPATH += $$PWD/../measurements/
 INCLUDEPATH += $$PWD/../datastore/
 INCLUDEPATH += $$PWD/../network/
+INCLUDEPATH += $$PWD/actions/
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../network/release/ -lnetwork
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../network/debug/ -lnetwork
