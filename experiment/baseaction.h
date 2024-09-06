@@ -14,6 +14,9 @@ class BaseAction : public QObject
     Q_OBJECT
 
     QElapsedTimer timElaps;
+
+    enum STATE_PAUSE {STATE_PAUSE_TRANSIT_1, STATE_PAUSE_TRANSIT_2} state_pause = STATE_PAUSE_TRANSIT_1;
+
 public:
     explicit BaseAction(QObject *parent = nullptr);
     ~BaseAction();
@@ -34,6 +37,7 @@ public:
     LoadFrame *loadFrame = nullptr;
     Plata *plata = nullptr;
     QJsonObject jAction;
+    int stepperPos = 0;
 
 };
 

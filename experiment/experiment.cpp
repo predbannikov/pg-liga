@@ -63,6 +63,7 @@ bool Experiment::conveyor()
             jExperiment[QString::number(curAction)] = action->jAction;
             curAction++;
             delete action;
+            action = nullptr;
             transition = TRANSITION_2;
             return false;
         }
@@ -75,17 +76,81 @@ bool Experiment::conveyor()
     return false;
 }
 
-bool Experiment::pause()
+bool Experiment::pausing()
 {
-    switch (transition_pause) {
-    case Experiment::TRANSITION_PAUSE_1:
+    /**
+     *  Если в данный момент нет созданного акшиона, значит
+     *  или эксперимента нет, что значит такого тоже не должно быть
+     *  или в данный момент во время эксперимента идёт переключение
+     *  в конвейере, а во время переключения все рамы должны быть остановлены
+     */
+
+
+    switch (transitionToPause) {
+    case Experiment::TRANSITION_TO_PAUSE_1:
+        if (action != nullptr) {
+            if (action->pause())
+                transitionToPause = TRANSITION_TO_PAUSE_2;
+        } else {
+            transitionToPause = TRANSITION_TO_PAUSE_2;
+        }
         break;
-    case Experiment::TRANSITION_PAUSE_2:
+    case Experiment::TRANSITION_TO_PAUSE_2:
+        if (stopDevice()) {
+            transitionToPause  = TRANSITION_TO_PAUSE_1;
+            return true;
+        }
         break;
-    case Experiment::TRANSITION_PAUSE_3:
+    }
+    return false;
+}
+
+bool Experiment::stopping()
+{
+    switch (transitionToStop) {
+    case Experiment::TRANSITION_TO_STOP_1:
+        curAction = 0;
+        jExperiment = QJsonObject();
+        transitionToStop = TRANSITION_TO_STOP_2;
+        transition = TRANSITION_1;
+        transitionToPause = TRANSITION_TO_PAUSE_1;
+        if (action != nullptr)
+            delete action;
+        break;
+    case Experiment::TRANSITION_TO_STOP_2:
+        if (stopDevice()) {
+            transitionToStop = TRANSITION_TO_STOP_1;
+            return true;
+        }
         break;
 
     }
+    return false;
+}
+
+bool Experiment::stopDevice()
+{
+    switch (transitionToStopDevice) {
+    case Experiment::TRANSITION_TO_STOP_DEVICE_1:
+    {
+        QJsonObject jobj;
+        jobj["CMD"] = "unlock_PID";
+        put(jobj);
+        jobj["CMD"] = "stop_frame";
+        put(jobj);
+        transitionToStopDevice = TRANSITION_TO_STOP_DEVICE_2;
+        loadFramePosition = loadFrame.stepper->position;
+    }
+        break;
+    case Experiment::TRANSITION_TO_STOP_DEVICE_2:
+        if (loadFrame.controller->status == 0 && loadFramePosition == loadFrame.stepper->position) {
+            transitionToStopDevice = TRANSITION_TO_STOP_DEVICE_1;
+            return true;
+        }
+        loadFramePosition = loadFrame.stepper->position;
+        break;
+    }
+    return false;
 }
 
 void Experiment::stateSwitch()
@@ -101,10 +166,17 @@ void Experiment::stateSwitch()
         }
         break;
     case Experiment::STATE_EXPERIMENT_PAUSE:
-        // if (pause()) {
 
-        // }
         // qDebug() << "STATE_EXPERIMENT_PAUSE";
+        break;
+    case Operations::STATE_EXPERIMENT_TRANSIT_TO_PAUSE:
+        qDebug() << "STATE_EXPERIMENT_TRANSIT_TO_PAUSE";
+        if (pausing())
+            stateExperiment = STATE_EXPERIMENT_PAUSE;
+        break;
+    case Operations::STATE_EXPERIMENT_TRANSIT_TO_STOP:
+        if (stopping())
+            stateExperiment = STATE_EXPERIMENT_IDLE;
         break;
     }
 }

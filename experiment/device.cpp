@@ -114,6 +114,11 @@ RETCODE LoadFrame::statusSensors(QJsonObject &jOperation)
     case READ_SENS_5:
         ret = stepper->readPos(jOperation);
         if (ret == COMPLATE)
+            readSensState = READ_CONTROLLER_STATUS;
+        break;
+    case READ_CONTROLLER_STATUS:
+        ret = controller->readStatus(jOperation);
+        if (ret == COMPLATE)
             readSensState = READ_SENS_6;
         break;
     case READ_SENS_6:
@@ -121,9 +126,12 @@ RETCODE LoadFrame::statusSensors(QJsonObject &jOperation)
         readSensState = READ_SENS_1;
         if (store != nullptr)
             store->updateData();
+        return COMPLATE;
         break;
     }
-    return ret;
+    if (ret == ERROR)
+        return ERROR;
+    return NOERROR;
 }
 
 void LoadFrame::resetStateModeBusCommunication()

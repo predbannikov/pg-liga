@@ -26,15 +26,16 @@ bool MoveByTimeLoadFrame::update()
         putQueue(jobj);
         elapseTime.start();
         trans = TRANS_2;
-        break;
     }
+        break;
+
     case TRANS_2: {
         if (!elapseTime.isActive()) {
 
             return true;
         }
-        break;
     }
+        break;
     }
     return false;
 }

@@ -27,12 +27,8 @@ void BaseAction::finish() {
 
 bool BaseAction::pause()
 {
-    QJsonObject jobj;
-    jobj["CMD"] = "unlock_PID";
-    putQueue(jobj);
-    jobj["CMD"] = "stop_frame";
-    putQueue(jobj);
-    pausing();
+    jAction["status"] = "paused";
+    finishing();
     return true;
 }
 

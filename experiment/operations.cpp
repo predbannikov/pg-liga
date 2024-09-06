@@ -25,7 +25,7 @@ bool Operations::execut()
         ret = loadFrame.statusSensors(jStatusOperation);
         if (ret == COMPLATE) {
             counter++;
-            if (counter % 10 == 0) {
+            if (counter % 1 == 0) {
                 qDebug() << qPrintable(QString("force=%1(N)\t deform=%2(mm)\t stepperPos=%3\t stepperStatus=%4\t controllerStatus=%5\t counter=%6\t sizeQueue=%7 ").
                         arg(Force::fromNewtons(loadFrame.forceSens->value).newtons(), 9).
                         arg(Length::fromMicrometres(loadFrame.deformSens->value).millimetres(), 9).
@@ -43,6 +43,11 @@ bool Operations::execut()
         break;
     case Operations::STATE_MODE_EXECCMD:
         ret = execCMD(jStatusOperation);
+        if (ret == COMPLATE) {
+            // qDebug() << jStatusOperation;
+            state_mode = STATE_MODE_IDLE;
+            return true;
+        }
         break;
     }
 
@@ -79,13 +84,13 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
             stateExperiment = STATE_EXPERIMENT_PROCESS;
     } else if (jobj["CMD"].toString() == "stop_experiment") {
         if (stateExperiment == STATE_EXPERIMENT_PROCESS || stateExperiment == STATE_EXPERIMENT_PAUSE)
-            stateExperiment = STATE_EXPERIMENT_IDLE;
+            stateExperiment = STATE_EXPERIMENT_TRANSIT_TO_STOP;
     } else if (jobj["CMD"].toString() == "continue_experiment") {
         if (stateExperiment == STATE_EXPERIMENT_PAUSE)
             stateExperiment = STATE_EXPERIMENT_PROCESS;
     } else if (jobj["CMD"].toString() == "pause_experiment") {
         if (stateExperiment == STATE_EXPERIMENT_PROCESS)
-            stateExperiment = STATE_EXPERIMENT_PAUSE;
+            stateExperiment = STATE_EXPERIMENT_TRANSIT_TO_PAUSE;
     } else if (jobj["CMD"].toString() == "scan") {
         loadFrame.readSensors(jobj);
         emit sendRequestToClient(jobj);
@@ -138,6 +143,10 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
 QString Operations::getStateExperiment()
 {
     switch(stateExperiment) {
+    case Operations::STATE_EXPERIMENT_TRANSIT_TO_PAUSE:
+        return QString("STATE_EXPERIMENT_TRANSIT_TO_PAUSE");
+    case Operations::STATE_EXPERIMENT_TRANSIT_TO_STOP:
+        return QString("STATE_EXPERIMENT_TRANSIT_TO_STOP");
     case Operations::STATE_EXPERIMENT_IDLE:
         return QString("STATE_EXPERIMENT_IDLE");
     case Operations::STATE_EXPERIMENT_PROCESS:
@@ -145,6 +154,7 @@ QString Operations::getStateExperiment()
     case Operations::STATE_EXPERIMENT_PAUSE:
         return QString("STATE_EXPERIMENT_PAUSE");
     }
+    return QString("STATE_UNKNOWN");
 }
 
 void Operations::resetCommunicationState()
