@@ -57,11 +57,13 @@ bool Experiment::conveyor()
         }
         transition = TRANSITION_4;
         break;
+
     case Experiment::TRANSITION_3:
         if (action->update()) {
             action->finish();
             jExperiment[QString::number(curAction)] = action->jAction;
             curAction++;
+            jExperiment["curAction"] = QString::number(curAction);      // Считать как указатель, с которого начнётся выполнение следующей ступени
             delete action;
             action = nullptr;
             transition = TRANSITION_2;
@@ -70,8 +72,10 @@ bool Experiment::conveyor()
         break;
 
     case Experiment::TRANSITION_4:
+        stateExperiment = STATE_EXPERIMENT_TRANSIT_TO_PAUSE;
         transition = TRANSITION_1;
-        return true;
+        return false;
+        // return true;     // Завершение эксперимента
     }
     return false;
 }
