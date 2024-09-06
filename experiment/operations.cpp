@@ -25,7 +25,7 @@ bool Operations::execut()
         ret = loadFrame.statusSensors(jStatusOperation);
         if (ret == COMPLATE) {
             counter++;
-            if (counter % 1 == 0) {
+            if (counter % 10 == 0) {
                 qDebug() << qPrintable(QString("force=%1(N)\t deform=%2(mm)\t stepperPos=%3\t stepperStatus=%4\t controllerStatus=%5\t counter=%6\t sizeQueue=%7 ").
                         arg(Force::fromNewtons(loadFrame.forceSens->value).newtons(), 9).
                         arg(Length::fromMicrometres(loadFrame.deformSens->value).millimetres(), 9).

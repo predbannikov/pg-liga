@@ -38,7 +38,7 @@ bool Experiment::conveyor()
     switch (transition) {
     case Experiment::TRANSITION_1:
         if (jExperiment.isEmpty())
-            transition = TRANSITION_4;
+            stateExperiment = STATE_EXPERIMENT_IDLE;
         else {
             curAction = jExperiment["curAction"].toString().toInt();
             transition = TRANSITION_2;
