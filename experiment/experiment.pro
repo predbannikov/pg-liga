@@ -27,7 +27,8 @@ SOURCES += \
         server.cpp  \
         main.cpp \
         stepper.cpp \
-        storedata.cpp
+        storedata.cpp \
+        volumeter1.cpp
 
 HEADERS += \
         abstractunit.h \
@@ -45,7 +46,8 @@ HEADERS += \
         serialport.h \
         server.h    \
         stepper.h \
-        storedata.h
+        storedata.h \
+        volumeter1.h
 
 #INCLUDEPATH += $$PWD/../
 INCLUDEPATH += $$PWD/../measurements/

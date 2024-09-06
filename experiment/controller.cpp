@@ -5,34 +5,34 @@ RETCODE Controller::readStatus(QJsonObject &jOperation)
     return read(jOperation, ControllerStatus);
 }
 
-RETCODE Controller::setTarget(QJsonObject &jOperation, float newtonsMin, float newtons)
+RETCODE Controller::setTarget(QJsonObject &jOperation, float value)
 {
     // 0.0004 метра квадратных
     RETCODE ret = ERROR;
     switch(stateSet) {
-    case STATE_SET_TARGET_MIN_VALUE:
-        ret = write(jOperation, newtonsMin);
-        if (ret == COMPLATE)
-            stateSet = STATE_SET_TARGET_MIN;
-        else if (ret == ERROR) {
-            stateSet = STATE_SET_TARGET_MIN_VALUE;
-            return ERROR;
-        }
-        break;
-    case STATE_SET_TARGET_MIN:
-        ret = write(jOperation, ControllerSetMin);
-        if (ret == COMPLATE)
-            stateSet = STATE_SET_TARGET_VALUE;
-        else if (ret == ERROR) {
-            stateSet = STATE_SET_TARGET_MIN_VALUE;
-            return ERROR;
-        }
-        break;
+    // case STATE_SET_TARGET_MIN_VALUE:
+    //     ret = write(jOperation, newtonsMin);
+    //     if (ret == COMPLATE)
+    //         stateSet = STATE_SET_TARGET_MIN;
+    //     else if (ret == ERROR) {
+    //         stateSet = STATE_SET_TARGET_MIN_VALUE;
+    //         return ERROR;
+    //     }
+    //     break;
+    // case STATE_SET_TARGET_MIN:
+    //     ret = write(jOperation, ControllerSetMin);
+    //     if (ret == COMPLATE)
+    //         stateSet = STATE_SET_TARGET_VALUE;
+    //     else if (ret == ERROR) {
+    //         stateSet = STATE_SET_TARGET_MIN_VALUE;
+    //         return ERROR;
+    //     }
+    //     break;
 /* Если убрать задачу минимальной цели, то нужно stateSet по умолчанию выставить в STATE_SET_TARGET_VALUE и закоментировать код выше
    и в STATE_ACTIVATE_PID выставить STATE_SET_TARGET_VALUE
 */
     case STATE_SET_TARGET_VALUE:
-        ret = write(jOperation, newtons);
+        ret = write(jOperation, value);
         if (ret == COMPLATE)
             stateSet = STATE_SET_TARGET;
         else if (ret == ERROR) {
@@ -62,11 +62,13 @@ RETCODE Controller::setTarget(QJsonObject &jOperation, float newtonsMin, float n
     case STATE_ACTIVATE_PID:
         ret = write(jOperation, ControllerLock);
         if (ret == COMPLATE) {
-            stateSet = STATE_SET_TARGET_MIN_VALUE;
+            // stateSet = STATE_SET_TARGET_MIN_VALUE;
+            stateSet = STATE_SET_TARGET_VALUE;
             return COMPLATE;
         }
         else if (ret == ERROR) {
-            stateSet = STATE_SET_TARGET_MIN_VALUE;
+            // stateSet = STATE_SET_TARGET_MIN_VALUE;
+            stateSet = STATE_SET_TARGET_VALUE;
             return ERROR;
         }
         break;

@@ -7,6 +7,7 @@ using namespace Measurements;
 Operations::Operations(quint8 addr) : Interface(addr),
     plata(0, ActBase)
 {
+    volumeter1.address = addr;
     loadFrame.address = addr;
 }
 
@@ -22,17 +23,34 @@ bool Operations::execut()
     RETCODE ret;    // Переключает состояния если возврат не равно NOERROR
     switch(state_mode) {
     case Operations::STATE_MODE_IDLE:
-        ret = loadFrame.statusSensors(jStatusOperation);
+//         ret = loadFrame.statusSensors(jStatusOperation);
+//         if (ret == COMPLATE) {
+//             counter++;
+//             if (counter % 10 == 0) {
+//                 qDebug() << qPrintable(QString("force=%1(N)\t deform=%2(mm)\t stepperPos=%3\t stepperStatus=%4\t controllerStatus=%5\t counter=%6\t sizeQueue=%7 ").
+//                         arg(Force::fromNewtons(loadFrame.forceSens->value).newtons(), 9).
+//                         arg(Length::fromMicrometres(loadFrame.deformSens->value).millimetres(), 9).
+// //                        arg((loadFrame.stepper.position * 0.31250)/1000., 9).        // TODO 1:10 на эмуляторе
+//                         arg(loadFrame.stepper->position).        // TODO 1:10 на эмуляторе
+//                         arg(loadFrame.stepper->status).
+//                         arg(loadFrame.controller->status).
+//                         arg(counter).
+//                         arg(queueRequest.size()));
+//             }
+//             fflush(stderr);
+//             // Тут нужно запустить парсер нашего эксперимента
+//             stateSwitch();
+//         }
+
+        ret = volumeter1.statusSensors(jStatusOperation);
         if (ret == COMPLATE) {
             counter++;
             if (counter % 10 == 0) {
-                qDebug() << qPrintable(QString("force=%1(N)\t deform=%2(mm)\t stepperPos=%3\t stepperStatus=%4\t controllerStatus=%5\t counter=%6\t sizeQueue=%7 ").
-                        arg(Force::fromNewtons(loadFrame.forceSens->value).newtons(), 9).
-                        arg(Length::fromMicrometres(loadFrame.deformSens->value).millimetres(), 9).
-//                        arg((loadFrame.stepper.position * 0.31250)/1000., 9).        // TODO 1:10 на эмуляторе
-                        arg(loadFrame.stepper->position).        // TODO 1:10 на эмуляторе
-                        arg(loadFrame.stepper->status).
-                        arg(loadFrame.controller->status).
+                qDebug() << qPrintable(QString("pressure=%1(Pa)\t stepperPos=%3\t stepperStatus=%4\t controllerStatus=%5\t counter=%6\t sizeQueue=%7 ").
+                        arg(Pressure::fromPascals(volumeter1.pressureSens->value).pascals(), 9).
+                        arg(volumeter1.stepper->position).        // TODO 1:10 на эмуляторе
+                        arg(volumeter1.stepper->status).
+                        arg(volumeter1.controller->status).
                         arg(counter).
                         arg(queueRequest.size()));
             }
@@ -130,7 +148,7 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
     } else if (jobj["CMD"].toString() == "set_up_pid_d") {
         return loadFrame.setKPID(jobj, AbstractUnit::CMD::ControllerSetVibroKd);
     } else if (jobj["CMD"].toString() == "set_state_pid") {
-        return loadFrame.setStatePid(jobj);
+        // return loadFrame.setStatePid(jobj);
     } else if (jobj["CMD"].toString() == "set_sensor_zero") {
         return loadFrame.sensorSetZero(jobj);
     } else if (jobj["CMD"].toString() == "reset_sensor_offset") {

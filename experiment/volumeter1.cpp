@@ -1,25 +1,23 @@
-#include "device.h"
+#include "volumeter1.h"
 
-LoadFrame::LoadFrame() :
-    /// первая рама
-    forceSens(new Sensor(SensLoad0Addr, SensLoad0)),
-    deformSens(new Sensor(SensDeform0Addr, SensDef0)),
-    stepper(new Stepper(ActLoad0Addr, ActLoad0)),
-    controller(new Controller(CtrlLoad0Addr, CtrlLoad0))
+Volumeter1::Volumeter1() :
+    /// Волюмометр 1
+    pressureSens(new Sensor(SensPress0Addr, SensPrs0)),
+    stepper(new Stepper(ActVol0Addr, ActVol0)),
+    controller(new Controller(CtrlVol0Addr, CtrlVol0))
 {
-    targetNewtones = Measurements::Force::fromNewtons(50.);
+    targetPressure = Measurements::Pressure::fromPascals(50.);
 }
 
-LoadFrame::~LoadFrame()
+Volumeter1::~Volumeter1()
 {
-    delete forceSens;
-    delete deformSens;
+    delete pressureSens;
     delete stepper;
     delete controller;
     qDebug() << Q_FUNC_INFO;
 }
 
-bool LoadFrame::init()
+bool Volumeter1::init()
 {
     if (store != nullptr) {
         store->deleteLater();
@@ -32,15 +30,14 @@ bool LoadFrame::init()
         return false;
 
     QVector<Sensor *> sens;
-    sens.append(forceSens);
-    sens.append(deformSens);
+    sens.append(pressureSens);
 
     store->setSensors(sens);
     store->setStepper(stepper);
     return true;
 }
 
-bool LoadFrame::deleteData()
+bool Volumeter1::deleteData()
 {
     if (store != nullptr) {
         store->deleteLater();
@@ -49,16 +46,15 @@ bool LoadFrame::deleteData()
     return true;
 }
 
-RETCODE LoadFrame::setTarget(QJsonObject &jOperation)
+RETCODE Volumeter1::setTarget(QJsonObject &jOperation)
 {
     RETCODE ret = ERROR;
-    targetNewtones = Measurements::Force::fromNewtons(jOperation["target"].toDouble());
-    // targetMinNewtones = Measurements::Force::fromNewtons(jOperation["target_min"].toDouble());
-    ret = controller->setTarget(jOperation, targetNewtones.newtons());      // 200.19642105368277
+    targetPressure = Measurements::Pressure::fromPascals(jOperation["target"].toDouble());
+    ret = controller->setTarget(jOperation, targetPressure.pascals());      // 200.19642105368277
     return ret;
 }
 
-RETCODE LoadFrame::setKPID(QJsonObject &jOperation, AbstractUnit::CMD cmd)
+RETCODE Volumeter1::setKPID(QJsonObject &jOperation, AbstractUnit::CMD cmd)
 {
     RETCODE ret = ERROR;
     float value = jOperation["value"].toDouble();
@@ -66,15 +62,7 @@ RETCODE LoadFrame::setKPID(QJsonObject &jOperation, AbstractUnit::CMD cmd)
     return ret;
 }
 
-RETCODE LoadFrame::setHz(QJsonObject &jOperation)
-{
-    RETCODE ret = ERROR;
-    double hz = jOperation["hz"].toDouble();
-    ret = controller->setHz(jOperation, hz);
-    return ret;
-}
-
-// RETCODE LoadFrame::setStatePid(QJsonObject &jOperation)
+// RETCODE Volumeter1::setStatePid(QJsonObject &jOperation)
 // {
 //     RETCODE ret = ERROR;
 //     STATE_SET_STATE_PID_CONTROLLER state_pid = STATE_SET_STATE_PID_CONTROLLER_DEFAULT;
@@ -87,31 +75,27 @@ RETCODE LoadFrame::setHz(QJsonObject &jOperation)
 //     return ret;
 // }
 
-RETCODE LoadFrame::statusSensors(QJsonObject &jOperation)
+RETCODE Volumeter1::statusSensors(QJsonObject &jOperation)
 {
     RETCODE ret = ERROR;
     switch (readSensState) {
     case READ_SENS_1:
-        ret = forceSens->read(jOperation);
+        ret = pressureSens->read(jOperation);
         if (ret == COMPLATE)
-            readSensState = READ_SENS_2;
+            readSensState = READ_SENS_3;
         break;
+
     case READ_SENS_2:
-        ret = deformSens->read(jOperation);
+        ret = pressureSens->readRaw(jOperation);
         if (ret == COMPLATE)
-            readSensState = READ_SENS_4; // TODO changed READ_SENS_3
+            readSensState = READ_SENS_3;
         break;
     case READ_SENS_3:
-        ret = deformSens->readRaw(jOperation);
+        ret = stepper->readStatus(jOperation);
         if (ret == COMPLATE)
             readSensState = READ_SENS_4;
         break;
     case READ_SENS_4:
-        ret = stepper->readStatus(jOperation);
-        if (ret == COMPLATE)
-            readSensState = READ_SENS_5;
-        break;
-    case READ_SENS_5:
         ret = stepper->readPos(jOperation);
         if (ret == COMPLATE)
             readSensState = READ_CONTROLLER_STATUS;
@@ -134,53 +118,51 @@ RETCODE LoadFrame::statusSensors(QJsonObject &jOperation)
     return NOERROR;
 }
 
-void LoadFrame::resetStateModeBusCommunication()
+void Volumeter1::resetStateModeBusCommunication()
 {
-    forceSens->resetState();
-    deformSens->resetState();
+    pressureSens->resetState();
     controller->resetState();
     stepper->resetState();
 }
 
-RETCODE LoadFrame::moveFrame(QJsonObject &jobj)
+RETCODE Volumeter1::movePiston(QJsonObject &jobj)
 {
     int speed = jobj["speed"].toString().toInt();
     return stepper->setSpeed(jobj, speed);
 }
 
-RETCODE LoadFrame::unlockPID(QJsonObject &jobj)
+RETCODE Volumeter1::unlockPID(QJsonObject &jobj)
 {
     return controller->stopPID(jobj);
 }
 
-RETCODE LoadFrame::stopFrame(QJsonObject &jobj)
+RETCODE Volumeter1::stopPiston(QJsonObject &jobj)
 {
     return stepper->stop(jobj);
 }
 
-RETCODE LoadFrame::sensorSetZero(QJsonObject &jobj)
+RETCODE Volumeter1::sensorSetZero(QJsonObject &jobj)
 {
     Sensor *sensor = getSensorFromStr(jobj["sensor_name"].toString());
     return sensor->setNull(jobj);
 }
 
-RETCODE LoadFrame::resetSensorOffset(QJsonObject &jobj)
+RETCODE Volumeter1::resetSensorOffset(QJsonObject &jobj)
 {
     Sensor *sensor = getSensorFromStr(jobj["sensor_name"].toString());
     return sensor->resetOffset(jobj);
 }
 
-void LoadFrame::readSensors(QJsonObject &jobj)
+void Volumeter1::readSensors(QJsonObject &jobj)
 {
     QJsonObject jsensors;
-    jsensors["force"] = QString::number(forceSens->value);
-    jsensors["deform"] = QString::number(deformSens->value);
+    jsensors["pressure"] = QString::number(pressureSens->value);
     jsensors["stepper"] = QString::number(stepper->position);
     jobj["sensors"] = jsensors;
     jobj["status"] = "ok";
 }
 
-void LoadFrame::sendProtocol(QJsonObject &jobj)
+void Volumeter1::sendProtocol(QJsonObject &jobj)
 {
     if (store != nullptr) {
         store->sendProtocol(jobj);
@@ -189,7 +171,7 @@ void LoadFrame::sendProtocol(QJsonObject &jobj)
     }
 }
 
-void LoadFrame::sendStoreData(QJsonObject &jobj)
+void Volumeter1::sendStoreData(QJsonObject &jobj)
 {
     if (store != nullptr) {
         store->sendStoreData(jobj);

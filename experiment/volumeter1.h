@@ -1,5 +1,5 @@
-#ifndef DEVICE_H
-#define DEVICE_H
+#ifndef VOLUMETER1_H
+#define VOLUMETER1_H
 
 #include <QDataStream>
 #include <QJsonDocument>
@@ -11,37 +11,31 @@
 #include "controller.h"
 #include "storedata.h"
 
-class LoadFrame
+class Volumeter1
 {
-    enum READ_SENS {READ_SENS_1, READ_SENS_2, READ_SENS_3, READ_SENS_4, READ_SENS_5, READ_CONTROLLER_STATUS, READ_SENS_6} readSensState = READ_SENS_1;
-
-    // enum STATE_SET_STATE_PID_CONTROLLER {STATE_SET_STATE_PID_CONTROLLER_DEFAULT, STATE_P_CORRECTION} state_pid = STATE_SET_STATE_PID_CONTROLLER_DEFAULT;
+    enum READ_SENS {READ_SENS_1, READ_SENS_2, READ_SENS_3, READ_SENS_4, READ_CONTROLLER_STATUS, READ_SENS_6} readSensState = READ_SENS_1;
 
     Sensor *getSensorFromStr(QString strSensorName) {
-        if (strSensorName == "SensLoad0") {
-            return forceSens;
-        } else if (strSensorName == "SensDef0") {
-            return deformSens;
+        if (strSensorName == "SensPress0Addr") {
+            return pressureSens;
         }
-        return forceSens;
+        return pressureSens;
     }
-
 public:
-    LoadFrame();
-    ~LoadFrame();
+    Volumeter1();
+    ~Volumeter1();
 
     bool init();
     bool deleteData();
     void resetStateModeBusCommunication();
 
-    RETCODE setHz(QJsonObject &jOperation);
     // RETCODE setStatePid(QJsonObject &jOperation);
     RETCODE statusSensors(QJsonObject &jOperation);
-    RETCODE moveFrame(QJsonObject &jobj);
+    RETCODE movePiston(QJsonObject &jobj);
     RETCODE unlockPID(QJsonObject &jobj);
     RETCODE setTarget(QJsonObject &jOperation);
     RETCODE setKPID(QJsonObject &jOperation, AbstractUnit::CMD cmd);
-    RETCODE stopFrame(QJsonObject &jobj);
+    RETCODE stopPiston(QJsonObject &jobj);
     RETCODE sensorSetZero(QJsonObject &jobj);
     RETCODE resetSensorOffset(QJsonObject &jobj);
 
@@ -49,21 +43,17 @@ public:
     void sendProtocol(QJsonObject &jobj);
     void sendStoreData(QJsonObject &jobj);
 
-    Measurements::Force targetNewtones;
-    Measurements::Force targetMinNewtones;
+    Measurements::Pressure targetPressure;
 
     QJsonObject jconfig;
     quint8 address = 0;
 
-    Sensor *forceSens = nullptr;
-    Sensor *deformSens = nullptr;
+    Sensor *pressureSens = nullptr;
     Stepper *stepper = nullptr;
     Controller *controller = nullptr;
 
     StoreData *store = nullptr;
 
-private:
 };
 
-
-#endif // DEVICE_H
+#endif // VOLUMETER1_H

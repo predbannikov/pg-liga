@@ -9,6 +9,7 @@
 #include "operations.h"
 #include "global.h"
 #include "device.h"
+#include "volumeter1.h"
 
 
 class Plata : public AbstractUnit {
@@ -46,6 +47,7 @@ public:
     QJsonObject jExperiment;
     int counter = 0;
     LoadFrame loadFrame;
+    Volumeter1 volumeter1;
     Plata plata;
     RETCODE execCMD(QJsonObject &jobj);
 
