@@ -266,6 +266,8 @@ void ExperimentView::onReadyResponse(const QJsonObject &jobj)
             out_to_lbl.append(QString("%1:%2\n").arg(iter.key(), 15).arg(QString::number(iter.value().toDouble(), 'f', 7) ));
         if (out_to_lbl.size() < 5)
             qDebug() << "stop";
+        out_to_lbl.append("\n");
+        out_to_lbl.append(jobj["status_experiment"].toString());
         ui->lblSensors->setText(out_to_lbl);
         ui->controlPanelWgt->changeButtons(jobj["status_experiment"].toString());
 
@@ -502,15 +504,17 @@ void ExperimentView::on_btnTest_clicked()
     for (int i = 0; i < 10; i+=2) {
         QJsonObject jAction;
         jAction["name"] = "move_of_time";
-        jAction["speed"] = QString::number(10 * (i+1));
-        jAction["time_ms"] = "1000";
+//        jAction["speed"] = QString::number(10 * (i+1));
+        jAction["speed"] = QString::number(100);
+        jAction["time_ms"] = "1500";
         jAction["status"] = "";
         jExp[QString::number(i)] = jAction;
 
         QJsonObject jAction2;
         jAction2["name"] = "move_of_time";
-        jAction2["speed"] = QString::number(-10 * (i+1));
-        jAction2["time_ms"] = "1000";
+//        jAction2["speed"] = QString::number(-10 * (i+1));
+        jAction2["speed"] = QString::number(-100);
+        jAction2["time_ms"] = "1500";
         jAction2["status"] = "";
         jExp[QString::number(i+1)] = jAction2;
     }
