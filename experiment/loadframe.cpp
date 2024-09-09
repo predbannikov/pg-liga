@@ -227,6 +227,9 @@ void LoadFrame::sendProtocol(QJsonObject &jobj)
 void LoadFrame::sendStoreData(QJsonObject &jobj)
 {
     if (store != nullptr) {
+
+        // jobj["store_data"] = QString(QByteArray(QJsonDocument(jstoreData).toJson()).toBase64());
+
         store->sendStoreData(jobj);
     } else {
         jobj["store_data"] = QString(QByteArray("no experiment has been launched yet").toBase64());

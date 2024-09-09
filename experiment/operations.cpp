@@ -24,24 +24,6 @@ bool Operations::execut()
     switch(state_mode) {
     case Operations::STATE_MODE_IDLE:
         ret = readSensors(jStatusOperation);
-//         ret = loadFrame.statusSensors(jStatusOperation);
-//         if (ret == COMPLATE) {
-//             counter++;
-//             if (counter % 10 == 0) {
-//                 qDebug() << qPrintable(QString("force=%1(N)\t deform=%2(mm)\t stepperPos=%3\t stepperStatus=%4\t controllerStatus=%5\t counter=%6\t sizeQueue=%7 ").
-//                         arg(Force::fromNewtons(loadFrame.forceSens->value).newtons(), 9).
-//                         arg(Length::fromMicrometres(loadFrame.deformSens->value).millimetres(), 9).
-// //                        arg((loadFrame.stepper.position * 0.31250)/1000., 9).        // TODO 1:10 на эмуляторе
-//                         arg(loadFrame.stepper->position).        // TODO 1:10 на эмуляторе
-//                         arg(loadFrame.stepper->status).
-//                         arg(loadFrame.controller->status).
-//                         arg(counter).
-//                         arg(queueRequest.size()));
-//             }
-//             fflush(stderr);
-//             // Тут нужно запустить парсер нашего эксперимента
-//             stateSwitch();
-//         }
         if (ret == COMPLATE) {
             counter++;
             if (counter % 10 == 0) {
@@ -62,6 +44,10 @@ bool Operations::execut()
             }
             fflush(stderr);
             // Тут нужно запустить парсер нашего эксперимента
+            if (loadFrame.store != nullptr)
+                loadFrame.store->updateData();
+            if (volumetr1.store != nullptr)
+                volumetr1.store->updateData();
             stateSwitch();
         }
         break;
@@ -97,7 +83,9 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
 //    qDebug().noquote() << Q_FUNC_INFO << jobj;
     if (jobj["CMD"].toString() == "get_status_device") {
         QJsonObject jObj({{"Сила", loadFrame.forceSens->value},
-                          {"Деформация", loadFrame.deformSens->value}});
+                          {"Деформация", loadFrame.deformSens->value},
+                          {"Давление1", volumetr1.pressureSens->value}
+                         });
         jobj["sensors"] = jObj;
         jobj["status_experiment"] = getStateExperiment();
         emit sendRequestToClient(jobj);
