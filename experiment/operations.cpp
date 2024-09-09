@@ -139,7 +139,9 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
         return loadFrame.stopFrame(jobj);
     } else if (jobj["CMD"].toString() == "unlock_PID") {
         return loadFrame.unlockPID(jobj);
-    } else if (jobj["CMD"].toString() == "Volumetr1_set_target") {
+    } else if (jobj["CMD"].toString() == "volumetr1_unlock_PID") {
+        return volumetr1.unlockPID(jobj);
+    } else if (jobj["CMD"].toString() == "volumetr1_set_target") {
         return volumetr1.setTarget(jobj);
     } else if (jobj["CMD"].toString() == "set_target") {
         return loadFrame.setTarget(jobj);
