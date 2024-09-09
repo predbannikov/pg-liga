@@ -158,6 +158,10 @@ private slots:
 
     void on_btnLoadFrameSensorDeformReset_clicked();
 
+    void on_btnVolumetr1SensorPressureSetZero_clicked();
+
+    void on_btnVolumetr1SensorPressureReset_clicked();
+
 signals:
     void sendRequest(QJsonObject &jobj);
 
