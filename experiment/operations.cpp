@@ -157,10 +157,14 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
         return loadFrame.setKPID(jobj, AbstractUnit::CMD::ControllerSetVibroKd);
     } else if (jobj["CMD"].toString() == "set_state_pid") {
         // return loadFrame.setStatePid(jobj);
-    } else if (jobj["CMD"].toString() == "set_sensor_zero") {
+    } else if (jobj["CMD"].toString() == "load_frame_sensor_set_zero") {
         return loadFrame.sensorSetZero(jobj);
-    } else if (jobj["CMD"].toString() == "reset_sensor_offset") {
+    } else if (jobj["CMD"].toString() == "load_frame_sensor_reset_offset") {
         return loadFrame.resetSensorOffset(jobj);
+    } else if (jobj["CMD"].toString() == "volumetr1_sensor_set_zero") {
+        return volumetr1.sensorSetZero(jobj);
+    } else if (jobj["CMD"].toString() == "volumetr1_sensor_reset__offset") {
+        return volumetr1.resetSensorOffset(jobj);
     }
 
     return COMPLATE;
