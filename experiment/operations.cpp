@@ -45,8 +45,8 @@ bool Operations::execut()
         if (ret == COMPLATE) {
             counter++;
             if (counter % 10 == 0) {
-                qDebug() << qPrintable(QString("force=%1(N)\tdeform=%2(mm)\tLFPos=%3\tLFStatus=%4\tLFCtrlStatus=%5\t"
-                                               "Vol1pres=%6(Pa)\tVol1Pos=%7\tVol1Status=%8\tVol1CtrlStatus=%9\tcntr=%10\tszQueue=%11").
+                qDebug() << qPrintable(QString("force=%1(N)  deform=%2(mm)  LFPos=%3  LFStatus=%4  LFCtrlStatus=%5  "
+                                               "Vol1pres=%6(Pa)  Vol1Pos=%7  Vol1Status=%8  Vol1CtrlStatus=%9 cntr=%10  szQueue=%11").
                                        arg(Force::fromNewtons(loadFrame.forceSens->value).newtons(), 9).
                                        arg(Length::fromMicrometres(loadFrame.deformSens->value).millimetres(), 9).
                                        //                        arg((loadFrame.stepper.position * 0.31250)/1000., 9).        // TODO 1:10 на эмуляторе
@@ -139,6 +139,8 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
         return loadFrame.stopFrame(jobj);
     } else if (jobj["CMD"].toString() == "unlock_PID") {
         return loadFrame.unlockPID(jobj);
+    } else if (jobj["CMD"].toString() == "Volumetr1_set_target") {
+        return volumetr1.setTarget(jobj);
     } else if (jobj["CMD"].toString() == "set_target") {
         return loadFrame.setTarget(jobj);
     } else if (jobj["CMD"].toString() == "set_hz") {
