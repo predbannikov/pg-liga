@@ -163,7 +163,7 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
         return loadFrame.resetSensorOffset(jobj);
     } else if (jobj["CMD"].toString() == "volumetr1_sensor_set_zero") {
         return volumetr1.sensorSetZero(jobj);
-    } else if (jobj["CMD"].toString() == "volumetr1_sensor_reset__offset") {
+    } else if (jobj["CMD"].toString() == "volumetr1_sensor_reset_offset") {
         return volumetr1.resetSensorOffset(jobj);
     }
 
