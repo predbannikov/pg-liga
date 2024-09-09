@@ -1,5 +1,5 @@
-#ifndef DEVICE_H
-#define DEVICE_H
+#ifndef LOADFRAME_H
+#define LOADFRAME_H
 
 #include <QDataStream>
 #include <QJsonDocument>
@@ -34,6 +34,14 @@ public:
     bool deleteData();
     void resetStateModeBusCommunication();
 
+    RETCODE readSensorForce(QJsonObject &jOperation);
+    RETCODE readRawSensorForce(QJsonObject &jOperation);
+    RETCODE readSensorDeform(QJsonObject &jOperation);
+    RETCODE readRawSensorDeform(QJsonObject &jOperation);
+    RETCODE readHolStatus(QJsonObject &jOperation);
+    RETCODE readPosition(QJsonObject &jOperation);
+    RETCODE readControllerStatus(QJsonObject &jOperation);
+
     RETCODE setHz(QJsonObject &jOperation);
     // RETCODE setStatePid(QJsonObject &jOperation);
     RETCODE statusSensors(QJsonObject &jOperation);
@@ -66,4 +74,4 @@ private:
 };
 
 
-#endif // DEVICE_H
+#endif // LOADFRAME_H

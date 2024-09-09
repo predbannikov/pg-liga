@@ -1,4 +1,4 @@
-#include "device.h"
+#include "loadframe.h"
 
 LoadFrame::LoadFrame() :
     /// первая рама
@@ -140,6 +140,41 @@ void LoadFrame::resetStateModeBusCommunication()
     deformSens->resetState();
     controller->resetState();
     stepper->resetState();
+}
+
+RETCODE LoadFrame::readSensorForce(QJsonObject &jOperation)
+{
+    return forceSens->read(jOperation);
+}
+
+RETCODE LoadFrame::readRawSensorForce(QJsonObject &jOperation)
+{
+    return forceSens->readRaw(jOperation);
+}
+
+RETCODE LoadFrame::readSensorDeform(QJsonObject &jOperation)
+{
+    return deformSens->read(jOperation);
+}
+
+RETCODE LoadFrame::readRawSensorDeform(QJsonObject &jOperation)
+{
+    return deformSens->readRaw(jOperation);
+}
+
+RETCODE LoadFrame::readHolStatus(QJsonObject &jOperation)
+{
+    return stepper->readStatus(jOperation);
+}
+
+RETCODE LoadFrame::readPosition(QJsonObject &jOperation)
+{
+   return stepper->readPos(jOperation);
+}
+
+RETCODE LoadFrame::readControllerStatus(QJsonObject &jOperation)
+{
+    return controller->readStatus(jOperation);
 }
 
 RETCODE LoadFrame::moveFrame(QJsonObject &jobj)

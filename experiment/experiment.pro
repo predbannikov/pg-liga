@@ -18,9 +18,9 @@ SOURCES += \
         baseaction.cpp \
         clientmanager.cpp \
         controller.cpp \
-        device.cpp \
         experiment.cpp \
         interface.cpp \
+        loadframe.cpp \
         operations.cpp \
         sensors.cpp \
         serialport.cpp \
@@ -37,10 +37,10 @@ HEADERS += \
         baseaction.h \
         clientmanager.h \
         controller.h \
-        device.h \
         experiment.h    \
         global.h \
         interface.h \
+        loadframe.h \
         operations.h \
         sensors.h \
         serialport.h \

@@ -30,6 +30,13 @@ public:
     void resetStateModeBusCommunication();
 
     // RETCODE setStatePid(QJsonObject &jOperation);
+    RETCODE readSensorPressure(QJsonObject &jOperation);
+    RETCODE readRawSensorPressure(QJsonObject &jOperation);
+    RETCODE readStatusHol(QJsonObject &jOperation);
+    RETCODE readPosition(QJsonObject &jOperation);
+    RETCODE readControllerStatus(QJsonObject &jOperation);
+    RETCODE updateStoreData(QJsonObject &jOperation);
+
     RETCODE statusSensors(QJsonObject &jOperation);
     RETCODE movePiston(QJsonObject &jobj);
     RETCODE unlockPID(QJsonObject &jobj);
@@ -55,5 +62,7 @@ public:
     StoreData *store = nullptr;
 
 };
+
+
 
 #endif // VOLUMETER1_H

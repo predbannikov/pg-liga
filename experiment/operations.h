@@ -8,7 +8,7 @@
 #include <QFile>
 #include "operations.h"
 #include "global.h"
-#include "device.h"
+#include "loadframe.h"
 #include "volumeter1.h"
 
 
@@ -29,6 +29,18 @@ class Operations : public Interface
 {
     Q_OBJECT
 
+    enum STATE_SENSORS {
+        VOLUMETR1_SENSOR_PRESSURE,
+        VOLUMETR1_HOL_STATUS,
+        VOLUMETR1_POSITION,
+        VOLUMETR1_CONTROLLER_STATUS,
+        LOADFRAME_SENSOR_FORCE,
+        LOADFRAME_SENSOR_DEFORM,
+        LOADFRAME_HOL_STATUS,
+        LOADFRAME_POSITION,
+        LOADFRAME_CONTROLLER_STATUS
+        } vol_stat = VOLUMETR1_SENSOR_PRESSURE;
+
     enum STATE_MODE { STATE_MODE_IDLE, STATE_MODE_EXECCMD } state_mode = STATE_MODE_IDLE;
 
 protected:
@@ -47,9 +59,11 @@ public:
     QJsonObject jExperiment;
     int counter = 0;
     LoadFrame loadFrame;
-    Volumeter1 volumeter1;
+    Volumeter1 volumetr1;
     Plata plata;
     RETCODE execCMD(QJsonObject &jobj);
+
+    RETCODE readSensors(QJsonObject &jobj);
 
 
 private:

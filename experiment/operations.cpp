@@ -7,7 +7,7 @@ using namespace Measurements;
 Operations::Operations(quint8 addr) : Interface(addr),
     plata(0, ActBase)
 {
-    volumeter1.address = addr;
+    volumetr1.address = addr;
     loadFrame.address = addr;
 }
 
@@ -23,6 +23,7 @@ bool Operations::execut()
     RETCODE ret;    // Переключает состояния если возврат не равно NOERROR
     switch(state_mode) {
     case Operations::STATE_MODE_IDLE:
+        ret = readSensors(jStatusOperation);
 //         ret = loadFrame.statusSensors(jStatusOperation);
 //         if (ret == COMPLATE) {
 //             counter++;
@@ -41,18 +42,23 @@ bool Operations::execut()
 //             // Тут нужно запустить парсер нашего эксперимента
 //             stateSwitch();
 //         }
-
-        ret = volumeter1.statusSensors(jStatusOperation);
         if (ret == COMPLATE) {
             counter++;
             if (counter % 10 == 0) {
-                qDebug() << qPrintable(QString("pressure=%1(Pa)\t stepperPos=%3\t stepperStatus=%4\t controllerStatus=%5\t counter=%6\t sizeQueue=%7 ").
-                        arg(Pressure::fromPascals(volumeter1.pressureSens->value).pascals(), 9).
-                        arg(volumeter1.stepper->position).        // TODO 1:10 на эмуляторе
-                        arg(volumeter1.stepper->status).
-                        arg(volumeter1.controller->status).
-                        arg(counter).
-                        arg(queueRequest.size()));
+                qDebug() << qPrintable(QString("force=%1(N)\tdeform=%2(mm)\tLFPos=%3\tLFStatus=%4\tLFCtrlStatus=%5\t"
+                                               "Vol1pres=%6(Pa)\tVol1Pos=%7\tVol1Status=%8\tVol1CtrlStatus=%9\tcntr=%10\tszQueue=%11").
+                                       arg(Force::fromNewtons(loadFrame.forceSens->value).newtons(), 9).
+                                       arg(Length::fromMicrometres(loadFrame.deformSens->value).millimetres(), 9).
+                                       //                        arg((loadFrame.stepper.position * 0.31250)/1000., 9).        // TODO 1:10 на эмуляторе
+                                       arg(loadFrame.stepper->position).        // TODO 1:10 на эмуляторе
+                                       arg(loadFrame.stepper->status).
+                                       arg(loadFrame.controller->status).
+                                       arg(Pressure::fromPascals(volumetr1.pressureSens->value).pascals(), 9).
+                                       arg(volumetr1.stepper->position).        // TODO 1:10 на эмуляторе
+                                       arg(volumetr1.stepper->status).
+                                       arg(volumetr1.controller->status).
+                                       arg(counter).
+                                       arg(queueRequest.size()));
             }
             fflush(stderr);
             // Тут нужно запустить парсер нашего эксперимента
@@ -156,6 +162,54 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
     }
 
     return COMPLATE;
+}
+
+RETCODE Operations::readSensors(QJsonObject &jobj)
+{
+    switch (vol_stat) {
+
+    case Operations::VOLUMETR1_SENSOR_PRESSURE:
+        if (volumetr1.readSensorPressure(jobj) == COMPLATE)
+            vol_stat = VOLUMETR1_HOL_STATUS;
+        break;
+    case Operations::VOLUMETR1_HOL_STATUS:
+        if (volumetr1.readStatusHol(jobj) == COMPLATE)
+            vol_stat = VOLUMETR1_POSITION;
+        break;
+    case Operations::VOLUMETR1_POSITION:
+        if (volumetr1.readPosition(jobj) == COMPLATE)
+            vol_stat = VOLUMETR1_CONTROLLER_STATUS;
+        break;
+    case Operations::VOLUMETR1_CONTROLLER_STATUS:
+        if (volumetr1.readControllerStatus(jobj) == COMPLATE)
+            vol_stat = LOADFRAME_SENSOR_FORCE;
+        break;
+    case Operations::LOADFRAME_SENSOR_FORCE:
+        if (loadFrame.readSensorForce(jobj) == COMPLATE)
+            vol_stat = LOADFRAME_SENSOR_DEFORM;
+        break;
+    case Operations::LOADFRAME_SENSOR_DEFORM:
+        if (loadFrame.readSensorDeform(jobj) == COMPLATE)
+            vol_stat = LOADFRAME_HOL_STATUS;
+        break;
+    case Operations::LOADFRAME_HOL_STATUS:
+        if (loadFrame.readHolStatus(jobj) == COMPLATE)
+            vol_stat = LOADFRAME_POSITION;
+        break;
+    case Operations::LOADFRAME_POSITION:
+        if (loadFrame.readPosition(jobj) == COMPLATE)
+            vol_stat = LOADFRAME_CONTROLLER_STATUS;
+        break;
+    case Operations::LOADFRAME_CONTROLLER_STATUS:
+        if (loadFrame.readControllerStatus(jobj) == COMPLATE) {
+            vol_stat = VOLUMETR1_SENSOR_PRESSURE;
+            return COMPLATE;
+        }
+        break;
+    }
+    return NOERROR;
+    // for (int i = 0; i < sizeof(vol_stat) * 8; ++i)
+    //     if ((vol_stat & (1u << i)) != 0)
 }
 
 QString Operations::getStateExperiment()

@@ -179,3 +179,34 @@ void Volumeter1::sendStoreData(QJsonObject &jobj)
         jobj["store_data"] = QString(QByteArray("no experiment has been launched yet").toBase64());
     }
 }
+
+RETCODE Volumeter1::readSensorPressure(QJsonObject &jOperation)
+{
+    return pressureSens->read(jOperation);
+}
+
+RETCODE Volumeter1::readRawSensorPressure(QJsonObject &jOperation)
+{
+    return pressureSens->readRaw(jOperation);
+}
+
+RETCODE Volumeter1::readStatusHol(QJsonObject &jOperation)
+{
+    return stepper->readStatus(jOperation);
+}
+
+RETCODE Volumeter1::readPosition(QJsonObject &jOperation)
+{
+    return stepper->readPos(jOperation);
+}
+
+RETCODE Volumeter1::readControllerStatus(QJsonObject &jOperation)
+{
+    return controller->readStatus(jOperation);
+}
+
+RETCODE Volumeter1::updateStoreData(QJsonObject &jOperation)
+{
+    if (store != nullptr)
+        store->updateData();
+}
