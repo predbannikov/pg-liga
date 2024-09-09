@@ -510,7 +510,7 @@ void ExperimentView::on_btnTest_clicked()
 void ExperimentView::on_btnLoadFrameSensorForceSetZero_clicked()
 {
     QJsonObject jobj;
-    jobj["CMD"] = "load_frame_set_force_zero";
+    jobj["CMD"] = "load_frame_sensor_set_zero";
     jobj["sensor_name"] = "SensLoad0";
     emit sendRequest(jobj);
 }
@@ -519,7 +519,7 @@ void ExperimentView::on_btnLoadFrameSensorForceSetZero_clicked()
 void ExperimentView::on_btnLoadFrameSensorForceReset_clicked()
 {
     QJsonObject jobj;
-    jobj["CMD"] = "load_frame_reset_force_offset";
+    jobj["CMD"] = "load_frame_sensor_reset_offset";
     jobj["sensor_name"] = "SensLoad0";
     emit sendRequest(jobj);
 }
@@ -528,7 +528,7 @@ void ExperimentView::on_btnLoadFrameSensorForceReset_clicked()
 void ExperimentView::on_btnLoadFrameSensorDeformSetZero_clicked()
 {
     QJsonObject jobj;
-    jobj["CMD"] = "load_frame_set_deform_zero";
+    jobj["CMD"] = "load_frame_sensor_set_zero";
     jobj["sensor_name"] = "SensDef0";
     emit sendRequest(jobj);
 }
@@ -537,8 +537,26 @@ void ExperimentView::on_btnLoadFrameSensorDeformSetZero_clicked()
 void ExperimentView::on_btnLoadFrameSensorDeformReset_clicked()
 {
     QJsonObject jobj;
-    jobj["CMD"] = "load_frame_reset_deform_offset";
+    jobj["CMD"] = "load_frame_sensor_reset_offset";
     jobj["sensor_name"] = "SensDef0";
+    emit sendRequest(jobj);
+}
+
+
+void ExperimentView::on_btnVolumetr1SensorPressureSetZero_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "volumetr1_sensor_set_zero";
+    jobj["sensor_name"] = "SensPrs0";
+    emit sendRequest(jobj);
+}
+
+
+void ExperimentView::on_btnVolumetr1SensorPressureReset_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "volumetr1_sensor_reset_offset";
+    jobj["sensor_name"] = "SensPrs0";
     emit sendRequest(jobj);
 }
 
