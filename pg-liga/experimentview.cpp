@@ -449,25 +449,6 @@ void ExperimentView::on_btnSetState_clicked()
     emit sendRequest(jobj);
 }
 
-
-void ExperimentView::on_btnSensorSetZero_clicked()
-{
-    QJsonObject jobj;
-    jobj["CMD"] = "set_sensor_zero";
-    jobj["sensor_name"] = ui->cmbSensorName->currentText();
-    emit sendRequest(jobj);
-}
-
-
-void ExperimentView::on_btnResetSensorOffset_clicked()
-{
-    QJsonObject jobj;
-    jobj["CMD"] = "reset_sensor_offset";
-    jobj["sensor_name"] = ui->cmbSensorName->currentText();
-    emit sendRequest(jobj);
-}
-
-
 void ExperimentView::on_btnLoadFrameMoveUp_clicked()
 {
     QJsonObject jobj;
@@ -522,6 +503,42 @@ void ExperimentView::on_btnTest_clicked()
     jobj["experiment"] = jExp;
     qDebug().noquote() << QJsonDocument(jExp).toJson(QJsonDocument::Indented);
 
+    emit sendRequest(jobj);
+}
+
+
+void ExperimentView::on_btnLoadFrameSensorForceSetZero_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "load_frame_set_force_zero";
+    jobj["sensor_name"] = "SensLoad0";
+    emit sendRequest(jobj);
+}
+
+
+void ExperimentView::on_btnLoadFrameSensorForceReset_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "load_frame_reset_force_offset";
+    jobj["sensor_name"] = "SensLoad0";
+    emit sendRequest(jobj);
+}
+
+
+void ExperimentView::on_btnLoadFrameSensorDeformSetZero_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "load_frame_set_deform_zero";
+    jobj["sensor_name"] = "SensDef0";
+    emit sendRequest(jobj);
+}
+
+
+void ExperimentView::on_btnLoadFrameSensorDeformReset_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "load_frame_reset_deform_offset";
+    jobj["sensor_name"] = "SensDef0";
     emit sendRequest(jobj);
 }
 

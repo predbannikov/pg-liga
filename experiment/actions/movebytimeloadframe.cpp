@@ -1,5 +1,7 @@
 #include "movebytimeloadframe.h"
 
+#include <QDebug>
+
 MoveByTimeLoadFrame::MoveByTimeLoadFrame(QObject *parent)
     : BaseAction{parent}
 {

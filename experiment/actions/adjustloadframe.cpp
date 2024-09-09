@@ -1,4 +1,5 @@
 #include <QElapsedTimer>
+#include <QDebug>
 
 #include "adjustloadframe.h"
 

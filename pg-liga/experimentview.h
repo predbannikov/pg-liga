@@ -142,10 +142,6 @@ private slots:
 
     void on_btnSetState_clicked();
 
-    void on_btnSensorSetZero_clicked();
-
-    void on_btnResetSensorOffset_clicked();
-
     void on_btnLoadFrameMoveUp_clicked();
 
     void on_btnLoadFrameMoveDown_clicked();
@@ -153,6 +149,14 @@ private slots:
     void on_btnLoadFrameStopStepper_clicked();
 
     void on_btnTest_clicked();
+
+    void on_btnLoadFrameSensorForceSetZero_clicked();
+
+    void on_btnLoadFrameSensorForceReset_clicked();
+
+    void on_btnLoadFrameSensorDeformSetZero_clicked();
+
+    void on_btnLoadFrameSensorDeformReset_clicked();
 
 signals:
     void sendRequest(QJsonObject &jobj);
