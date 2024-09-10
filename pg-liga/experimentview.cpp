@@ -57,6 +57,7 @@ ExperimentView::ExperimentView(QWidget *parent) :
 void ExperimentView::initServicePanel()
 {
     ui->lblLoadFrameSpeed->setNum(ui->sliderLoadFrameSpeed->value());
+    ui->lblVolumetr1Speed->setNum(ui->sliderVolumetr1Speed->value());
 }
 
 void ExperimentView::initControlPanel()
@@ -290,7 +291,7 @@ void ExperimentView::onReadyResponse(const QJsonObject &jobj)
             if (jkey == "VerticalPressure_kPa") {
                 m_experimentData.value("Сила")->append(allList);
             }
-            if (jkey == "Position_mm") {
+            if (jkey == "LF_position_mm") {
                 m_experimentData.value("Позиция")->append(allList);
             }
         }
@@ -350,7 +351,6 @@ void ExperimentView::on_btnSetSettings_clicked()
 //    emit sendRequest(jobj);
 }
 
-
 void ExperimentView::on_btnSetTarget_clicked()
 {
     QJsonObject jobj;
@@ -359,7 +359,6 @@ void ExperimentView::on_btnSetTarget_clicked()
     jobj["target"] = ui->spinTarget->value();
     emit sendRequest(jobj);
 }
-
 
 void ExperimentView::on_btnClearDataStore_clicked()
 {
@@ -378,7 +377,6 @@ void ExperimentView::on_btnClearDataStore_clicked()
     positionVsTime->m_plot->replot();
 }
 
-
 void ExperimentView::on_btnSetHz_clicked()
 {
     QJsonObject jobj;
@@ -386,7 +384,6 @@ void ExperimentView::on_btnSetHz_clicked()
     jobj["hz"] = ui->spinHz->value();
     emit sendRequest(jobj);
 }
-
 
 void ExperimentView::on_btnStopStoreData_clicked()
 {
@@ -396,14 +393,12 @@ void ExperimentView::on_btnStopStoreData_clicked()
     emit sendRequest(jobj);
 }
 
-
 void ExperimentView::on_btnHardReset_clicked()
 {
     QJsonObject jobj;
     jobj["CMD"] = "hard_reset";
     emit sendRequest(jobj);
 }
-
 
 void ExperimentView::on_btnSetPidP_clicked()
 {
@@ -413,7 +408,6 @@ void ExperimentView::on_btnSetPidP_clicked()
     emit sendRequest(jobj);
 }
 
-
 void ExperimentView::on_btnSetPID_D_clicked()
 {
     QJsonObject jobj;
@@ -421,7 +415,6 @@ void ExperimentView::on_btnSetPID_D_clicked()
     jobj["value"] = ui->spinSetPID_D->value();
     emit sendRequest(jobj);
 }
-
 
 void ExperimentView::on_btnSetUpPidP_clicked()
 {
@@ -431,7 +424,6 @@ void ExperimentView::on_btnSetUpPidP_clicked()
     emit sendRequest(jobj);
 }
 
-
 void ExperimentView::on_btnSetUpPID_D_clicked()
 {
     QJsonObject jobj;
@@ -439,7 +431,6 @@ void ExperimentView::on_btnSetUpPID_D_clicked()
     jobj["value"] = ui->spinSetPID_D->value();
     emit sendRequest(jobj);
 }
-
 
 void ExperimentView::on_btnSetState_clicked()
 {
@@ -457,7 +448,6 @@ void ExperimentView::on_btnLoadFrameMoveUp_clicked()
     emit sendRequest(jobj);
 }
 
-
 void ExperimentView::on_btnLoadFrameMoveDown_clicked()
 {
     QJsonObject jobj;
@@ -466,14 +456,12 @@ void ExperimentView::on_btnLoadFrameMoveDown_clicked()
     emit sendRequest(jobj);
 }
 
-
 void ExperimentView::on_btnLoadFrameStopStepper_clicked()
 {
     QJsonObject jobj;
     jobj["CMD"] = "stop_frame";
     emit sendRequest(jobj);
 }
-
 
 void ExperimentView::on_btnTest_clicked()
 {
@@ -506,7 +494,6 @@ void ExperimentView::on_btnTest_clicked()
     emit sendRequest(jobj);
 }
 
-
 void ExperimentView::on_btnLoadFrameSensorForceSetZero_clicked()
 {
     QJsonObject jobj;
@@ -514,7 +501,6 @@ void ExperimentView::on_btnLoadFrameSensorForceSetZero_clicked()
     jobj["sensor_name"] = "SensLoad0";
     emit sendRequest(jobj);
 }
-
 
 void ExperimentView::on_btnLoadFrameSensorForceReset_clicked()
 {
@@ -524,7 +510,6 @@ void ExperimentView::on_btnLoadFrameSensorForceReset_clicked()
     emit sendRequest(jobj);
 }
 
-
 void ExperimentView::on_btnLoadFrameSensorDeformSetZero_clicked()
 {
     QJsonObject jobj;
@@ -532,7 +517,6 @@ void ExperimentView::on_btnLoadFrameSensorDeformSetZero_clicked()
     jobj["sensor_name"] = "SensDef0";
     emit sendRequest(jobj);
 }
-
 
 void ExperimentView::on_btnLoadFrameSensorDeformReset_clicked()
 {
@@ -542,7 +526,6 @@ void ExperimentView::on_btnLoadFrameSensorDeformReset_clicked()
     emit sendRequest(jobj);
 }
 
-
 void ExperimentView::on_btnVolumetr1SensorPressureSetZero_clicked()
 {
     QJsonObject jobj;
@@ -550,7 +533,6 @@ void ExperimentView::on_btnVolumetr1SensorPressureSetZero_clicked()
     jobj["sensor_name"] = "SensPrs0";
     emit sendRequest(jobj);
 }
-
 
 void ExperimentView::on_btnVolumetr1SensorPressureReset_clicked()
 {
@@ -560,7 +542,6 @@ void ExperimentView::on_btnVolumetr1SensorPressureReset_clicked()
     emit sendRequest(jobj);
 }
 
-
 void ExperimentView::on_btnVolumetr1SetTarget_clicked()
 {
     QJsonObject jobj;
@@ -569,11 +550,33 @@ void ExperimentView::on_btnVolumetr1SetTarget_clicked()
     emit sendRequest(jobj);
 }
 
-
 void ExperimentView::on_btnVolumetr1Unlock_clicked()
 {
     QJsonObject jobj;
     jobj["CMD"] = "volumetr1_unlock_PID";
+    emit sendRequest(jobj);
+}
+
+void ExperimentView::on_btnVolumetr1MoveUp_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "volumetr1_move";
+    jobj["speed"] = QString::number(ui->sliderVolumetr1Speed->value());
+    emit sendRequest(jobj);
+}
+
+void ExperimentView::on_btnVolumetr1MoveDown_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "volumetr1_move";
+    jobj["speed"] = QString::number(-ui->sliderVolumetr1Speed->value());
+    emit sendRequest(jobj);
+}
+
+void ExperimentView::on_btnVolumetr1Stop_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "volumetr1_stop";
     emit sendRequest(jobj);
 }
 

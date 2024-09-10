@@ -166,6 +166,12 @@ private slots:
 
     void on_btnVolumetr1Unlock_clicked();
 
+    void on_btnVolumetr1MoveUp_clicked();
+
+    void on_btnVolumetr1MoveDown_clicked();
+
+    void on_btnVolumetr1Stop_clicked();
+
 signals:
     void sendRequest(QJsonObject &jobj);
 
