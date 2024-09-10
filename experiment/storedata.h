@@ -137,6 +137,10 @@ class StoreData : public QObject
         "Epsilon3"
     };
 
+    /**
+     * @brief currentData       Данные текущие, постоянно обновляются
+     *                          используется для записи в файл протокола
+     */
     QMap <QString, double> currentData;
     void createFileProtocol();
 

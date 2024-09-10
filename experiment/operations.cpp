@@ -5,10 +5,25 @@ using namespace Measurements;
 
 
 Operations::Operations(quint8 addr) : Interface(addr),
+    loadFrame(new LoadFrame),
     plata(0, ActBase)
 {
+    jConfig["area"] = "0.01";
+    store = new StoreData(addr, jConfig);
+
+
+    QVector<Sensor *> sens;
+    sens.append(loadFrame->forceSens);
+    sens.append(loadFrame->deformSens);
+    sens.append(volumetr1.pressureSens);
+
+    store->setSensors(sens);
+    store->setStepper(loadFrame->stepper);
+
+
+    loadFrame->setStore(store);
     volumetr1.address = addr;
-    loadFrame.address = addr;
+    loadFrame->address = addr;
 }
 
 Operations::~Operations()
@@ -29,12 +44,12 @@ bool Operations::execut()
             if (counter % 10 == 0) {
                 qDebug() << qPrintable(QString("force=%1(N)  deform=%2(mm)  LFPos=%3  LFStatus=%4  LFCtrlStatus=%5  "
                                                "Vol1pres=%6(Pa)  Vol1Pos=%7  Vol1Status=%8  Vol1CtrlStatus=%9 cntr=%10  szQueue=%11").
-                                       arg(Force::fromNewtons(loadFrame.forceSens->value).newtons(), 9).
-                                       arg(Length::fromMicrometres(loadFrame.deformSens->value).millimetres(), 9).
-                                       //                        arg((loadFrame.stepper.position * 0.31250)/1000., 9).        // TODO 1:10 на эмуляторе
-                                       arg(loadFrame.stepper->position).        // TODO 1:10 на эмуляторе
-                                       arg(loadFrame.stepper->status).
-                                       arg(loadFrame.controller->status).
+                                       arg(Force::fromNewtons(loadFrame->forceSens->value).newtons(), 9).
+                                       arg(Length::fromMicrometres(loadFrame->deformSens->value).millimetres(), 9).
+                                       //                        arg((loadFrame->stepper.position * 0.31250)/1000., 9).        // TODO 1:10 на эмуляторе
+                                       arg(loadFrame->stepper->position).        // TODO 1:10 на эмуляторе
+                                       arg(loadFrame->stepper->status).
+                                       arg(loadFrame->controller->status).
                                        arg(Pressure::fromPascals(volumetr1.pressureSens->value).pascals(), 9).
                                        arg(volumetr1.stepper->position).        // TODO 1:10 на эмуляторе
                                        arg(volumetr1.stepper->status).
@@ -44,10 +59,11 @@ bool Operations::execut()
             }
             fflush(stderr);
             // Тут нужно запустить парсер нашего эксперимента
-            if (loadFrame.store != nullptr)
-                loadFrame.store->updateData();
-            if (volumetr1.store != nullptr)
-                volumetr1.store->updateData();
+            // if (loadFrame->store != nullptr)
+            //     loadFrame->store->updateData();
+            // if (volumetr1.store != nullptr)
+            //     volumetr1.store->updateData();
+            store->updateData();
             stateSwitch();
         }
         break;
@@ -82,8 +98,8 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
 {
 //    qDebug().noquote() << Q_FUNC_INFO << jobj;
     if (jobj["CMD"].toString() == "get_status_device") {
-        QJsonObject jObj({{"Сила", loadFrame.forceSens->value},
-                          {"Деформация", loadFrame.deformSens->value},
+        QJsonObject jObj({{"Сила", loadFrame->forceSens->value},
+                          {"Деформация", loadFrame->deformSens->value},
                           {"Давление1", volumetr1.pressureSens->value}
                          });
         jobj["sensors"] = jObj;
@@ -104,53 +120,53 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
         if (stateExperiment == STATE_EXPERIMENT_PROCESS)
             stateExperiment = STATE_EXPERIMENT_TRANSIT_TO_PAUSE;
     } else if (jobj["CMD"].toString() == "scan") {
-        loadFrame.readSensors(jobj);
+        loadFrame->readSensors(jobj);
         emit sendRequestToClient(jobj);
      } else if (jobj["CMD"].toString() == "read_sensors") {
-        loadFrame.readSensors(jobj);
+        loadFrame->readSensors(jobj);
         emit sendRequestToClient(jobj);
     } else if (jobj["CMD"].toString() == "get_protocol") {
-        loadFrame.sendProtocol(jobj);
+        loadFrame->sendProtocol(jobj);
         emit sendRequestToClient(jobj);
     } else if (jobj["CMD"].toString() == "init_store_data") {
-        jobj["status"] = loadFrame.init();
+        jobj["status"] = loadFrame->init();
         emit sendRequestToClient(jobj);
     } else if (jobj["CMD"].toString() == "get_store_data") {
-        loadFrame.sendStoreData(jobj);
+        loadFrame->sendStoreData(jobj);
         emit sendRequestToClient(jobj);
     } else if (jobj["CMD"].toString() == "stop_store_data") {
-        loadFrame.deleteData();
+        loadFrame->deleteData();
         emit sendRequestToClient(jobj);
     } else if (jobj["CMD"].toString() == "move_frame") {
-        return loadFrame.moveFrame(jobj);
+        return loadFrame->moveFrame(jobj);
     } else if (jobj["CMD"].toString() == "stop_frame") {
-        return loadFrame.stopFrame(jobj);
+        return loadFrame->stopFrame(jobj);
     } else if (jobj["CMD"].toString() == "unlock_PID") {
-        return loadFrame.unlockPID(jobj);
+        return loadFrame->unlockPID(jobj);
     } else if (jobj["CMD"].toString() == "volumetr1_unlock_PID") {
         return volumetr1.unlockPID(jobj);
     } else if (jobj["CMD"].toString() == "volumetr1_set_target") {
         return volumetr1.setTarget(jobj);
     } else if (jobj["CMD"].toString() == "set_target") {
-        return loadFrame.setTarget(jobj);
+        return loadFrame->setTarget(jobj);
     } else if (jobj["CMD"].toString() == "set_hz") {
-        return loadFrame.setHz(jobj);
+        return loadFrame->setHz(jobj);
     } else if (jobj["CMD"].toString() == "hard_reset") {
         return plata.write(jobj, HardReset);
     } else if (jobj["CMD"].toString() == "set_pid_p") {
-        return loadFrame.setKPID(jobj, AbstractUnit::CMD::ControllerSetKp);
+        return loadFrame->setKPID(jobj, AbstractUnit::CMD::ControllerSetKp);
     } else if (jobj["CMD"].toString() == "set_pid_d") {
-        return loadFrame.setKPID(jobj, AbstractUnit::CMD::ControllerSetKd);
+        return loadFrame->setKPID(jobj, AbstractUnit::CMD::ControllerSetKd);
     } else if (jobj["CMD"].toString() == "set_up_pid_p") {
-        return loadFrame.setKPID(jobj, AbstractUnit::CMD::ControllerSetVibroKp);
+        return loadFrame->setKPID(jobj, AbstractUnit::CMD::ControllerSetVibroKp);
     } else if (jobj["CMD"].toString() == "set_up_pid_d") {
-        return loadFrame.setKPID(jobj, AbstractUnit::CMD::ControllerSetVibroKd);
+        return loadFrame->setKPID(jobj, AbstractUnit::CMD::ControllerSetVibroKd);
     } else if (jobj["CMD"].toString() == "set_state_pid") {
-        // return loadFrame.setStatePid(jobj);
+        // return loadFrame->setStatePid(jobj);
     } else if (jobj["CMD"].toString() == "load_frame_sensor_set_zero") {
-        return loadFrame.sensorSetZero(jobj);
+        return loadFrame->sensorSetZero(jobj);
     } else if (jobj["CMD"].toString() == "load_frame_sensor_reset_offset") {
-        return loadFrame.resetSensorOffset(jobj);
+        return loadFrame->resetSensorOffset(jobj);
     } else if (jobj["CMD"].toString() == "volumetr1_sensor_set_zero") {
         return volumetr1.sensorSetZero(jobj);
     } else if (jobj["CMD"].toString() == "volumetr1_sensor_reset_offset") {
@@ -181,23 +197,23 @@ RETCODE Operations::readSensors(QJsonObject &jobj)
             vol_stat = LOADFRAME_SENSOR_FORCE;
         break;
     case Operations::LOADFRAME_SENSOR_FORCE:
-        if (loadFrame.readSensorForce(jobj) == COMPLATE)
+        if (loadFrame->readSensorForce(jobj) == COMPLATE)
             vol_stat = LOADFRAME_SENSOR_DEFORM;
         break;
     case Operations::LOADFRAME_SENSOR_DEFORM:
-        if (loadFrame.readSensorDeform(jobj) == COMPLATE)
+        if (loadFrame->readSensorDeform(jobj) == COMPLATE)
             vol_stat = LOADFRAME_HOL_STATUS;
         break;
     case Operations::LOADFRAME_HOL_STATUS:
-        if (loadFrame.readHolStatus(jobj) == COMPLATE)
+        if (loadFrame->readHolStatus(jobj) == COMPLATE)
             vol_stat = LOADFRAME_POSITION;
         break;
     case Operations::LOADFRAME_POSITION:
-        if (loadFrame.readPosition(jobj) == COMPLATE)
+        if (loadFrame->readPosition(jobj) == COMPLATE)
             vol_stat = LOADFRAME_CONTROLLER_STATUS;
         break;
     case Operations::LOADFRAME_CONTROLLER_STATUS:
-        if (loadFrame.readControllerStatus(jobj) == COMPLATE) {
+        if (loadFrame->readControllerStatus(jobj) == COMPLATE) {
             vol_stat = VOLUMETR1_SENSOR_PRESSURE;
             return COMPLATE;
         }
@@ -227,5 +243,5 @@ QString Operations::getStateExperiment()
 
 void Operations::resetCommunicationState()
 {
-    loadFrame.resetStateModeBusCommunication();
+    loadFrame->resetStateModeBusCommunication();
 }

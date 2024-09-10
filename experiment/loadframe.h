@@ -30,6 +30,7 @@ public:
     LoadFrame();
     ~LoadFrame();
 
+    void setStoreData(StoreData *storeData);
     bool init();
     bool deleteData();
     void resetStateModeBusCommunication();
@@ -70,6 +71,7 @@ public:
 
     StoreData *store = nullptr;
 
+    void setStore(StoreData *pStore);
 private:
 };
 

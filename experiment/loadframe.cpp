@@ -19,6 +19,11 @@ LoadFrame::~LoadFrame()
     qDebug() << Q_FUNC_INFO;
 }
 
+void LoadFrame::setStoreData(StoreData *storeData)
+{
+    store = storeData;
+}
+
 bool LoadFrame::init()
 {
     if (store != nullptr) {
@@ -234,4 +239,9 @@ void LoadFrame::sendStoreData(QJsonObject &jobj)
     } else {
         jobj["store_data"] = QString(QByteArray("no experiment has been launched yet").toBase64());
     }
+}
+
+void LoadFrame::setStore(StoreData *pStore)
+{
+    store = pStore;
 }
