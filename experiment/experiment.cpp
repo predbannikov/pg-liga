@@ -50,7 +50,7 @@ bool Experiment::conveyor()
             if (iter.key().toInt() == curAction) {
                 qDebug() << "key=" << iter.key() << "    curAction=" << curAction;
                 action = new MoveByTimeLoadFrame(this);
-                action->initialization(iter.value().toObject(), &loadFrame, &plata);
+                action->initialization(iter.value().toObject(), loadFrame, &plata);
                 transition = TRANSITION_3;
                 return false;
             }
@@ -143,15 +143,15 @@ bool Experiment::stopDevice()
         jobj["CMD"] = "stop_frame";
         put(jobj);
         transitionToStopDevice = TRANSITION_TO_STOP_DEVICE_2;
-        loadFramePosition = loadFrame.stepper->position;
+        loadFramePosition = loadFrame->stepper->position;
     }
         break;
     case Experiment::TRANSITION_TO_STOP_DEVICE_2:
-        if (loadFrame.controller->status == 0 && loadFramePosition == loadFrame.stepper->position) {
+        if (loadFrame->controller->status == 0 && loadFramePosition == loadFrame->stepper->position) {
             transitionToStopDevice = TRANSITION_TO_STOP_DEVICE_1;
             return true;
         }
-        loadFramePosition = loadFrame.stepper->position;
+        loadFramePosition = loadFrame->stepper->position;
         break;
     }
     return false;

@@ -57,10 +57,12 @@ public:
 
     QJsonObject jStatusOperation;
     QJsonObject jExperiment;
+    QJsonObject jConfig;
     int counter = 0;
-    LoadFrame loadFrame;
+    LoadFrame *loadFrame = nullptr;
     Volumeter1 volumetr1;
     Plata plata;
+    StoreData *store = nullptr;
     RETCODE execCMD(QJsonObject &jobj);
 
     RETCODE readSensors(QJsonObject &jobj);

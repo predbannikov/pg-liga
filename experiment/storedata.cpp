@@ -92,11 +92,15 @@ void StoreData::updateData()
             currentData.insert("VerticalDeform_mm", sensors[i]->value);
             data["VerticalDeform_mm"].append(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
             break;
+        case SensPrs0:
+            currentData.insert("CellPressure_kPa", sensors[i]->value / 1000.);
+            data["CellPressure_kPa"].append(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
+            break;
         }
     }
 
-    currentData.insert("Position_mm", stepper->position);
-    data["Position_mm"].append(stepTimeStart, elapseExperimentTimer.elapsed(), stepper->position);
+    currentData.insert("LF_position_mm", stepper->position);
+    data["LF_position_mm"].append(stepTimeStart, elapseExperimentTimer.elapsed(), stepper->position);
 
     if (period.complate())
         writeToDataFile();
@@ -195,7 +199,7 @@ bool StoreData::writeToDataFile()
            QString((jcurStep["step"].toString().isEmpty())?"IDLE":jcurStep["step"].toString()) << '\t' <<
            QString::number(Pressure::fromForce(Force::fromNewtons(currentData.value("VerticalPressure_kPa")), Area::fromMetresSquare(jconfig["area"].toString().toDouble())).kiloPascals()) << '\t' <<
            QString::number(Pressure::fromForce(Force::fromNewtons(currentData.value("ShearPressure_kPa")), Area::fromMetresSquare(jconfig["area"].toString().toDouble())).kiloPascals()) << '\t' <<
-           QString::number(Pressure::fromForce(Force::fromNewtons(currentData.value("CellPressure_kPa")), Area::fromMetresSquare(jconfig["area"].toString().toDouble())).kiloPascals()) << '\t' <<
+           QString::number(currentData.value("CellPressure_kPa")) << '\t' <<
            QString::number(Pressure::fromForce(Force::fromNewtons(currentData.value("PorePressure_kPa")), Area::fromMetresSquare(jconfig["area"].toString().toDouble())).kiloPascals()) << '\t' <<
            QString::number(Pressure::fromForce(Force::fromNewtons(currentData.value("PorePressureAux_kPa")), Area::fromMetresSquare(jconfig["area"].toString().toDouble())).kiloPascals()) << '\t' <<
            QString::number(Length::fromMicrometres(currentData.value("VerticalDeform_mm")).millimetres()) << '\t' <<
