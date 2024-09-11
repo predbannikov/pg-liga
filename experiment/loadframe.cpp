@@ -7,6 +7,7 @@ LoadFrame::LoadFrame() :
     stepper(new Stepper(ActLoad0Addr, ActLoad0)),
     controller(new Controller(CtrlLoad0Addr, CtrlLoad0))
 {
+    unitName = "loadFrame";
     targetNewtones = Measurements::Force::fromNewtons(50.);
 }
 
@@ -208,6 +209,11 @@ RETCODE LoadFrame::resetSensorOffset(QJsonObject &jobj)
 {
     Sensor *sensor = getSensorFromStr(jobj["sensor_name"].toString());
     return sensor->resetOffset(jobj);
+}
+
+RETCODE LoadFrame::stepperSetNull(QJsonObject &jobj)
+{
+    return stepper->setNull(jobj);
 }
 
 void LoadFrame::readSensors(QJsonObject &jobj)

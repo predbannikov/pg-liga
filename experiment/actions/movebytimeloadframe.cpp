@@ -23,7 +23,7 @@ bool MoveByTimeLoadFrame::update()
     switch(trans) {
     case TRANS_1: {
         QJsonObject jobj;
-        jobj["CMD"] = "move_frame";
+        jobj["CMD"] = "load_frame_move";
         jobj["speed"] = jAction["speed"].toString();
         putQueue(jobj);
         elapseTime.start();
@@ -45,7 +45,7 @@ bool MoveByTimeLoadFrame::update()
 void MoveByTimeLoadFrame::finishing()
 {
     QJsonObject jobj;
-    jobj["CMD"] = "stop_frame";
+    jobj["CMD"] = "load_frame_stop";
     putQueue(jobj);
 }
 

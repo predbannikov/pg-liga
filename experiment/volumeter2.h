@@ -45,6 +45,7 @@ public:
     RETCODE stopPiston(QJsonObject &jobj);
     RETCODE sensorSetZero(QJsonObject &jobj);
     RETCODE resetSensorOffset(QJsonObject &jobj);
+    RETCODE stepperSetNull(QJsonObject &jobj);
 
     void readSensors(QJsonObject &jobj);
     void sendProtocol(QJsonObject &jobj);
@@ -60,7 +61,7 @@ public:
     Controller *controller = nullptr;
 
     StoreData *store = nullptr;
-
+    QString unitName;
 };
 
 

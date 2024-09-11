@@ -53,6 +53,7 @@ public:
     RETCODE stopFrame(QJsonObject &jobj);
     RETCODE sensorSetZero(QJsonObject &jobj);
     RETCODE resetSensorOffset(QJsonObject &jobj);
+    RETCODE stepperSetNull(QJsonObject &jobj);
 
     void readSensors(QJsonObject &jobj);
     void sendProtocol(QJsonObject &jobj);
@@ -72,6 +73,9 @@ public:
     StoreData *store = nullptr;
 
     void setStore(StoreData *pStore);
+
+    QString unitName;
+
 private:
 };
 

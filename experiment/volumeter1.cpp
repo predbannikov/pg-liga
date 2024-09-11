@@ -2,10 +2,11 @@
 
 Volumeter1::Volumeter1() :
     /// Волюмометр 1
-    pressureSens(new Sensor(SensPress0Addr, SensPrs0)),
-    stepper(new Stepper(ActVol0Addr, ActVol0)),
-    controller(new Controller(CtrlVol0Addr, CtrlVol0))
+    pressureSens(new Sensor(SensPress1Addr, SensPrs1)),
+    stepper(new Stepper(ActVol1Addr, ActVol1)),
+    controller(new Controller(CtrlVol1Addr, CtrlVol1))
 {
+    unitName = "Volumetr1";
     targetPressure = Measurements::Pressure::fromPascals(50.);
 }
 
@@ -209,4 +210,9 @@ RETCODE Volumeter1::updateStoreData(QJsonObject &jOperation)
 {
     if (store != nullptr)
         store->updateData();
+}
+
+RETCODE Volumeter1::stepperSetNull(QJsonObject &jobj)
+{
+    return stepper->setNull(jobj);
 }

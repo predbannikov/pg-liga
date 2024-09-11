@@ -2,10 +2,11 @@
 
 Volumeter2::Volumeter2() :
     /// Волюмометр 2
-    pressureSens(new Sensor(SensPress1Addr, SensPrs1)),
-    stepper(new Stepper(ActVol1Addr, ActVol1)),
-    controller(new Controller(CtrlVol1Addr, CtrlVol1))
+    pressureSens(new Sensor(SensPress0Addr, SensPrs0)),
+    stepper(new Stepper(ActVol0Addr, ActVol0)),
+    controller(new Controller(CtrlVol0Addr, CtrlVol0))
 {
+    unitName = "Volumetr2";
     targetPressure = Measurements::Pressure::fromPascals(50.);
 }
 
@@ -151,6 +152,11 @@ RETCODE Volumeter2::resetSensorOffset(QJsonObject &jobj)
 {
     Sensor *sensor = getSensorFromStr(jobj["sensor_name"].toString());
     return sensor->resetOffset(jobj);
+}
+
+RETCODE Volumeter2::stepperSetNull(QJsonObject &jobj)
+{
+    return stepper->setNull(jobj);
 }
 
 void Volumeter2::readSensors(QJsonObject &jobj)
