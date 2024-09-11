@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1102</width>
-    <height>694</height>
+    <width>1245</width>
+    <height>889</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -83,7 +83,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>300</width>
+             <width>356</width>
              <height>150</height>
             </rect>
            </property>
@@ -153,789 +153,1337 @@
           </attribute>
           <layout class="QGridLayout" name="gridLayout_2">
            <item row="0" column="0">
-            <widget class="QGroupBox" name="groupBox_3">
-             <property name="title">
-              <string>Сервисный режим</string>
+            <widget class="QScrollArea" name="scrollArea_2">
+             <property name="widgetResizable">
+              <bool>true</bool>
              </property>
-             <layout class="QGridLayout" name="gridLayout_3">
-              <item row="0" column="0">
-               <widget class="QPushButton" name="btnInitStoreData">
-                <property name="text">
-                 <string>initStoreData</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1">
-               <widget class="QPushButton" name="btnGetStoreData">
-                <property name="text">
-                 <string>getStoreData</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="2">
-               <widget class="QPushButton" name="btnClearDataStore">
-                <property name="text">
-                 <string>clearData</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="3">
-               <widget class="QPushButton" name="btnStopStoreData">
-                <property name="text">
-                 <string>stopStoreData</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="0">
-               <widget class="QPushButton" name="btnCreateGraph">
-                <property name="text">
-                 <string>graph</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="1">
-               <widget class="QPushButton" name="btnSaveImage">
-                <property name="text">
-                 <string>save image</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="2">
-               <widget class="QPushButton" name="btnTest">
-                <property name="text">
-                 <string>test</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="0" colspan="4">
-               <widget class="QGroupBox" name="grpVolumetr1">
-                <property name="title">
-                 <string>Волюметр 1</string>
-                </property>
-                <layout class="QHBoxLayout" name="horizontalLayout_6">
-                 <item>
-                  <widget class="QGroupBox" name="groupBox_2">
-                   <property name="title">
-                    <string>Автоматический режим</string>
-                   </property>
-                   <widget class="QWidget" name="layoutWidget">
-                    <property name="geometry">
-                     <rect>
-                      <x>10</x>
-                      <y>20</y>
-                      <width>110</width>
-                      <height>90</height>
-                     </rect>
+             <widget class="QWidget" name="scrollAreaWidgetContents_2">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>-180</y>
+                <width>674</width>
+                <height>1334</height>
+               </rect>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_15">
+               <item>
+                <widget class="QGroupBox" name="groupBox_3">
+                 <property name="title">
+                  <string>Сервисный режим</string>
+                 </property>
+                 <layout class="QVBoxLayout" name="verticalLayout_23">
+                  <item>
+                   <widget class="QPushButton" name="btnGetStoreData">
+                    <property name="text">
+                     <string>getStoreData</string>
                     </property>
-                    <layout class="QVBoxLayout" name="verticalLayout_13">
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="btnInitStoreData">
+                    <property name="text">
+                     <string>initStoreData</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="btnStopStoreData">
+                    <property name="text">
+                     <string>stopStoreData</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="btnClearDataStore">
+                    <property name="text">
+                     <string>clearData</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="btnTest">
+                    <property name="text">
+                     <string>test</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="btnSaveImage">
+                    <property name="text">
+                     <string>save image</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="btnCreateGraph">
+                    <property name="text">
+                     <string>graph</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QGroupBox" name="grpVolumetr1">
+                    <property name="title">
+                     <string>Волюметр 1</string>
+                    </property>
+                    <layout class="QHBoxLayout" name="horizontalLayout_6">
                      <item>
-                      <widget class="QPushButton" name="btnVolumetr1Unlock">
-                       <property name="text">
-                        <string>Остановить</string>
+                      <widget class="QGroupBox" name="groupBox_2">
+                       <property name="maximumSize">
+                        <size>
+                         <width>130</width>
+                         <height>16777215</height>
+                        </size>
                        </property>
+                       <property name="title">
+                        <string>Авто режим</string>
+                       </property>
+                       <layout class="QVBoxLayout" name="verticalLayout_20">
+                        <item>
+                         <layout class="QVBoxLayout" name="verticalLayout_13">
+                          <item>
+                           <widget class="QPushButton" name="btnVolumetr1SetTarget">
+                            <property name="text">
+                             <string>Задать</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="btnVolumetr1Unlock">
+                            <property name="text">
+                             <string>Остановить</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QDoubleSpinBox" name="spinVolumetr1Target">
+                            <property name="suffix">
+                             <string> Па</string>
+                            </property>
+                            <property name="maximum">
+                             <double>900000000.000000000000000</double>
+                            </property>
+                            <property name="singleStep">
+                             <double>10000.000000000000000</double>
+                            </property>
+                            <property name="value">
+                             <double>50000.000000000000000</double>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <spacer name="verticalSpacer_4">
+                            <property name="orientation">
+                             <enum>Qt::Vertical</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                             <size>
+                              <width>20</width>
+                              <height>40</height>
+                             </size>
+                            </property>
+                           </spacer>
+                          </item>
+                         </layout>
+                        </item>
+                       </layout>
                       </widget>
                      </item>
                      <item>
-                      <widget class="QPushButton" name="btnVolumetr1SetTarget">
-                       <property name="text">
-                        <string>Задать</string>
+                      <widget class="QGroupBox" name="groupBox">
+                       <property name="minimumSize">
+                        <size>
+                         <width>150</width>
+                         <height>150</height>
+                        </size>
                        </property>
+                       <property name="maximumSize">
+                        <size>
+                         <width>150</width>
+                         <height>150</height>
+                        </size>
+                       </property>
+                       <property name="title">
+                        <string>Ручной режим</string>
+                       </property>
+                       <layout class="QHBoxLayout" name="horizontalLayout_4">
+                        <item>
+                         <layout class="QVBoxLayout" name="verticalLayout_8">
+                          <item>
+                           <widget class="QLabel" name="lblVolumetr1Speed">
+                            <property name="text">
+                             <string>TextLabel</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QSlider" name="sliderVolumetr1Speed">
+                            <property name="maximum">
+                             <number>150</number>
+                            </property>
+                            <property name="sliderPosition">
+                             <number>50</number>
+                            </property>
+                            <property name="orientation">
+                             <enum>Qt::Vertical</enum>
+                            </property>
+                            <property name="tickPosition">
+                             <enum>QSlider::TicksAbove</enum>
+                            </property>
+                            <property name="tickInterval">
+                             <number>10</number>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
+                        </item>
+                        <item>
+                         <layout class="QVBoxLayout" name="verticalLayout_7">
+                          <item>
+                           <widget class="QPushButton" name="btnVolumetr1MoveUp">
+                            <property name="text">
+                             <string>Вверх</string>
+                            </property>
+                            <property name="icon">
+                             <iconset resource="resources/resources.qrc">
+                              <normaloff>:/icons/arrow-up.png</normaloff>:/icons/arrow-up.png</iconset>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="btnVolumetr1Stop">
+                            <property name="sizePolicy">
+                             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                             </sizepolicy>
+                            </property>
+                            <property name="text">
+                             <string>Стоп</string>
+                            </property>
+                            <property name="icon">
+                             <iconset resource="resources/resources.qrc">
+                              <normaloff>:/icons/arrow-stop.png</normaloff>:/icons/arrow-stop.png</iconset>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="btnVolumetr1MoveDown">
+                            <property name="text">
+                             <string>Вниз</string>
+                            </property>
+                            <property name="icon">
+                             <iconset resource="resources/resources.qrc">
+                              <normaloff>:/icons/arrow-down.png</normaloff>:/icons/arrow-down.png</iconset>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
+                        </item>
+                       </layout>
                       </widget>
                      </item>
                      <item>
-                      <widget class="QDoubleSpinBox" name="spinVolumetr1Target">
-                       <property name="suffix">
-                        <string> Па</string>
+                      <widget class="QGroupBox" name="groupBox">
+                       <property name="title">
+                        <string>Сенсоры</string>
                        </property>
-                       <property name="maximum">
-                        <double>900000000.000000000000000</double>
-                       </property>
-                       <property name="singleStep">
-                        <double>10000.000000000000000</double>
-                       </property>
-                       <property name="value">
-                        <double>50000.000000000000000</double>
-                       </property>
+                       <layout class="QVBoxLayout" name="verticalLayout_9">
+                        <item>
+                         <layout class="QHBoxLayout" name="horizontalLayout_3">
+                          <item>
+                           <spacer name="horizontalSpacer_3">
+                            <property name="orientation">
+                             <enum>Qt::Horizontal</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                             <size>
+                              <width>40</width>
+                              <height>20</height>
+                             </size>
+                            </property>
+                           </spacer>
+                          </item>
+                          <item>
+                           <widget class="QLabel" name="label_3">
+                            <property name="text">
+                             <string>Датчик давления</string>
+                            </property>
+                            <property name="alignment">
+                             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                            </property>
+                            <property name="wordWrap">
+                             <bool>true</bool>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="btnVolumetr1SensorPressureSetZero">
+                            <property name="text">
+                             <string/>
+                            </property>
+                            <property name="icon">
+                             <iconset resource="resources/resources.qrc">
+                              <normaloff>:/icons/set-zero.png</normaloff>:/icons/set-zero.png</iconset>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="btnVolumetr1SensorPressureReset">
+                            <property name="text">
+                             <string/>
+                            </property>
+                            <property name="icon">
+                             <iconset resource="resources/resources.qrc">
+                              <normaloff>:/icons/reset_zero.png</normaloff>:/icons/reset_zero.png</iconset>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QLabel" name="lblVolumetr1PressureSensor">
+                            <property name="minimumSize">
+                             <size>
+                              <width>50</width>
+                              <height>0</height>
+                             </size>
+                            </property>
+                            <property name="font">
+                             <font>
+                              <pointsize>13</pointsize>
+                             </font>
+                            </property>
+                            <property name="text">
+                             <string>21</string>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
+                        </item>
+                        <item>
+                         <layout class="QHBoxLayout" name="horizontalLayout_9">
+                          <item>
+                           <spacer name="horizontalSpacer_7">
+                            <property name="orientation">
+                             <enum>Qt::Horizontal</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                             <size>
+                              <width>40</width>
+                              <height>20</height>
+                             </size>
+                            </property>
+                           </spacer>
+                          </item>
+                          <item>
+                           <widget class="QLabel" name="label_5">
+                            <property name="text">
+                             <string>Позиция</string>
+                            </property>
+                            <property name="alignment">
+                             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                            </property>
+                            <property name="wordWrap">
+                             <bool>true</bool>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="btnVolumetr1SensorPositionSetZero">
+                            <property name="enabled">
+                             <bool>true</bool>
+                            </property>
+                            <property name="text">
+                             <string/>
+                            </property>
+                            <property name="icon">
+                             <iconset resource="resources/resources.qrc">
+                              <normaloff>:/icons/set-zero.png</normaloff>:/icons/set-zero.png</iconset>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="btnVolumetr1SensorPositionReset">
+                            <property name="enabled">
+                             <bool>false</bool>
+                            </property>
+                            <property name="text">
+                             <string/>
+                            </property>
+                            <property name="icon">
+                             <iconset resource="resources/resources.qrc">
+                              <normaloff>:/icons/reset_zero.png</normaloff>:/icons/reset_zero.png</iconset>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QLabel" name="lblVolumetr1SensorPosition">
+                            <property name="minimumSize">
+                             <size>
+                              <width>50</width>
+                              <height>0</height>
+                             </size>
+                            </property>
+                            <property name="font">
+                             <font>
+                              <pointsize>13</pointsize>
+                             </font>
+                            </property>
+                            <property name="text">
+                             <string>21</string>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
+                        </item>
+                        <item>
+                         <spacer name="verticalSpacer_3">
+                          <property name="orientation">
+                           <enum>Qt::Vertical</enum>
+                          </property>
+                          <property name="sizeHint" stdset="0">
+                           <size>
+                            <width>20</width>
+                            <height>40</height>
+                           </size>
+                          </property>
+                         </spacer>
+                        </item>
+                       </layout>
                       </widget>
                      </item>
                      <item>
-                      <spacer name="verticalSpacer_4">
+                      <spacer name="horizontalSpacer_4">
                        <property name="orientation">
-                        <enum>Qt::Vertical</enum>
+                        <enum>Qt::Horizontal</enum>
                        </property>
                        <property name="sizeHint" stdset="0">
                         <size>
-                         <width>20</width>
-                         <height>40</height>
+                         <width>40</width>
+                         <height>20</height>
                         </size>
                        </property>
                       </spacer>
                      </item>
                     </layout>
                    </widget>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QGroupBox" name="groupBox">
-                   <property name="title">
-                    <string>Ручной режим</string>
-                   </property>
-                   <layout class="QHBoxLayout" name="horizontalLayout_4">
+                  </item>
+                  <item>
+                   <widget class="QGroupBox" name="grpVolumetr2">
+                    <property name="title">
+                     <string>Волюметр 2</string>
+                    </property>
+                    <layout class="QHBoxLayout" name="horizontalLayout_8">
+                     <item>
+                      <widget class="QGroupBox" name="groupBox_4">
+                       <property name="maximumSize">
+                        <size>
+                         <width>130</width>
+                         <height>16777215</height>
+                        </size>
+                       </property>
+                       <property name="title">
+                        <string>Авто режим</string>
+                       </property>
+                       <layout class="QVBoxLayout" name="verticalLayout_21">
+                        <item>
+                         <layout class="QVBoxLayout" name="verticalLayout_16">
+                          <item>
+                           <widget class="QPushButton" name="btnVolumetr2SetTarget">
+                            <property name="text">
+                             <string>Задать</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="btnVolumetr2Unlock">
+                            <property name="text">
+                             <string>Остановить</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QDoubleSpinBox" name="spinVolumetr2Target">
+                            <property name="suffix">
+                             <string> Па</string>
+                            </property>
+                            <property name="maximum">
+                             <double>900000000.000000000000000</double>
+                            </property>
+                            <property name="singleStep">
+                             <double>10000.000000000000000</double>
+                            </property>
+                            <property name="value">
+                             <double>50000.000000000000000</double>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <spacer name="verticalSpacer_6">
+                            <property name="orientation">
+                             <enum>Qt::Vertical</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                             <size>
+                              <width>20</width>
+                              <height>40</height>
+                             </size>
+                            </property>
+                           </spacer>
+                          </item>
+                         </layout>
+                        </item>
+                       </layout>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QGroupBox" name="groupBox_5">
+                       <property name="minimumSize">
+                        <size>
+                         <width>150</width>
+                         <height>150</height>
+                        </size>
+                       </property>
+                       <property name="maximumSize">
+                        <size>
+                         <width>150</width>
+                         <height>150</height>
+                        </size>
+                       </property>
+                       <property name="title">
+                        <string>Ручной режим</string>
+                       </property>
+                       <layout class="QHBoxLayout" name="horizontalLayout_10">
+                        <item>
+                         <layout class="QVBoxLayout" name="verticalLayout_17">
+                          <item>
+                           <widget class="QLabel" name="lblVolumetr2Speed">
+                            <property name="text">
+                             <string>TextLabel</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QSlider" name="sliderVolumetr2Speed">
+                            <property name="maximum">
+                             <number>150</number>
+                            </property>
+                            <property name="sliderPosition">
+                             <number>50</number>
+                            </property>
+                            <property name="orientation">
+                             <enum>Qt::Vertical</enum>
+                            </property>
+                            <property name="tickPosition">
+                             <enum>QSlider::TicksAbove</enum>
+                            </property>
+                            <property name="tickInterval">
+                             <number>10</number>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
+                        </item>
+                        <item>
+                         <layout class="QVBoxLayout" name="verticalLayout_18">
+                          <item>
+                           <widget class="QPushButton" name="btnVolumetr2MoveUp">
+                            <property name="text">
+                             <string>Вверх</string>
+                            </property>
+                            <property name="icon">
+                             <iconset resource="resources/resources.qrc">
+                              <normaloff>:/icons/arrow-up.png</normaloff>:/icons/arrow-up.png</iconset>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="btnVolumetr2Stop">
+                            <property name="sizePolicy">
+                             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                             </sizepolicy>
+                            </property>
+                            <property name="text">
+                             <string>Стоп</string>
+                            </property>
+                            <property name="icon">
+                             <iconset resource="resources/resources.qrc">
+                              <normaloff>:/icons/arrow-stop.png</normaloff>:/icons/arrow-stop.png</iconset>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="btnVolumetr2MoveDown">
+                            <property name="text">
+                             <string>Вниз</string>
+                            </property>
+                            <property name="icon">
+                             <iconset resource="resources/resources.qrc">
+                              <normaloff>:/icons/arrow-down.png</normaloff>:/icons/arrow-down.png</iconset>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
+                        </item>
+                       </layout>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QGroupBox" name="groupBox_6">
+                       <property name="title">
+                        <string>Сенсоры</string>
+                       </property>
+                       <layout class="QVBoxLayout" name="verticalLayout_19">
+                        <item>
+                         <layout class="QHBoxLayout" name="horizontalLayout_11">
+                          <item>
+                           <spacer name="horizontalSpacer_8">
+                            <property name="orientation">
+                             <enum>Qt::Horizontal</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                             <size>
+                              <width>40</width>
+                              <height>20</height>
+                             </size>
+                            </property>
+                           </spacer>
+                          </item>
+                          <item>
+                           <widget class="QLabel" name="label_6">
+                            <property name="text">
+                             <string>Датчик давления</string>
+                            </property>
+                            <property name="alignment">
+                             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                            </property>
+                            <property name="wordWrap">
+                             <bool>true</bool>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="btnVolumetr2SensorPressureSetZero">
+                            <property name="text">
+                             <string/>
+                            </property>
+                            <property name="icon">
+                             <iconset resource="resources/resources.qrc">
+                              <normaloff>:/icons/set-zero.png</normaloff>:/icons/set-zero.png</iconset>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="btnVolumetr2SensorPressureReset">
+                            <property name="text">
+                             <string/>
+                            </property>
+                            <property name="icon">
+                             <iconset resource="resources/resources.qrc">
+                              <normaloff>:/icons/reset_zero.png</normaloff>:/icons/reset_zero.png</iconset>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QLabel" name="lblVolumetr2PressureSensor">
+                            <property name="minimumSize">
+                             <size>
+                              <width>50</width>
+                              <height>0</height>
+                             </size>
+                            </property>
+                            <property name="font">
+                             <font>
+                              <pointsize>13</pointsize>
+                             </font>
+                            </property>
+                            <property name="text">
+                             <string>21</string>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
+                        </item>
+                        <item>
+                         <layout class="QHBoxLayout" name="horizontalLayout_12">
+                          <item>
+                           <spacer name="horizontalSpacer_9">
+                            <property name="orientation">
+                             <enum>Qt::Horizontal</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                             <size>
+                              <width>40</width>
+                              <height>20</height>
+                             </size>
+                            </property>
+                           </spacer>
+                          </item>
+                          <item>
+                           <widget class="QLabel" name="label_7">
+                            <property name="text">
+                             <string>Позиция</string>
+                            </property>
+                            <property name="alignment">
+                             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                            </property>
+                            <property name="wordWrap">
+                             <bool>true</bool>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="btnVolumetr2SensorPositionSetZero">
+                            <property name="enabled">
+                             <bool>true</bool>
+                            </property>
+                            <property name="text">
+                             <string/>
+                            </property>
+                            <property name="icon">
+                             <iconset resource="resources/resources.qrc">
+                              <normaloff>:/icons/set-zero.png</normaloff>:/icons/set-zero.png</iconset>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="btnVolumetr2SensorPositionReset">
+                            <property name="enabled">
+                             <bool>false</bool>
+                            </property>
+                            <property name="text">
+                             <string/>
+                            </property>
+                            <property name="icon">
+                             <iconset resource="resources/resources.qrc">
+                              <normaloff>:/icons/reset_zero.png</normaloff>:/icons/reset_zero.png</iconset>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QLabel" name="lblVolumetr2SensorPosition">
+                            <property name="minimumSize">
+                             <size>
+                              <width>50</width>
+                              <height>0</height>
+                             </size>
+                            </property>
+                            <property name="font">
+                             <font>
+                              <pointsize>13</pointsize>
+                             </font>
+                            </property>
+                            <property name="text">
+                             <string>21</string>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
+                        </item>
+                        <item>
+                         <spacer name="verticalSpacer_7">
+                          <property name="orientation">
+                           <enum>Qt::Vertical</enum>
+                          </property>
+                          <property name="sizeHint" stdset="0">
+                           <size>
+                            <width>20</width>
+                            <height>40</height>
+                           </size>
+                          </property>
+                         </spacer>
+                        </item>
+                       </layout>
+                      </widget>
+                     </item>
+                     <item>
+                      <spacer name="horizontalSpacer_10">
+                       <property name="orientation">
+                        <enum>Qt::Horizontal</enum>
+                       </property>
+                       <property name="sizeHint" stdset="0">
+                        <size>
+                         <width>40</width>
+                         <height>20</height>
+                        </size>
+                       </property>
+                      </spacer>
+                     </item>
+                    </layout>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QGroupBox" name="grpLoadFrame">
+                    <property name="title">
+                     <string>Силовая рама</string>
+                    </property>
+                    <layout class="QHBoxLayout" name="horizontalLayout_13">
+                     <item>
+                      <widget class="QGroupBox" name="groupBox">
+                       <property name="maximumSize">
+                        <size>
+                         <width>130</width>
+                         <height>16777215</height>
+                        </size>
+                       </property>
+                       <property name="title">
+                        <string>Авто режим</string>
+                       </property>
+                       <layout class="QVBoxLayout" name="verticalLayout_22">
+                        <item>
+                         <layout class="QVBoxLayout" name="verticalLayout_11">
+                          <item>
+                           <widget class="QPushButton" name="btnLoadFrameSetTarget">
+                            <property name="text">
+                             <string>Задать</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="btnLoadFrameUnlockPid">
+                            <property name="text">
+                             <string>Остановить</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QDoubleSpinBox" name="spinLoadFrameTargetPIDMin">
+                            <property name="maximum">
+                             <double>1000000.000000000000000</double>
+                            </property>
+                            <property name="singleStep">
+                             <double>10.000000000000000</double>
+                            </property>
+                            <property name="value">
+                             <double>0.000000000000000</double>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QDoubleSpinBox" name="spinLoadFrameTargetPID">
+                            <property name="minimum">
+                             <double>5.000000000000000</double>
+                            </property>
+                            <property name="maximum">
+                             <double>2000.000000000000000</double>
+                            </property>
+                            <property name="singleStep">
+                             <double>50.000000000000000</double>
+                            </property>
+                            <property name="value">
+                             <double>50.000000000000000</double>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
+                        </item>
+                        <item>
+                         <spacer name="verticalSpacer_5">
+                          <property name="orientation">
+                           <enum>Qt::Vertical</enum>
+                          </property>
+                          <property name="sizeHint" stdset="0">
+                           <size>
+                            <width>20</width>
+                            <height>40</height>
+                           </size>
+                          </property>
+                         </spacer>
+                        </item>
+                       </layout>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QGroupBox" name="grpLoadFrameManualMode">
+                       <property name="minimumSize">
+                        <size>
+                         <width>150</width>
+                         <height>150</height>
+                        </size>
+                       </property>
+                       <property name="maximumSize">
+                        <size>
+                         <width>150</width>
+                         <height>150</height>
+                        </size>
+                       </property>
+                       <property name="title">
+                        <string>Ручной режим</string>
+                       </property>
+                       <layout class="QVBoxLayout" name="verticalLayout_14">
+                        <item>
+                         <layout class="QHBoxLayout" name="horizontalLayout">
+                          <item>
+                           <layout class="QVBoxLayout" name="verticalLayout_5">
+                            <item>
+                             <widget class="QLabel" name="lblLoadFrameSpeed">
+                              <property name="text">
+                               <string>TextLabel</string>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QSlider" name="sliderLoadFrameSpeed">
+                              <property name="maximum">
+                               <number>150</number>
+                              </property>
+                              <property name="sliderPosition">
+                               <number>50</number>
+                              </property>
+                              <property name="orientation">
+                               <enum>Qt::Vertical</enum>
+                              </property>
+                              <property name="tickPosition">
+                               <enum>QSlider::TicksAbove</enum>
+                              </property>
+                              <property name="tickInterval">
+                               <number>10</number>
+                              </property>
+                             </widget>
+                            </item>
+                           </layout>
+                          </item>
+                          <item>
+                           <layout class="QVBoxLayout" name="verticalLayout_10">
+                            <item>
+                             <widget class="QPushButton" name="btnLoadFrameMoveUp">
+                              <property name="text">
+                               <string>Вверх</string>
+                              </property>
+                              <property name="icon">
+                               <iconset resource="resources/resources.qrc">
+                                <normaloff>:/icons/arrow-up.png</normaloff>:/icons/arrow-up.png</iconset>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QPushButton" name="btnLoadFrameStopStepper">
+                              <property name="sizePolicy">
+                               <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                               </sizepolicy>
+                              </property>
+                              <property name="text">
+                               <string>Стоп</string>
+                              </property>
+                              <property name="icon">
+                               <iconset resource="resources/resources.qrc">
+                                <normaloff>:/icons/arrow-stop.png</normaloff>:/icons/arrow-stop.png</iconset>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QPushButton" name="btnLoadFrameMoveDown">
+                              <property name="text">
+                               <string>Вниз</string>
+                              </property>
+                              <property name="icon">
+                               <iconset resource="resources/resources.qrc">
+                                <normaloff>:/icons/arrow-down.png</normaloff>:/icons/arrow-down.png</iconset>
+                              </property>
+                             </widget>
+                            </item>
+                           </layout>
+                          </item>
+                         </layout>
+                        </item>
+                       </layout>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QGroupBox" name="groupBox">
+                       <property name="title">
+                        <string>Сенсоры</string>
+                       </property>
+                       <layout class="QVBoxLayout" name="verticalLayout_12">
+                        <item>
+                         <layout class="QHBoxLayout" name="horizontalLayout_5">
+                          <item>
+                           <spacer name="horizontalSpacer_2">
+                            <property name="orientation">
+                             <enum>Qt::Horizontal</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                             <size>
+                              <width>40</width>
+                              <height>20</height>
+                             </size>
+                            </property>
+                           </spacer>
+                          </item>
+                          <item>
+                           <widget class="QLabel" name="label_2">
+                            <property name="text">
+                             <string>Датчик деформации</string>
+                            </property>
+                            <property name="alignment">
+                             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                            </property>
+                            <property name="wordWrap">
+                             <bool>true</bool>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="btnLoadFrameSensorDeformSetZero">
+                            <property name="text">
+                             <string/>
+                            </property>
+                            <property name="icon">
+                             <iconset resource="resources/resources.qrc">
+                              <normaloff>:/icons/set-zero.png</normaloff>:/icons/set-zero.png</iconset>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="btnLoadFrameSensorDeformReset">
+                            <property name="text">
+                             <string/>
+                            </property>
+                            <property name="icon">
+                             <iconset resource="resources/resources.qrc">
+                              <normaloff>:/icons/reset_zero.png</normaloff>:/icons/reset_zero.png</iconset>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QLabel" name="lblLoadFrameDeformSensor">
+                            <property name="minimumSize">
+                             <size>
+                              <width>50</width>
+                              <height>0</height>
+                             </size>
+                            </property>
+                            <property name="font">
+                             <font>
+                              <pointsize>13</pointsize>
+                             </font>
+                            </property>
+                            <property name="text">
+                             <string>21</string>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
+                        </item>
+                        <item>
+                         <layout class="QHBoxLayout" name="horizontalLayout_2">
+                          <item>
+                           <spacer name="horizontalSpacer">
+                            <property name="orientation">
+                             <enum>Qt::Horizontal</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                             <size>
+                              <width>40</width>
+                              <height>20</height>
+                             </size>
+                            </property>
+                           </spacer>
+                          </item>
+                          <item>
+                           <widget class="QLabel" name="label">
+                            <property name="text">
+                             <string>Датчик силы</string>
+                            </property>
+                            <property name="alignment">
+                             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                            </property>
+                            <property name="wordWrap">
+                             <bool>true</bool>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="btnLoadFrameSensorForceSetZero">
+                            <property name="text">
+                             <string/>
+                            </property>
+                            <property name="icon">
+                             <iconset resource="resources/resources.qrc">
+                              <normaloff>:/icons/set-zero.png</normaloff>:/icons/set-zero.png</iconset>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="btnLoadFrameSensorForceReset">
+                            <property name="text">
+                             <string/>
+                            </property>
+                            <property name="icon">
+                             <iconset resource="resources/resources.qrc">
+                              <normaloff>:/icons/reset_zero.png</normaloff>:/icons/reset_zero.png</iconset>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QLabel" name="lblLoadFrameForceSensor">
+                            <property name="minimumSize">
+                             <size>
+                              <width>50</width>
+                              <height>0</height>
+                             </size>
+                            </property>
+                            <property name="font">
+                             <font>
+                              <pointsize>13</pointsize>
+                             </font>
+                            </property>
+                            <property name="text">
+                             <string>21</string>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
+                        </item>
+                        <item>
+                         <layout class="QHBoxLayout" name="horizontalLayout_7">
+                          <item>
+                           <spacer name="horizontalSpacer_6">
+                            <property name="orientation">
+                             <enum>Qt::Horizontal</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                             <size>
+                              <width>40</width>
+                              <height>20</height>
+                             </size>
+                            </property>
+                           </spacer>
+                          </item>
+                          <item>
+                           <widget class="QLabel" name="label_4">
+                            <property name="text">
+                             <string>Позиция</string>
+                            </property>
+                            <property name="alignment">
+                             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                            </property>
+                            <property name="wordWrap">
+                             <bool>true</bool>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="btnLoadFrameSensorPositionSetZero">
+                            <property name="enabled">
+                             <bool>true</bool>
+                            </property>
+                            <property name="text">
+                             <string/>
+                            </property>
+                            <property name="icon">
+                             <iconset resource="resources/resources.qrc">
+                              <normaloff>:/icons/set-zero.png</normaloff>:/icons/set-zero.png</iconset>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="btnLoadFrameSensorPositionReset">
+                            <property name="enabled">
+                             <bool>false</bool>
+                            </property>
+                            <property name="text">
+                             <string/>
+                            </property>
+                            <property name="icon">
+                             <iconset resource="resources/resources.qrc">
+                              <normaloff>:/icons/reset_zero.png</normaloff>:/icons/reset_zero.png</iconset>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QLabel" name="lblLoadFrameForceSensorPosition">
+                            <property name="minimumSize">
+                             <size>
+                              <width>50</width>
+                              <height>0</height>
+                             </size>
+                            </property>
+                            <property name="font">
+                             <font>
+                              <pointsize>13</pointsize>
+                             </font>
+                            </property>
+                            <property name="text">
+                             <string>21</string>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
+                        </item>
+                        <item>
+                         <spacer name="verticalSpacer_2">
+                          <property name="orientation">
+                           <enum>Qt::Vertical</enum>
+                          </property>
+                          <property name="sizeHint" stdset="0">
+                           <size>
+                            <width>20</width>
+                            <height>40</height>
+                           </size>
+                          </property>
+                         </spacer>
+                        </item>
+                       </layout>
+                      </widget>
+                     </item>
+                     <item>
+                      <spacer name="horizontalSpacer_5">
+                       <property name="orientation">
+                        <enum>Qt::Horizontal</enum>
+                       </property>
+                       <property name="sizeHint" stdset="0">
+                        <size>
+                         <width>40</width>
+                         <height>20</height>
+                        </size>
+                       </property>
+                      </spacer>
+                     </item>
+                    </layout>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="btnSetHz">
+                    <property name="text">
+                     <string>setHz</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QDoubleSpinBox" name="spinHz">
+                    <property name="minimum">
+                     <double>0.010000000000000</double>
+                    </property>
+                    <property name="maximum">
+                     <double>5.000000000000000</double>
+                    </property>
+                    <property name="singleStep">
+                     <double>0.500000000000000</double>
+                    </property>
+                    <property name="value">
+                     <double>0.500000000000000</double>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="btnHardReset">
+                    <property name="text">
+                     <string>hardReset</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="btnSetPidP">
+                    <property name="text">
+                     <string>set down PID_P</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="btnSetPID_D">
+                    <property name="text">
+                     <string>set down PID_D</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QDoubleSpinBox" name="spinSetPID_D">
+                    <property name="maximum">
+                     <double>1000.000000000000000</double>
+                    </property>
+                    <property name="value">
+                     <double>30.000000000000000</double>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QDoubleSpinBox" name="spinSetPID_P">
+                    <property name="maximum">
+                     <double>1000.000000000000000</double>
+                    </property>
+                    <property name="value">
+                     <double>10.000000000000000</double>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="btnSetUpPidP">
+                    <property name="text">
+                     <string>set up PID_P</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="btnSetUpPID_D">
+                    <property name="text">
+                     <string>set up PID_D</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QDoubleSpinBox" name="spinSetUpPID_D">
+                    <property name="maximum">
+                     <double>1000.000000000000000</double>
+                    </property>
+                    <property name="value">
+                     <double>30.000000000000000</double>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QDoubleSpinBox" name="spinSetUpPID_P">
+                    <property name="maximum">
+                     <double>1000.000000000000000</double>
+                    </property>
+                    <property name="value">
+                     <double>10.000000000000000</double>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="btnSetState">
+                    <property name="text">
+                     <string>set state pid</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QComboBox" name="cmbState">
                     <item>
-                     <layout class="QVBoxLayout" name="verticalLayout_8">
-                      <item>
-                       <widget class="QLabel" name="lblVolumetr1Speed">
-                        <property name="text">
-                         <string>TextLabel</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QSlider" name="sliderVolumetr1Speed">
-                        <property name="maximum">
-                         <number>150</number>
-                        </property>
-                        <property name="sliderPosition">
-                         <number>50</number>
-                        </property>
-                        <property name="orientation">
-                         <enum>Qt::Vertical</enum>
-                        </property>
-                        <property name="tickPosition">
-                         <enum>QSlider::TicksAbove</enum>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
+                     <property name="text">
+                      <string>P_correct</string>
+                     </property>
                     </item>
                     <item>
-                     <layout class="QVBoxLayout" name="verticalLayout_7">
-                      <item>
-                       <widget class="QLabel" name="lblVolumetr1HolUp">
-                        <property name="text">
-                         <string/>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QPushButton" name="btnVolumetr1MoveUp">
-                        <property name="text">
-                         <string>Вверх</string>
-                        </property>
-                        <property name="icon">
-                         <iconset resource="resources/resources.qrc">
-                          <normaloff>:/icons/arrow-up.png</normaloff>:/icons/arrow-up.png</iconset>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QPushButton" name="btnVolumetr1Stop">
-                        <property name="text">
-                         <string>Стоп</string>
-                        </property>
-                        <property name="icon">
-                         <iconset resource="resources/resources.qrc">
-                          <normaloff>:/icons/arrow-stop.png</normaloff>:/icons/arrow-stop.png</iconset>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QPushButton" name="btnVolumetr1MoveDown">
-                        <property name="text">
-                         <string>Вниз</string>
-                        </property>
-                        <property name="icon">
-                         <iconset resource="resources/resources.qrc">
-                          <normaloff>:/icons/arrow-down.png</normaloff>:/icons/arrow-down.png</iconset>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QLabel" name="lblVolumetr1HolDown">
-                        <property name="text">
-                         <string/>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
+                     <property name="text">
+                      <string>controller_default</string>
+                     </property>
                     </item>
-                   </layout>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QGroupBox" name="groupBox">
-                   <property name="title">
-                    <string>Сенсоры</string>
-                   </property>
-                   <layout class="QVBoxLayout" name="verticalLayout_9">
-                    <item>
-                     <layout class="QHBoxLayout" name="horizontalLayout_3">
-                      <item>
-                       <spacer name="horizontalSpacer_3">
-                        <property name="orientation">
-                         <enum>Qt::Horizontal</enum>
-                        </property>
-                        <property name="sizeHint" stdset="0">
-                         <size>
-                          <width>40</width>
-                          <height>20</height>
-                         </size>
-                        </property>
-                       </spacer>
-                      </item>
-                      <item>
-                       <widget class="QLabel" name="label_3">
-                        <property name="text">
-                         <string>Датчик давления</string>
-                        </property>
-                        <property name="alignment">
-                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QPushButton" name="btnVolumetr1SensorPressureSetZero">
-                        <property name="text">
-                         <string/>
-                        </property>
-                        <property name="icon">
-                         <iconset resource="resources/resources.qrc">
-                          <normaloff>:/icons/set-zero.png</normaloff>:/icons/set-zero.png</iconset>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QPushButton" name="btnVolumetr1SensorPressureReset">
-                        <property name="text">
-                         <string/>
-                        </property>
-                        <property name="icon">
-                         <iconset resource="resources/resources.qrc">
-                          <normaloff>:/icons/reset_zero.png</normaloff>:/icons/reset_zero.png</iconset>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QLabel" name="lblVolumetr1PressureSensor">
-                        <property name="minimumSize">
-                         <size>
-                          <width>50</width>
-                          <height>0</height>
-                         </size>
-                        </property>
-                        <property name="font">
-                         <font>
-                          <pointsize>13</pointsize>
-                         </font>
-                        </property>
-                        <property name="text">
-                         <string>21</string>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
-                    </item>
-                    <item>
-                     <spacer name="verticalSpacer_3">
-                      <property name="orientation">
-                       <enum>Qt::Vertical</enum>
-                      </property>
-                      <property name="sizeHint" stdset="0">
-                       <size>
-                        <width>20</width>
-                        <height>40</height>
-                       </size>
-                      </property>
-                     </spacer>
-                    </item>
-                   </layout>
-                  </widget>
-                 </item>
-                 <item>
-                  <spacer name="horizontalSpacer_4">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>40</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                </layout>
-               </widget>
-              </item>
-              <item row="3" column="0" colspan="4">
-               <widget class="QGroupBox" name="grpLoadFrame">
-                <property name="title">
-                 <string>Силовая рама</string>
-                </property>
-                <layout class="QHBoxLayout" name="horizontalLayout_8">
-                 <item>
-                  <widget class="QGroupBox" name="groupBox">
-                   <property name="title">
-                    <string>Автоматический режим</string>
-                   </property>
-                   <layout class="QVBoxLayout" name="verticalLayout_11">
-                    <item>
-                     <widget class="QPushButton" name="btnLoadFrameSetTarget">
-                      <property name="text">
-                       <string>Задать</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QPushButton" name="btnLoadFrameUnlockPid">
-                      <property name="text">
-                       <string>Остановить</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QDoubleSpinBox" name="spinLoadFrameTargetPIDMin">
-                      <property name="maximum">
-                       <double>1000000.000000000000000</double>
-                      </property>
-                      <property name="singleStep">
-                       <double>10.000000000000000</double>
-                      </property>
-                      <property name="value">
-                       <double>0.000000000000000</double>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QDoubleSpinBox" name="spinLoadFrameTargetPID">
-                      <property name="minimum">
-                       <double>5.000000000000000</double>
-                      </property>
-                      <property name="maximum">
-                       <double>2000.000000000000000</double>
-                      </property>
-                      <property name="singleStep">
-                       <double>50.000000000000000</double>
-                      </property>
-                      <property name="value">
-                       <double>50.000000000000000</double>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <spacer name="verticalSpacer_5">
-                      <property name="orientation">
-                       <enum>Qt::Vertical</enum>
-                      </property>
-                      <property name="sizeHint" stdset="0">
-                       <size>
-                        <width>20</width>
-                        <height>40</height>
-                       </size>
-                      </property>
-                     </spacer>
-                    </item>
-                   </layout>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QGroupBox" name="groupBox">
-                   <property name="title">
-                    <string>Ручной режим</string>
-                   </property>
-                   <layout class="QHBoxLayout" name="horizontalLayout">
-                    <item>
-                     <layout class="QVBoxLayout" name="verticalLayout_10">
-                      <item>
-                       <widget class="QLabel" name="lblLoadFrameSpeed">
-                        <property name="text">
-                         <string>TextLabel</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QSlider" name="sliderLoadFrameSpeed">
-                        <property name="maximum">
-                         <number>150</number>
-                        </property>
-                        <property name="sliderPosition">
-                         <number>50</number>
-                        </property>
-                        <property name="orientation">
-                         <enum>Qt::Vertical</enum>
-                        </property>
-                        <property name="tickPosition">
-                         <enum>QSlider::TicksAbove</enum>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
-                    </item>
-                    <item>
-                     <layout class="QVBoxLayout" name="verticalLayout_5">
-                      <item>
-                       <widget class="QLabel" name="lblLoadFrameHolUp">
-                        <property name="text">
-                         <string/>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QPushButton" name="btnLoadFrameMoveUp">
-                        <property name="text">
-                         <string>Вверх</string>
-                        </property>
-                        <property name="icon">
-                         <iconset resource="resources/resources.qrc">
-                          <normaloff>:/icons/arrow-up.png</normaloff>:/icons/arrow-up.png</iconset>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QPushButton" name="btnLoadFrameStopStepper">
-                        <property name="text">
-                         <string>Стоп</string>
-                        </property>
-                        <property name="icon">
-                         <iconset resource="resources/resources.qrc">
-                          <normaloff>:/icons/arrow-stop.png</normaloff>:/icons/arrow-stop.png</iconset>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QPushButton" name="btnLoadFrameMoveDown">
-                        <property name="text">
-                         <string>Вниз</string>
-                        </property>
-                        <property name="icon">
-                         <iconset resource="resources/resources.qrc">
-                          <normaloff>:/icons/arrow-down.png</normaloff>:/icons/arrow-down.png</iconset>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QLabel" name="lblLoadFrameHolDown">
-                        <property name="text">
-                         <string/>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
-                    </item>
-                   </layout>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QGroupBox" name="groupBox">
-                   <property name="title">
-                    <string>Сенсоры</string>
-                   </property>
-                   <layout class="QVBoxLayout" name="verticalLayout_12">
-                    <item>
-                     <layout class="QHBoxLayout" name="horizontalLayout_5">
-                      <item>
-                       <spacer name="horizontalSpacer_2">
-                        <property name="orientation">
-                         <enum>Qt::Horizontal</enum>
-                        </property>
-                        <property name="sizeHint" stdset="0">
-                         <size>
-                          <width>40</width>
-                          <height>20</height>
-                         </size>
-                        </property>
-                       </spacer>
-                      </item>
-                      <item>
-                       <widget class="QLabel" name="label_2">
-                        <property name="text">
-                         <string>Датчик деформации</string>
-                        </property>
-                        <property name="alignment">
-                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                        </property>
-                        <property name="wordWrap">
-                         <bool>true</bool>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QPushButton" name="btnLoadFrameSensorDeformSetZero">
-                        <property name="text">
-                         <string/>
-                        </property>
-                        <property name="icon">
-                         <iconset resource="resources/resources.qrc">
-                          <normaloff>:/icons/set-zero.png</normaloff>:/icons/set-zero.png</iconset>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QPushButton" name="btnLoadFrameSensorDeformReset">
-                        <property name="text">
-                         <string/>
-                        </property>
-                        <property name="icon">
-                         <iconset resource="resources/resources.qrc">
-                          <normaloff>:/icons/reset_zero.png</normaloff>:/icons/reset_zero.png</iconset>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QLabel" name="lblLoadFrameDeformSensor">
-                        <property name="minimumSize">
-                         <size>
-                          <width>50</width>
-                          <height>0</height>
-                         </size>
-                        </property>
-                        <property name="font">
-                         <font>
-                          <pointsize>13</pointsize>
-                         </font>
-                        </property>
-                        <property name="text">
-                         <string>21</string>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
-                    </item>
-                    <item>
-                     <layout class="QHBoxLayout" name="horizontalLayout_2">
-                      <item>
-                       <spacer name="horizontalSpacer">
-                        <property name="orientation">
-                         <enum>Qt::Horizontal</enum>
-                        </property>
-                        <property name="sizeHint" stdset="0">
-                         <size>
-                          <width>40</width>
-                          <height>20</height>
-                         </size>
-                        </property>
-                       </spacer>
-                      </item>
-                      <item>
-                       <widget class="QLabel" name="label">
-                        <property name="text">
-                         <string>Датчик силы</string>
-                        </property>
-                        <property name="alignment">
-                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                        </property>
-                        <property name="wordWrap">
-                         <bool>true</bool>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QPushButton" name="btnLoadFrameSensorForceSetZero">
-                        <property name="text">
-                         <string/>
-                        </property>
-                        <property name="icon">
-                         <iconset resource="resources/resources.qrc">
-                          <normaloff>:/icons/set-zero.png</normaloff>:/icons/set-zero.png</iconset>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QPushButton" name="btnLoadFrameSensorForceReset">
-                        <property name="text">
-                         <string/>
-                        </property>
-                        <property name="icon">
-                         <iconset resource="resources/resources.qrc">
-                          <normaloff>:/icons/reset_zero.png</normaloff>:/icons/reset_zero.png</iconset>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QLabel" name="lblLoadFrameForceSensor">
-                        <property name="minimumSize">
-                         <size>
-                          <width>50</width>
-                          <height>0</height>
-                         </size>
-                        </property>
-                        <property name="font">
-                         <font>
-                          <pointsize>13</pointsize>
-                         </font>
-                        </property>
-                        <property name="text">
-                         <string>21</string>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
-                    </item>
-                    <item>
-                     <spacer name="verticalSpacer_2">
-                      <property name="orientation">
-                       <enum>Qt::Vertical</enum>
-                      </property>
-                      <property name="sizeHint" stdset="0">
-                       <size>
-                        <width>20</width>
-                        <height>40</height>
-                       </size>
-                      </property>
-                     </spacer>
-                    </item>
-                   </layout>
-                  </widget>
-                 </item>
-                 <item>
-                  <spacer name="horizontalSpacer_5">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>40</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                </layout>
-               </widget>
-              </item>
-              <item row="4" column="0">
-               <widget class="QPushButton" name="btnSetHz">
-                <property name="text">
-                 <string>setHz</string>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="1">
-               <widget class="QDoubleSpinBox" name="spinHz">
-                <property name="minimum">
-                 <double>0.010000000000000</double>
-                </property>
-                <property name="maximum">
-                 <double>5.000000000000000</double>
-                </property>
-                <property name="singleStep">
-                 <double>0.500000000000000</double>
-                </property>
-                <property name="value">
-                 <double>0.500000000000000</double>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="0">
-               <widget class="QPushButton" name="btnHardReset">
-                <property name="text">
-                 <string>hardReset</string>
-                </property>
-               </widget>
-              </item>
-              <item row="6" column="0">
-               <widget class="QPushButton" name="btnSetPidP">
-                <property name="text">
-                 <string>set down PID_P</string>
-                </property>
-               </widget>
-              </item>
-              <item row="6" column="1">
-               <widget class="QDoubleSpinBox" name="spinSetPID_P">
-                <property name="maximum">
-                 <double>1000.000000000000000</double>
-                </property>
-                <property name="value">
-                 <double>10.000000000000000</double>
-                </property>
-               </widget>
-              </item>
-              <item row="6" column="2">
-               <widget class="QPushButton" name="btnSetPID_D">
-                <property name="text">
-                 <string>set down PID_D</string>
-                </property>
-               </widget>
-              </item>
-              <item row="6" column="3">
-               <widget class="QDoubleSpinBox" name="spinSetPID_D">
-                <property name="maximum">
-                 <double>1000.000000000000000</double>
-                </property>
-                <property name="value">
-                 <double>30.000000000000000</double>
-                </property>
-               </widget>
-              </item>
-              <item row="7" column="0">
-               <widget class="QPushButton" name="btnSetUpPidP">
-                <property name="text">
-                 <string>set up PID_P</string>
-                </property>
-               </widget>
-              </item>
-              <item row="7" column="1">
-               <widget class="QDoubleSpinBox" name="spinSetUpPID_P">
-                <property name="maximum">
-                 <double>1000.000000000000000</double>
-                </property>
-                <property name="value">
-                 <double>10.000000000000000</double>
-                </property>
-               </widget>
-              </item>
-              <item row="7" column="2">
-               <widget class="QPushButton" name="btnSetUpPID_D">
-                <property name="text">
-                 <string>set up PID_D</string>
-                </property>
-               </widget>
-              </item>
-              <item row="7" column="3">
-               <widget class="QDoubleSpinBox" name="spinSetUpPID_D">
-                <property name="maximum">
-                 <double>1000.000000000000000</double>
-                </property>
-                <property name="value">
-                 <double>30.000000000000000</double>
-                </property>
-               </widget>
-              </item>
-              <item row="8" column="0">
-               <widget class="QPushButton" name="btnSetState">
-                <property name="text">
-                 <string>set state pid</string>
-                </property>
-               </widget>
-              </item>
-              <item row="8" column="1">
-               <widget class="QComboBox" name="cmbState">
-                <item>
-                 <property name="text">
-                  <string>P_correct</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>controller_default</string>
-                 </property>
-                </item>
-               </widget>
-              </item>
-              <item row="9" column="0">
-               <spacer name="verticalSpacer">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>40</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="verticalSpacer">
+                    <property name="orientation">
+                     <enum>Qt::Vertical</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>20</width>
+                      <height>40</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+              </layout>
+             </widget>
             </widget>
            </item>
           </layout>

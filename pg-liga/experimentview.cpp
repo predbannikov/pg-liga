@@ -58,6 +58,7 @@ void ExperimentView::initServicePanel()
 {
     ui->lblLoadFrameSpeed->setNum(ui->sliderLoadFrameSpeed->value());
     ui->lblVolumetr1Speed->setNum(ui->sliderVolumetr1Speed->value());
+    ui->lblVolumetr2Speed->setNum(ui->sliderVolumetr2Speed->value());
 }
 
 void ExperimentView::initControlPanel()
@@ -210,6 +211,87 @@ void ExperimentView::moveDownOperation()
     QTimer::singleShot(10, this, &ExperimentView::updateIndexOperationActions);
 }
 
+void ExperimentView::updateStatusView(QJsonObject jObj)
+{
+    auto jSensors = jObj["sensors"].toObject();
+
+    QString out_to_lbl;
+
+    for (QJsonObject::iterator iter = jSensors.begin(); iter != jSensors.end(); ++iter) {
+        out_to_lbl.append(QString("%1:%2\n").arg(iter.key(), 15).arg(iter.value().toString() ));
+        if (iter.key() == "LF_sensor_force")
+            ui->lblLoadFrameForceSensor->setText(iter.value().toString());
+        if (iter.key() == "LF_sensor_deform")
+            ui->lblLoadFrameDeformSensor->setText(iter.value().toString());
+        if (iter.key() == "LF_sensor_hol") {
+            if (iter.value().toString().toInt() == 0) {
+                ui->btnLoadFrameMoveUp->setStyleSheet("background-color: #66cc99;");
+                ui->btnLoadFrameMoveDown->setStyleSheet("background-color: #66cc99;");
+            } else if (iter.value().toString().toInt() == 1) {
+                ui->btnLoadFrameMoveUp->setStyleSheet("background-color: #66cc99;");
+                ui->btnLoadFrameMoveDown->setStyleSheet("background-color: #ffaaaa;");
+            } else if (iter.value().toString().toInt() == 2) {
+                ui->btnLoadFrameMoveUp->setStyleSheet("background-color: #ffaaaa;");
+                ui->btnLoadFrameMoveDown->setStyleSheet("background-color: #66cc99;");
+            }
+        }
+        if (iter.key() == "LF_stepper_pos")
+            ui->lblLoadFrameForceSensorPosition->setText(iter.value().toString());
+//        if (iter.key() == "LF_controller_status")
+//            ui->lblLoadFrameForceSensorPosition->setText(iter.value().toString());
+
+
+        if (iter.key() == "Vol1_sensor_pressure")
+            ui->lblVolumetr1PressureSensor->setText(iter.value().toString());
+        if (iter.key() == "Vol1_sensor_hol") {
+            if (iter.value().toString().toInt() == 0) {
+                ui->btnVolumetr1MoveUp->setStyleSheet("background-color: #66cc99;");
+                ui->btnVolumetr1MoveDown->setStyleSheet("background-color: #66cc99;");
+            } else if (iter.value().toString().toInt() == 1) {
+                ui->btnVolumetr1MoveUp->setStyleSheet("background-color: #ffaaaa;");
+                ui->btnVolumetr1MoveDown->setStyleSheet("background-color: #66cc99;");
+            } else if (iter.value().toString().toInt() == 2) {
+                ui->btnVolumetr1MoveUp->setStyleSheet("background-color: #66cc99;");
+                ui->btnVolumetr1MoveDown->setStyleSheet("background-color: #ffaaaa;");
+            }
+        }
+        if (iter.key() == "Vol1_stepper_pos")
+            ui->lblVolumetr1SensorPosition->setText(iter.value().toString());
+//        if (iter.key() == "Vol1_controller_status")
+//            ui->grpManualMode->setEnabled(false);
+
+        if (iter.key() == "Vol2_sensor_pressure")
+            ui->lblVolumetr2PressureSensor->setText(iter.value().toString());
+        if (iter.key() == "Vol2_sensor_hol") {
+            if (iter.value().toString().toInt() == 0) {
+                ui->btnVolumetr2MoveUp->setStyleSheet("background-color: #66cc99;");
+                ui->btnVolumetr2MoveDown->setStyleSheet("background-color: #66cc99;");
+            } else if (iter.value().toString().toInt() == 1) {
+                ui->btnVolumetr2MoveUp->setStyleSheet("background-color: #ffaaaa;");
+                ui->btnVolumetr2MoveDown->setStyleSheet("background-color: #66cc99;");
+            } else if (iter.value().toString().toInt() == 2) {
+                ui->btnVolumetr2MoveUp->setStyleSheet("background-color: #66cc99;");
+                ui->btnVolumetr2MoveDown->setStyleSheet("background-color: #ffaaaa;");
+            }
+        }
+        if (iter.key() == "Vol2_stepper_pos")
+            ui->lblVolumetr2SensorPosition->setText(iter.value().toString());
+//        if (iter.key() == "Vol2_controller_status")
+//            ui->grpManualMode->setEnabled(false);
+
+
+        out_to_lbl.append("\n");
+
+    }
+
+    if (out_to_lbl.size() < 5)
+        qDebug() << "stop";
+    out_to_lbl.append("\n");
+    out_to_lbl.append(jObj["status_experiment"].toString());
+    ui->lblSensors->setText(out_to_lbl);
+    ui->controlPanelWgt->changeButtons(jObj["status_experiment"].toString());
+}
+
 qint64 ExperimentView::timeInterval(const QString& date, const QString& format)
 {
     QDateTime sourceDate(QDate(1900, 1, 1), QTime(0, 0, 0));
@@ -261,16 +343,7 @@ void ExperimentView::onReadyResponse(const QJsonObject &jobj)
     //    ui->textEditLogOut->append(QString(QJsonDocument(jobj).toJson()).replace('\n', ' '));
     QString CMD = jobj["CMD"].toString();
     if (CMD == "get_status_device") {
-        QString out_to_lbl;
-        auto jSensors = jobj["sensors"].toObject();
-        for (QJsonObject::iterator iter = jSensors.begin(); iter != jSensors.end(); ++iter)
-            out_to_lbl.append(QString("%1:%2\n").arg(iter.key(), 15).arg(QString::number(iter.value().toDouble(), 'f', 7) ));
-        if (out_to_lbl.size() < 5)
-            qDebug() << "stop";
-        out_to_lbl.append("\n");
-        out_to_lbl.append(jobj["status_experiment"].toString());
-        ui->lblSensors->setText(out_to_lbl);
-        ui->controlPanelWgt->changeButtons(jobj["status_experiment"].toString());
+        updateStatusView(jobj);
 
     } else if (CMD == "get_protocol") {
         ui->textEdit->append(QByteArray::fromBase64(jobj["protocol"].toString().toUtf8()));
@@ -425,7 +498,7 @@ void ExperimentView::on_btnSetState_clicked()
 void ExperimentView::on_btnLoadFrameMoveUp_clicked()
 {
     QJsonObject jobj;
-    jobj["CMD"] = "move_frame";
+    jobj["CMD"] = "load_frame_move";
     jobj["speed"] = QString::number(-ui->sliderLoadFrameSpeed->value());
     emit sendRequest(jobj);
 }
@@ -433,7 +506,7 @@ void ExperimentView::on_btnLoadFrameMoveUp_clicked()
 void ExperimentView::on_btnLoadFrameMoveDown_clicked()
 {
     QJsonObject jobj;
-    jobj["CMD"] = "move_frame";
+    jobj["CMD"] = "load_frame_move";
     jobj["speed"] = QString::number(ui->sliderLoadFrameSpeed->value());
     emit sendRequest(jobj);
 }
@@ -441,7 +514,7 @@ void ExperimentView::on_btnLoadFrameMoveDown_clicked()
 void ExperimentView::on_btnLoadFrameStopStepper_clicked()
 {
     QJsonObject jobj;
-    jobj["CMD"] = "stop_frame";
+    jobj["CMD"] = "load_frame_stop";
     emit sendRequest(jobj);
 }
 
@@ -559,6 +632,92 @@ void ExperimentView::on_btnVolumetr1Stop_clicked()
 {
     QJsonObject jobj;
     jobj["CMD"] = "volumetr1_stop";
+    emit sendRequest(jobj);
+}
+
+
+void ExperimentView::on_sliderLoadFrameSpeed_valueChanged(int value)
+{
+    ui->lblLoadFrameSpeed->setText(QString::number(value));
+}
+
+
+void ExperimentView::on_btnVolumetr2MoveUp_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "volumetr2_move";
+    jobj["speed"] = QString::number(ui->sliderVolumetr2Speed->value());
+    emit sendRequest(jobj);
+}
+
+
+void ExperimentView::on_btnVolumetr2Stop_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "volumetr2_stop";
+    emit sendRequest(jobj);
+}
+
+
+void ExperimentView::on_btnVolumetr2MoveDown_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "volumetr2_move";
+    jobj["speed"] = QString::number(-ui->sliderVolumetr2Speed->value());
+    emit sendRequest(jobj);
+}
+
+
+void ExperimentView::on_sliderVolumetr2Speed_valueChanged(int value)
+{
+    ui->lblVolumetr2Speed->setText(QString::number(value));
+}
+
+
+void ExperimentView::on_sliderVolumetr1Speed_valueChanged(int value)
+{
+    ui->lblVolumetr1Speed->setText(QString::number(value));
+}
+
+
+void ExperimentView::on_btnLoadFrameSensorPositionSetZero_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "load_frame_stepper_set_zero";
+    emit sendRequest(jobj);
+}
+
+
+void ExperimentView::on_btnVolumetr2SensorPositionSetZero_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "volumetr2_stepper_set_zero";
+    emit sendRequest(jobj);
+}
+
+
+void ExperimentView::on_btnVolumetr1SensorPositionSetZero_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "volumetr1_stepper_set_zero";
+    emit sendRequest(jobj);
+}
+
+
+void ExperimentView::on_btnVolumetr2SensorPressureSetZero_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "volumetr2_sensor_set_zero";
+    jobj["sensor_name"] = "SensPrs1";
+    emit sendRequest(jobj);
+}
+
+
+void ExperimentView::on_btnVolumetr2SensorPressureReset_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "volumetr2_sensor_reset_offset";
+    jobj["sensor_name"] = "SensPrs1";
     emit sendRequest(jobj);
 }
 

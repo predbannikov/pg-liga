@@ -88,6 +88,9 @@ public slots:
     void moveUpOperation();
     void moveDownOperation();
 
+private:
+    void updateStatusView(QJsonObject jObj);
+
 
 
 private slots:
@@ -167,6 +170,28 @@ private slots:
     void on_btnVolumetr1MoveDown_clicked();
 
     void on_btnVolumetr1Stop_clicked();
+
+    void on_sliderLoadFrameSpeed_valueChanged(int value);
+
+    void on_btnVolumetr2MoveUp_clicked();
+
+    void on_btnVolumetr2Stop_clicked();
+
+    void on_btnVolumetr2MoveDown_clicked();
+
+    void on_sliderVolumetr2Speed_valueChanged(int value);
+
+    void on_sliderVolumetr1Speed_valueChanged(int value);
+
+    void on_btnLoadFrameSensorPositionSetZero_clicked();
+
+    void on_btnVolumetr2SensorPositionSetZero_clicked();
+
+    void on_btnVolumetr1SensorPositionSetZero_clicked();
+
+    void on_btnVolumetr2SensorPressureSetZero_clicked();
+
+    void on_btnVolumetr2SensorPressureReset_clicked();
 
 signals:
     void sendRequest(QJsonObject &jobj);
