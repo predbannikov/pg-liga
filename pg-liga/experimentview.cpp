@@ -317,15 +317,6 @@ void ExperimentView::on_btnGetStoreData_clicked()
     onReadDataStore();
 }
 
-void ExperimentView::on_btnGetSensorValue_clicked()
-{
-    QJsonObject jobj;
-    jobj["CMD"] = "get_sensor_value";
-    jobj["arg1"] = ui->cmbSensorName->currentText();
-    emit sendRequest(jobj);
-}
-
-
 void ExperimentView::on_btnInitStoreData_clicked()
 {
     on_btnClearDataStore_clicked();
@@ -349,15 +340,6 @@ void ExperimentView::on_btnSetSettings_clicked()
     ui->textEdit->clear();
     ui->textEdit->append(QJsonDocument(jobj).toJson());
 //    emit sendRequest(jobj);
-}
-
-void ExperimentView::on_btnSetTarget_clicked()
-{
-    QJsonObject jobj;
-    jobj["CMD"] = "set_target";
-    jobj["target_min"] = ui->spinTargetMin->value();
-    jobj["target"] = ui->spinTarget->value();
-    emit sendRequest(jobj);
 }
 
 void ExperimentView::on_btnClearDataStore_clicked()

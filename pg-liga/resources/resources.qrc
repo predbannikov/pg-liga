@@ -58,5 +58,7 @@
         <file>icons/skip_exp.png</file>
         <file>icons/stop_exp.png</file>
         <file>images/animation_loading.gif</file>
+        <file>icons/reset_zero.png</file>
+        <file>icons/set-zero.png</file>
     </qresource>
 </RCC>

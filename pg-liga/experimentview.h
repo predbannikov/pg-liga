@@ -116,13 +116,9 @@ private slots:
 
     void on_btnGetStoreData_clicked();
 
-    void on_btnGetSensorValue_clicked();
-
     void on_btnInitStoreData_clicked();
 
     void on_btnSetSettings_clicked();
-
-    void on_btnSetTarget_clicked();
 
     void on_btnClearDataStore_clicked();
 
