@@ -10,6 +10,7 @@
 #include "global.h"
 #include "loadframe.h"
 #include "volumeter1.h"
+#include "volumeter2.h"
 
 
 class Plata : public AbstractUnit {
@@ -34,6 +35,10 @@ class Operations : public Interface
         VOLUMETR1_HOL_STATUS,
         VOLUMETR1_POSITION,
         VOLUMETR1_CONTROLLER_STATUS,
+        VOLUMETR2_SENSOR_PRESSURE,
+        VOLUMETR2_HOL_STATUS,
+        VOLUMETR2_POSITION,
+        VOLUMETR2_CONTROLLER_STATUS,
         LOADFRAME_SENSOR_FORCE,
         LOADFRAME_SENSOR_DEFORM,
         LOADFRAME_HOL_STATUS,
@@ -61,6 +66,7 @@ public:
     int counter = 0;
     LoadFrame *loadFrame = nullptr;
     Volumeter1 volumetr1;
+    Volumeter2 volumetr2;
     Plata plata;
     StoreData *store = nullptr;
     RETCODE execCMD(QJsonObject &jobj);
