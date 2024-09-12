@@ -193,6 +193,10 @@ private slots:
 
     void on_btnVolumetr2SensorPressureReset_clicked();
 
+    void on_btnVolumetr2SetTarget_clicked();
+
+    void on_btnVolumetr2Unlock_clicked();
+
 signals:
     void sendRequest(QJsonObject &jobj);
 

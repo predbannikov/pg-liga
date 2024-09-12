@@ -721,3 +721,20 @@ void ExperimentView::on_btnVolumetr2SensorPressureReset_clicked()
     emit sendRequest(jobj);
 }
 
+
+void ExperimentView::on_btnVolumetr2SetTarget_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "volumetr2_set_target";
+    jobj["target"] = ui->spinVolumetr2Target->value();
+    emit sendRequest(jobj);
+}
+
+
+void ExperimentView::on_btnVolumetr2Unlock_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "volumetr2_unlock_PID";
+    emit sendRequest(jobj);
+}
+
