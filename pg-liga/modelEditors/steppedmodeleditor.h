@@ -40,6 +40,9 @@ public:
     void addStep();
     void clearStep(int idx);
 
+signals:
+    void dataChanged();
+
 public slots:
     void setStepHighlighted(int idx);
 

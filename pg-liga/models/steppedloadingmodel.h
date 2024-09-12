@@ -78,6 +78,9 @@ public:
 
     bool isLast(int idx) const;
 
+    QJsonObject getJsonModel() override;
+
+
 private:
     virtual QStringList headers() const = 0;
 
@@ -89,6 +92,7 @@ class StaticCompressionModel : public SteppedLoadingModel
 public:
     StaticCompressionModel(QObject *parent = nullptr):
         SteppedLoadingModel(parent) {}
+
 
 private:
     QStringList headers() const override {

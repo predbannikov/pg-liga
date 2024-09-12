@@ -2,6 +2,7 @@
 
 #include <QPair>
 #include <QDebug>
+#include <QAbstractTableModel>
 
 SteppedLoadingModel::SteppedLoadingModel(QObject *parent):
     AbstractSteppedModel(parent)
@@ -327,4 +328,11 @@ bool SteppedLoadingModel::isLast(int idx) const
     
 
     return idx == m_steps.size() - 1;
+}
+
+QJsonObject SteppedLoadingModel::getJsonModel()
+{
+    QJsonObject jobj;
+    jobj["stepCount"] = stepCount();
+    return jobj;
 }

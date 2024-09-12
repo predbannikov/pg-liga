@@ -206,9 +206,10 @@ int SteppedPressuriseModel::addStep(const Step &step)
 {
     const auto row = m_steps.size();
     beginInsertRows(QModelIndex(), row, row);
-    Step newStep;
+//    Step newStep;
     m_steps.append(step);
     endInsertRows();
+    emit dataChanged(QModelIndex(), QModelIndex());
     return m_steps.size();
 }
 
@@ -230,6 +231,7 @@ int SteppedPressuriseModel::insertStep(const QModelIndex &index)
     endInsertRows();
 
     
+    emit dataChanged(QModelIndex(), QModelIndex());
 
     return row;
 }
@@ -245,6 +247,7 @@ int SteppedPressuriseModel::removeStep(const QModelIndex &index)
         m_steps.removeAt(row);
         endRemoveRows();
     }
+    emit dataChanged(QModelIndex(), QModelIndex());
 
     if (row == m_steps.count())
     {
@@ -314,10 +317,20 @@ int SteppedPressuriseModel::duplicateStep(const QModelIndex &index)
         return -1;
     const auto row = index.row() + 1;
     beginInsertRows(QModelIndex(), row, row);
-    int stepCount = m_steps.count();
+//    int stepCount = m_steps.count();
 
     Step step = m_steps.at(index.row());
     m_steps.insert(row, step);
     endInsertRows();
+    emit dataChanged(QModelIndex(), QModelIndex());
+
+
     return row;
+}
+
+QJsonObject SteppedPressuriseModel::getJsonModel()
+{
+    QJsonObject jobj;
+    jobj["stepCount"] = stepCount();
+    return jobj;
 }

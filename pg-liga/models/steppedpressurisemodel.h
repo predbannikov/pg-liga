@@ -79,6 +79,7 @@ public:
 
     Measurements::Pressure getOverPressureCellVolumeter() { return m_overPressureCellVolumeter; }
     Measurements::Pressure getOverPressurePoreVolumeter() { return m_overPressurePoreVolumeter; }
+    QJsonObject getJsonModel() override;
 
 private:
     QList<Step> m_steps;

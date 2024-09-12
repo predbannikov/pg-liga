@@ -132,6 +132,7 @@ INCLUDEPATH += $$PWD/../measurements/
 INCLUDEPATH += $$PWD/../datastore/
 INCLUDEPATH += $$PWD/../network/
 INCLUDEPATH += $$PWD/models/
+INCLUDEPATH += $$PWD/modelEditors/
 INCLUDEPATH += $$PWD/QtWaitingSpinner/
 
 message($$HEADERS)

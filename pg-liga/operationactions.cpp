@@ -115,6 +115,9 @@ SteppedModelEditor *OperationActions::createSteppedModelEditor()
     SteppedModelEditor *wgtStepEdit = new SteppedModelEditor(this);
     ui->widget->layout()->addWidget(wgtStepEdit);
     updateTextMenu(qobject_cast<QAction *>(sender())->text());
+    connect(wgtStepEdit, &SteppedModelEditor::dataChanged, []() {
+        qDebug() << "########### dataChanged";
+    });
     return wgtStepEdit;
 }
 

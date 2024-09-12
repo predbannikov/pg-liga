@@ -128,6 +128,7 @@ void SteppedModelEditor::setModel(SteppedLoadingModel *model)
 
 void SteppedModelEditor::setModel(SteppedPressuriseModel *model)
 {
+
     auto *pressureDelegate = new SpinBoxDelegate(Strings::kPa, model->getOverPressureCellVolumeter().kiloPascals(), this);
     pressureDelegate->setSingleStep(5);
     pressureDelegate->setDecimals(0);
@@ -145,6 +146,7 @@ void SteppedModelEditor::setModel(SteppedPressuriseModel *model)
     });
 
     setupModel(model);
+    connect(model, &SteppedPressuriseModel::dataChanged, this, &SteppedModelEditor::dataChanged);
 }
 
 void SteppedModelEditor::setModel(AdvancedKinematicLoadingModel *model)
@@ -224,6 +226,7 @@ void SteppedModelEditor::setupModel(AbstractSteppedModel *model)
 
     connect(ui->btnLeftStepAdd, &QPushButton::clicked, [=]() {
         setStepHighlighted(model->insertStep(ui->stepView->currentIndex()));
+        qDebug() << "#############" << model->getJsonModel();
     });
 
     connect(ui->btnMiddleStepRemove, &QPushButton::clicked, [=]() {
