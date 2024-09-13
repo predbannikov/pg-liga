@@ -69,7 +69,7 @@ public:
     int removeStep(const QModelIndex &index = QModelIndex()) override;
     int moveStep(const QModelIndex &index, int moveAmount) override;
     int duplicateStep(const QModelIndex &index = QModelIndex()) override;
-    QJsonObject serializModel() override;
+    QJsonObject serializModel();
 
     void setStep(const QModelIndex &index, const Step &step);
 

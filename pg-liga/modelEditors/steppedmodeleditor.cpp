@@ -222,18 +222,19 @@ void SteppedModelEditor::clearStep(int idx)
 
 QJsonObject SteppedModelEditor::serializModel()
 {
+    QJsonObject jRet;
     QAbstractTableModel *tableModel = qobject_cast<QAbstractTableModel *>(ui->stepView->model());
     if (qobject_cast<SteppedPressuriseModel *>(tableModel) != nullptr) {
         SteppedPressuriseModel *model = qobject_cast<SteppedPressuriseModel *>(tableModel);
-        qDebug() << Q_FUNC_INFO << "SteppedPressuriseModel" << model->serializModel();
-
+        jRet = model->serializModel();
+        qDebug() << Q_FUNC_INFO << "SteppedPressuriseModel";
     }
     else if (qobject_cast<SteppedLoadingModel *>(tableModel) != nullptr) {
-        SteppedLoadingModel *model = qobject_cast<SteppedLoadingModel *>(tableModel);
-        qDebug() << Q_FUNC_INFO << "SteppedLoadingModel";
+//        SteppedLoadingModel *model = qobject_cast<SteppedLoadingModel *>(tableModel);
+//        qDebug() << Q_FUNC_INFO << "SteppedLoadingModel";
 
     }
-    return QJsonObject();
+    return jRet;
 }
 
 void SteppedModelEditor::setStepHighlighted(int idx)

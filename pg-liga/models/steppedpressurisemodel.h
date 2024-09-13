@@ -111,7 +111,7 @@ public:
     int moveStep(const QModelIndex &index, int moveAmount) override;
     void setStep(const QModelIndex &index, const Step &step);
     int duplicateStep(const QModelIndex &index = QModelIndex()) override;
-    QJsonObject serializModel() override;
+    QJsonObject serializModel();
 
     /* Getters */
     Step step(int idx) const { return m_steps.at(idx); }

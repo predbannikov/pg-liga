@@ -303,7 +303,7 @@ int SteppedLoadingModel::duplicateStep(const QModelIndex &index)
 
 QJsonObject SteppedLoadingModel::serializModel()
 {
-
+    return QJsonObject();
 }
 
 void SteppedLoadingModel::setStep(const QModelIndex &index, const SteppedLoadingModel::Step &step)

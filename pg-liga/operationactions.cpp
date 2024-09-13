@@ -1,6 +1,8 @@
 #include "operationactions.h"
 #include "ui_operationactions.h"
 
+#include <QJsonDocument>
+
 OperationActions::OperationActions(int numberOperation, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::OperationActions),
@@ -101,16 +103,20 @@ void OperationActions::deleteWidget()
 
 QJsonObject OperationActions::serializOperation()
 {
+    QJsonObject jTest;
     QWidget *wgt = ui->widget->layout()->itemAt(0)->widget();
     if (qobject_cast<SteppedModelEditor *>(wgt) != nullptr) {
         SteppedModelEditor *steppedModelEditor = qobject_cast<SteppedModelEditor *>(wgt);
-        qDebug() << "SteppedModelEditor" << steppedModelEditor->serializModel();
+        jTest = steppedModelEditor->serializModel();
+        qDebug().noquote() << QJsonDocument(jTest).toJson(QJsonDocument::Indented);
+//        qDebug().noquote() << QJsonDocument(jTest).toJson(QJsonDocument::Indented);
+
     } else if (qobject_cast<KinematicLoadingModelEditor *>(wgt) != nullptr){
         qDebug() << "KinematicLoadingModelEditor";
     } else {
         qDebug() << "##################";
     }
-    return QJsonObject();
+    return jTest;
 }
 
 void OperationActions::updateTextMenu(QString text)
