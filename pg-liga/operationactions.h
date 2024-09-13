@@ -10,9 +10,12 @@
 #include <QStyle>
 
 #include "steppedmodeleditor.h"
+#include "kinematicloadingmodeleditor.h"
+
 #include "steppedloadingmodel.h"
 #include "steppedpressurisemodel.h"
 #include "kinematicpressurisedloadingmodel.h"
+
 
 /*
  *  Для добавления действия операции необходимо:
@@ -52,6 +55,7 @@ public slots:
 
 private slots:
     void on_btnMenuActions_clicked();
+    QJsonObject serializOperation();
 
 signals:
     void addOperationActions();
@@ -66,6 +70,7 @@ private:
      *                          добавить его в операцию ( в операции должен быть только один виджет)
      */
     void deleteWidget();
+
 
     /**
      * @brief updateTextMenu    Обновляет индексы операций, в случае их перемещения

@@ -7,6 +7,8 @@
 
 class AbstractSteppedModel : public QAbstractTableModel
 {
+    Q_OBJECT
+
 public:
     AbstractSteppedModel(QObject *parent = nullptr):
         QAbstractTableModel(parent)
@@ -17,8 +19,7 @@ public:
     virtual int removeStep(const QModelIndex &index = QModelIndex()) = 0;
     virtual int moveStep(const QModelIndex &index, int moveAmount) = 0;
     virtual int duplicateStep(const QModelIndex &index = QModelIndex()) = 0;
-
-    virtual QJsonObject getJsonModel() = 0;
+    virtual QJsonObject serializModel() = 0;
 };
 
 #endif // ABSTRACTSTEPPEDMODEL_H

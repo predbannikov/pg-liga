@@ -69,6 +69,7 @@ public:
     int removeStep(const QModelIndex &index = QModelIndex()) override;
     int moveStep(const QModelIndex &index, int moveAmount) override;
     int duplicateStep(const QModelIndex &index = QModelIndex()) override;
+    QJsonObject serializModel() override;
 
     void setStep(const QModelIndex &index, const Step &step);
 
@@ -77,9 +78,6 @@ public:
     int stepCount() const { return m_steps.size(); }
 
     bool isLast(int idx) const;
-
-    QJsonObject getJsonModel() override;
-
 
 private:
     virtual QStringList headers() const = 0;

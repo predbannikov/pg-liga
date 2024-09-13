@@ -87,6 +87,7 @@ public slots:
     void updateIndexOperationActions();
     void moveUpOperation();
     void moveDownOperation();
+    QJsonObject serializExperiment();
 
 private:
     void updateStatusView(QJsonObject jObj);

@@ -141,10 +141,8 @@ void ExperimentView::updateIndexOperationActions()
         OperationActions *operAct = qobject_cast<OperationActions *> (lay->itemAt(i)->widget());
         if (operAct) {
             operAct->setNumberOperation(i);
-//            qDebug() << operAct->numberOperation();
         }
     }
-//    qDebug() << "**********";
 }
 
 void ExperimentView::moveUpOperation()
@@ -209,6 +207,17 @@ void ExperimentView::moveDownOperation()
         lay->addWidget(wgt);
     }
     QTimer::singleShot(10, this, &ExperimentView::updateIndexOperationActions);
+}
+
+QJsonObject ExperimentView::serializExperiment()
+{
+    QVBoxLayout *lay = qobject_cast<QVBoxLayout *>(ui->scrollAreaWidgetContents->layout());
+    for (int i = 0; i < lay->count(); i++) {
+        OperationActions *operAct = qobject_cast<OperationActions *> (lay->itemAt(i)->widget());
+        if (operAct) {
+//            operAct->widget
+        }
+    }
 }
 
 void ExperimentView::updateStatusView(QJsonObject jObj)

@@ -34,14 +34,13 @@ public:
 
         Measurements::Pressure cellPressure = Measurements::Pressure::fromKiloPascals(50);
 
-        int criterion = Stabilisation;
-        int stabilisationType = Absolute;
+        CriterionType criterion = Stabilisation;
+        StabilisationType stabilisationType = Absolute;
 
         Measurements::Pressure stabilisationParamAbsolute = Measurements::Pressure::fromKiloPascals(3);
         double stabilisationParamRelative = 0.1;
 
-        Measurements::TimeInterval durationTime = Measurements::TimeInterval::fromHMS(0, 15, 0);
-        Measurements::TimeInterval stabilisationTime = Measurements::TimeInterval::fromHMS(0, 15, 0);
+        Measurements::TimeInterval timeOfCriterionTime = Measurements::TimeInterval::fromHMS(0, 15, 0);
         void setCriterion(QString criter) {
             if (criter == "Stabilisation") {
                 criterion = Stabilisation;
@@ -50,6 +49,46 @@ public:
             } else if (criter == "Manual") {
                 criterion = Manual;
             }
+        }
+        QString criterionToStr() {
+            switch(criterion) {
+            case SteppedPressuriseModel::Step::Manual:
+                return "Manual";
+            case SteppedPressuriseModel::Step::Duration:
+                return "Duration";
+            case SteppedPressuriseModel::Step::Stabilisation:
+                return "Stabilisation";
+            }
+            return "unknown_criterionType";
+        }
+        QString stabilisationTypeToStr() {
+            switch (stabilisationType) {
+            case SteppedPressuriseModel::Step::Absolute:
+                return "Absolute";
+            case SteppedPressuriseModel::Step::Relative:
+                return "Relative";
+            }
+            return "unknown_stabilizationType";
+        }
+        QString stabilisationParamToStr() {
+            switch (stabilisationType) {
+            case SteppedPressuriseModel::Step::Absolute:
+                return stabilisationParamAbsolute.kiloPascalsStr();
+            case SteppedPressuriseModel::Step::Relative:
+                return QString::number(stabilisationParamRelative);
+            }
+            return "unknown_stabilisationParam";
+        }
+        QString timeOfCriterionTimeToStr() {
+            return timeOfCriterionTime.toString();
+        }
+        QJsonObject toJson() {
+            QJsonObject jobj;
+            jobj["criterionType"] = criterionToStr();
+            jobj["stabilisationType"] = stabilisationTypeToStr();
+            jobj["stabilisationParam"] = stabilisationParamToStr();
+            jobj["timeOfCriterionTime"] = timeOfCriterionTimeToStr();
+            return jobj;
         }
     };
 
@@ -72,6 +111,7 @@ public:
     int moveStep(const QModelIndex &index, int moveAmount) override;
     void setStep(const QModelIndex &index, const Step &step);
     int duplicateStep(const QModelIndex &index = QModelIndex()) override;
+    QJsonObject serializModel() override;
 
     /* Getters */
     Step step(int idx) const { return m_steps.at(idx); }
@@ -79,7 +119,6 @@ public:
 
     Measurements::Pressure getOverPressureCellVolumeter() { return m_overPressureCellVolumeter; }
     Measurements::Pressure getOverPressurePoreVolumeter() { return m_overPressurePoreVolumeter; }
-    QJsonObject getJsonModel() override;
 
 private:
     QList<Step> m_steps;

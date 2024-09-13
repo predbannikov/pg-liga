@@ -99,6 +99,20 @@ void OperationActions::deleteWidget()
     updateTextMenu();
 }
 
+QJsonObject OperationActions::serializOperation()
+{
+    QWidget *wgt = ui->widget->layout()->itemAt(0)->widget();
+    if (qobject_cast<SteppedModelEditor *>(wgt) != nullptr) {
+        SteppedModelEditor *steppedModelEditor = qobject_cast<SteppedModelEditor *>(wgt);
+        qDebug() << "SteppedModelEditor" << steppedModelEditor->serializModel();
+    } else if (qobject_cast<KinematicLoadingModelEditor *>(wgt) != nullptr){
+        qDebug() << "KinematicLoadingModelEditor";
+    } else {
+        qDebug() << "##################";
+    }
+    return QJsonObject();
+}
+
 void OperationActions::updateTextMenu(QString text)
 {
     if (text.isEmpty())
@@ -115,9 +129,7 @@ SteppedModelEditor *OperationActions::createSteppedModelEditor()
     SteppedModelEditor *wgtStepEdit = new SteppedModelEditor(this);
     ui->widget->layout()->addWidget(wgtStepEdit);
     updateTextMenu(qobject_cast<QAction *>(sender())->text());
-    connect(wgtStepEdit, &SteppedModelEditor::dataChanged, []() {
-        qDebug() << "########### dataChanged";
-    });
+    connect(wgtStepEdit, &SteppedModelEditor::dataChanged, this, &OperationActions::serializOperation);
     return wgtStepEdit;
 }
 
