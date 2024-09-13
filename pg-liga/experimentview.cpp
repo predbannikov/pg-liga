@@ -21,6 +21,7 @@ ExperimentView::ExperimentView(QWidget *parent) :
     connect (ui->controlPanelWgt, &ControlPanelWgt::btnStart, [this]() {
         QJsonObject jobj;
         jobj["CMD"] = "start_experiment";
+        jobj["curAction"] = "0";
         emit sendRequest(jobj);
     });
     connect (ui->controlPanelWgt, &ControlPanelWgt::btnStop, [this]() {
