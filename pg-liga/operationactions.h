@@ -47,6 +47,7 @@ public:
     ~OperationActions();
     int numberOperation() { return m_numOperation; }
     void setNumberOperation(int numberOperation);
+    QJsonObject serializOperation();
 
     void contextMenuEvent(QContextMenuEvent *event);
 
@@ -55,13 +56,13 @@ public slots:
 
 private slots:
     void on_btnMenuActions_clicked();
-    QJsonObject serializOperation();
 
 signals:
     void addOperationActions();
     void deleteOperationActions();
     void moveOperationUpActions();
     void moveOperationDownActions();
+    void dataChanged();
 private:
     void createMenu();
 
