@@ -50,7 +50,7 @@ bool Volumeter1::deleteData()
 RETCODE Volumeter1::setTarget(QJsonObject &jOperation)
 {
     RETCODE ret = ERROR;
-    targetPressure = Measurements::Pressure::fromPascals(jOperation["target"].toDouble());
+    targetPressure = Measurements::Pressure::fromPascals(jOperation["target"].toString().toDouble());
     ret = controller->setTarget(jOperation, targetPressure.pascals());      // 200.19642105368277
     return ret;
 }

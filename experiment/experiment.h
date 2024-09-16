@@ -15,7 +15,11 @@ class Experiment : public Operations
     enum TRANSITION_TO_STOP {TRANSITION_TO_STOP_1, TRANSITION_TO_STOP_2} transitionToStop = TRANSITION_TO_STOP_1;
 
     // Перечисление создано для управления устройством, физичиского остановления рамы , возможно стоит перенести реализацию в Operations, а оператионс познее переименовать
-    enum TRANSITION_TO_STOP_DEVICE {TRANSITION_TO_STOP_DEVICE_1, TRANSITION_TO_STOP_DEVICE_2} transitionToStopDevice = TRANSITION_TO_STOP_DEVICE_1;
+    enum TRANSITION_TO_STOP_DEVICE {
+        TRANSITION_TO_STOP_LOADFRAME_1, TRANSITION_TO_STOP_LOADFRAME_2,
+        TRANSITION_TO_STOP_VOLUMETER1_1, TRANSITION_TO_STOP_VOLUMETER1_2,
+        TRANSITION_TO_STOP_VOLUMETER2_1, TRANSITION_TO_STOP_VOLUMETER2_2,
+    } transitionToStopDevice = TRANSITION_TO_STOP_LOADFRAME_1;
 
 public:
     Experiment(quint8 addr);
@@ -31,9 +35,13 @@ private:
     bool pausing();
     bool stopping();
     bool stopDevice();
+    bool createAction(QJsonObject jAction);
+    void deleteAction();
 
     int curAction = 0;
     int loadFramePosition = 0;
+    int volumeter1Position = 0;
+    int volumeter2Position = 0;
     BaseAction *action = nullptr;
 
 };

@@ -65,8 +65,8 @@ public:
     QJsonObject jConfig;
     int counter = 0;
     LoadFrame *loadFrame = nullptr;
-    Volumeter1 volumetr1;
-    Volumeter2 volumetr2;
+    Volumeter1 *volumetr1 = nullptr;
+    Volumeter2 *volumetr2 = nullptr;
     Plata plata;
     StoreData *store = nullptr;
     RETCODE execCMD(QJsonObject &jobj);

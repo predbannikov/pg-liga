@@ -2,6 +2,7 @@
 #include "experiment.h"
 
 #include "movebytimeloadframe.h"
+#include "steppedpressure.h"
 
 Experiment::Experiment(quint8 addr) : Operations(addr)
 {
@@ -47,11 +48,13 @@ bool Experiment::conveyor()
 
     case Experiment::TRANSITION_2:
         for (QJsonObject::iterator iter = jExperiment.begin(); iter != jExperiment.end(); ++iter) {
-            if (iter.key().toInt() == curAction) {
-                qDebug() << "key=" << iter.key() << "    curAction=" << curAction;
-                action = new MoveByTimeLoadFrame(this);
-                action->initialization(iter.value().toObject(), loadFrame, &plata);
-                transition = TRANSITION_3;
+            if (iter.key().contains("Operation") && iter.key().split('_')[1].toInt() == curAction) {
+
+                qDebug() << "key=" << iter.key().split('_')[1] << "    curAction=" << curAction;
+                if (!createAction(iter.value().toObject()))
+                    transition = TRANSITION_4;
+                else
+                    transition = TRANSITION_3;
                 return false;
             }
         }
@@ -59,7 +62,7 @@ bool Experiment::conveyor()
         break;
 
     case Experiment::TRANSITION_3:
-        if (action->update()) {
+        if (action->updating()) {
             action->finish();
             jExperiment[QString::number(curAction)] = action->jAction;
             curAction++;
@@ -134,27 +137,76 @@ bool Experiment::stopping()
 
 bool Experiment::stopDevice()
 {
+    QJsonObject jobj;
+
     switch (transitionToStopDevice) {
-    case Experiment::TRANSITION_TO_STOP_DEVICE_1:
-    {
-        QJsonObject jobj;
-        jobj["CMD"] = "unlock_PID";
+
+    case Experiment::TRANSITION_TO_STOP_LOADFRAME_1:
+         jobj["CMD"] = "load_frame_unlock_PID";
         put(jobj);
-        jobj["CMD"] = "stop_frame";
+        jobj["CMD"] = "load_frame_stop";
         put(jobj);
-        transitionToStopDevice = TRANSITION_TO_STOP_DEVICE_2;
+        transitionToStopDevice = TRANSITION_TO_STOP_LOADFRAME_2;
         loadFramePosition = loadFrame->stepper->position;
-    }
         break;
-    case Experiment::TRANSITION_TO_STOP_DEVICE_2:
+    case Experiment::TRANSITION_TO_STOP_LOADFRAME_2:
         if (loadFrame->controller->status == 0 && loadFramePosition == loadFrame->stepper->position) {
-            transitionToStopDevice = TRANSITION_TO_STOP_DEVICE_1;
-            return true;
+            transitionToStopDevice = TRANSITION_TO_STOP_VOLUMETER1_1;
         }
         loadFramePosition = loadFrame->stepper->position;
         break;
+    case Experiment::TRANSITION_TO_STOP_VOLUMETER1_1:
+        jobj["CMD"] = "volumetr1_unlock_PID";
+        put(jobj);
+        jobj["CMD"] = "volumetr1_stop";
+        put(jobj);
+        transitionToStopDevice = TRANSITION_TO_STOP_VOLUMETER1_2;
+        volumeter1Position = volumetr1->stepper->position;
+        break;
+    case Experiment::TRANSITION_TO_STOP_VOLUMETER1_2:
+        if (volumetr1->controller->status == 0 && volumeter1Position == volumetr1->stepper->position) {
+            transitionToStopDevice = TRANSITION_TO_STOP_VOLUMETER2_1;
+        }
+        volumeter1Position = volumetr1->stepper->position;
+        break;
+    case Experiment::TRANSITION_TO_STOP_VOLUMETER2_1:
+        jobj["CMD"] = "volumetr2_unlock_PID";
+        put(jobj);
+        jobj["CMD"] = "volumetr2_stop";
+        put(jobj);
+        transitionToStopDevice = TRANSITION_TO_STOP_VOLUMETER2_2;
+        volumeter2Position = volumetr2->stepper->position;
+        break;
+    case Experiment::TRANSITION_TO_STOP_VOLUMETER2_2:
+        if (volumetr2->controller->status == 0 && volumeter2Position == volumetr2->stepper->position) {
+            transitionToStopDevice = TRANSITION_TO_STOP_LOADFRAME_1;
+            return true;
+        }
+        volumeter2Position = volumetr2->stepper->position;
+        break;
     }
     return false;
+}
+
+bool Experiment::createAction(QJsonObject jAction)
+{
+    if (jAction["name"].toString() == "move_of_time") {
+        action = new MoveByTimeLoadFrame(this);
+    } else if (jAction["name"].toString() == "steppedPressure") {
+        action = new SteppedPressure(this);
+    } else {
+        return false;
+    }
+    connect(action, &BaseAction::error, this, &Interface::sendRequestToClient);
+    action->initialization(jAction, loadFrame, volumetr1, volumetr2, &plata);
+    return true;
+}
+
+void Experiment::deleteAction()
+{
+    disconnect(action, &BaseAction::error, this, &Interface::sendRequestToClient);
+    delete action;
+    action = nullptr;
 }
 
 void Experiment::stateSwitch()
