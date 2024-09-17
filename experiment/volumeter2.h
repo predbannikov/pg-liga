@@ -35,7 +35,7 @@ public:
     RETCODE readStatusHol(QJsonObject &jOperation);
     RETCODE readPosition(QJsonObject &jOperation);
     RETCODE readControllerStatus(QJsonObject &jOperation);
-    RETCODE updateStoreData(QJsonObject &jOperation);
+    // RETCODE updateStoreData(QJsonObject &jOperation);
 
     RETCODE statusSensors(QJsonObject &jOperation);
     RETCODE movePiston(QJsonObject &jobj);

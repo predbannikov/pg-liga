@@ -40,7 +40,7 @@ public:
     qint64 size();
 
     void getLastStartAndCurTime(qint64 &start_time, qint64 &cur_time);
-
+    QList<QPair<qint64, float> > &getDataOfStartTime();
     QMap <qint64, QList<QPair<qint64, float>>> data;
 };
 

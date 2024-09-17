@@ -211,11 +211,11 @@ RETCODE Volumeter1::readControllerStatus(QJsonObject &jOperation)
     return controller->readStatus(jOperation);
 }
 
-RETCODE Volumeter1::updateStoreData(QJsonObject &jOperation)
-{
-    if (store != nullptr)
-        store->updateData();
-}
+// RETCODE Volumeter1::updateStoreData(QJsonObject &jOperation)
+// {
+//     if (store != nullptr)
+//         store->updateData();
+// }
 
 RETCODE Volumeter1::stepperSetNull(QJsonObject &jobj)
 {

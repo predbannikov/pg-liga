@@ -88,15 +88,25 @@ void StoreData::updateData()
             currentData.insert("VerticalPressure_kPa", sensors[i]->value);
             data["VerticalPressure_kPa"].append(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value);
             break;
+
         case SensDef0:
             currentData.insert("VerticalDeform_mm", sensors[i]->value);
             data["VerticalDeform_mm"].append(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
             break;
-        case SensPrs0:
+
+            // Все перепутано это волюмоментр 1
+        case SensPrs1:
             currentData.insert("CellPressure_kPa", sensors[i]->value / 1000.);
+            // auto &dt = data["CellPressure_kPa"];
+            // dt.append(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
             data["CellPressure_kPa"].append(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
             break;
-        }
+
+            // Все перепутано это волюмоментр 2
+        case SensPrs0:
+            currentData.insert("PorePressure_kPa", sensors[i]->value / 1000.);
+            data["PorePressure_kPa"].append(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
+            break;        }
     }
 
     currentData.insert("LF_position_mm", stepper->position);
@@ -106,21 +116,21 @@ void StoreData::updateData()
         writeToDataFile();
 }
 
-void StoreData::fixUpdateData()
-{
-    for (int i = 0; i < sensors.size(); i++) {
-        switch (sensors[i]->funCode) {
-        case SensLoad0:
-            data["VerticalPressure_kPa"].fixAppend(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
-            break;
-        case SensDef0:
-            data["VerticalDeform_mm"].fixAppend(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
-            break;
-        }
-    }
-    if (period.complate())
-        writeToDataFile();
-}
+// void StoreData::fixUpdateData()
+// {
+//     for (int i = 0; i < sensors.size(); i++) {
+//         switch (sensors[i]->funCode) {
+//         case SensLoad0:
+//             data["VerticalPressure_kPa"].fixAppend(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
+//             break;
+//         case SensDef0:
+//             data["VerticalDeform_mm"].fixAppend(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
+//             break;
+//         }
+//     }
+//     if (period.complate())
+//         writeToDataFile();
+// }
 
 void StoreData::sendProtocol(QJsonObject &jobj)
 {

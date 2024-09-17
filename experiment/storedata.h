@@ -154,7 +154,7 @@ public:
     bool printFileHeader();
 
     void updateData();
-    void fixUpdateData();
+    // void fixUpdateData();
     void sendProtocol(QJsonObject &jobj);
     void sendStoreData(QJsonObject &jobj);
     void setCurStep(const QJsonObject &jcurStep_);
@@ -175,6 +175,11 @@ private:
     Stepper *stepper;
 
     InstrumentType type = LIGA_KL0_1T;
+
+    /**
+     * @brief writeToDataFile       Запись в протокол
+     * @return
+     */
     bool writeToDataFile();
 
     QElapsedTimer elapseExperimentTimer;
