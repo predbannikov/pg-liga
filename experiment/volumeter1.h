@@ -61,6 +61,8 @@ public:
     Controller *controller = nullptr;
 
     StoreData *store = nullptr;
+    void setStore(StoreData *pStore);
+
     QString unitName;
 };
 

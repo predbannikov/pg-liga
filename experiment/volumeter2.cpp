@@ -186,6 +186,11 @@ void Volumeter2::sendStoreData(QJsonObject &jobj)
     }
 }
 
+void Volumeter2::setStore(StoreData *pStore)
+{
+    store = pStore;
+}
+
 RETCODE Volumeter2::readSensorPressure(QJsonObject &jOperation)
 {
     return pressureSens->read(jOperation);

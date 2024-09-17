@@ -25,6 +25,8 @@ Operations::Operations(quint8 addr) : Interface(addr),
 
 
     loadFrame->setStore(store);
+    volumetr1->setStore(store);
+    volumetr2->setStore(store);
     volumetr1->address = addr;
     volumetr2->address = addr;
     loadFrame->address = addr;

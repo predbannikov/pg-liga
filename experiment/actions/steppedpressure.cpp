@@ -62,7 +62,7 @@ bool SteppedPressure::update()
         jCmdToQueue["target"] = jAction[QString("step_%1").arg(curStep)].toObject()["target"].toString();
         putQueue(jCmdToQueue);
         elapseTime.start(1000);
-        trans = TRANS_5;
+        trans = TRANS_6;
         break;
 
     case SteppedPressure::TRANS_5:
@@ -75,6 +75,7 @@ bool SteppedPressure::update()
         break;
 
     case SteppedPressure::TRANS_6:
+
         break;
 
     case SteppedPressure::TRANS_7:
