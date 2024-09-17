@@ -78,8 +78,12 @@ bool SteppedPressure::update()
 
     case SteppedPressure::TRANS_6: {
         if (volumeter1->pressureSens->value > (jAction[QString("step_%1").arg(curStep)].toObject()["target"].toString().toDouble() - 3000)) {
-            if (jAction[QString("step_%1").arg(curStep)].toObject()["stabilisationType"].toString() == "Absolute")
-            trans = TRANS_7;
+            if (jAction[QString("step_%1").arg(curStep)].toObject()["criterionType"].toString() == "Stabilisation") {
+
+                trans = TRANS_7;
+            }
+            else if (jAction[QString("step_%1").arg(curStep)].toObject()["criterionType"].toString() == "Duration")
+                trans = TRANS_8;
         }
         // betaLeastSquares(3);
         // auto data = volumeter1->store->data["CellPressure_kPa"];
@@ -92,8 +96,12 @@ bool SteppedPressure::update()
 
     case SteppedPressure::TRANS_7:
         qDebug() << "stabilization needed";
-        break;
 
+
+        break;
+    case SteppedPressure::TRANS_8:
+        qDebug() << "time needed";
+        break;
     }
     return false;
 }

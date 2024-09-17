@@ -41,7 +41,7 @@ bool Experiment::conveyor()
         if (jExperiment.isEmpty())
             stateExperiment = STATE_EXPERIMENT_IDLE;
         else {
-            curAction = jExperiment["curAction"].toString().toInt();
+            curAction = jExperiment["status"].toObject()["curAction"].toString().toInt();
             transition = TRANSITION_2;
         }
         break;
@@ -209,6 +209,11 @@ void Experiment::deleteAction()
     action = nullptr;
 }
 
+void Experiment::updateJExperiment()
+{
+
+}
+
 void Experiment::stateSwitch()
 {
     switch (stateExperiment) {
@@ -225,14 +230,22 @@ void Experiment::stateSwitch()
 
         // qDebug() << "STATE_EXPERIMENT_PAUSE";
         break;
+    case Operations::STATE_EXPERIMENT_TRANSIT_TO_PROCESS:
+        jExperiment["status"] = "process";
+        stateExperiment = STATE_EXPERIMENT_PROCESS;
+        break;
     case Operations::STATE_EXPERIMENT_TRANSIT_TO_PAUSE:
         qDebug() << "STATE_EXPERIMENT_TRANSIT_TO_PAUSE";
-        if (pausing())
+        if (pausing()) {
+            jExperiment["status"] = "pause";
             stateExperiment = STATE_EXPERIMENT_PAUSE;
+        }
         break;
     case Operations::STATE_EXPERIMENT_TRANSIT_TO_STOP:
-        if (stopping())
+        if (stopping()) {
+            jExperiment["status"] = "idle";
             stateExperiment = STATE_EXPERIMENT_IDLE;
+        }
         break;
     }
 }

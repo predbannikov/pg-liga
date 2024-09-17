@@ -5,6 +5,11 @@
 
 #include "baseaction.h"
 
+/**
+ * @brief The Experiment class      После старта состояния процесса, перебирается
+ *
+ */
+
 
 class Experiment : public Operations
 {
@@ -37,6 +42,7 @@ private:
     bool stopDevice();
     bool createAction(QJsonObject jAction);
     void deleteAction();
+    void updateJExperiment();
 
     int curAction = 0;
     int loadFramePosition = 0;

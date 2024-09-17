@@ -30,6 +30,7 @@ private:
                 TRANS_5,
                 TRANS_6,
                 TRANS_7,
+                TRANS_8,
                } trans = TRANS_1;
 
     int curStep = 0;

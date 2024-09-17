@@ -132,7 +132,7 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
     } else if (jobj["CMD"].toString() == "start_experiment") {
         jExperiment["curAction"] = jobj["curAction"].toString();
         if (stateExperiment == STATE_EXPERIMENT_IDLE)
-            stateExperiment = STATE_EXPERIMENT_PROCESS;
+            stateExperiment = STATE_EXPERIMENT_TRANSIT_TO_PROCESS;
     } else if (jobj["CMD"].toString() == "stop_experiment") {
         if (stateExperiment == STATE_EXPERIMENT_PROCESS || stateExperiment == STATE_EXPERIMENT_PAUSE)
             stateExperiment = STATE_EXPERIMENT_TRANSIT_TO_STOP;
