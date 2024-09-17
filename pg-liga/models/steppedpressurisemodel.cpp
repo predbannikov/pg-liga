@@ -21,8 +21,6 @@ int SteppedPressuriseModel::rowCount(const QModelIndex &parent) const
 
 int SteppedPressuriseModel::columnCount(const QModelIndex &parent) const
 {
-    
-
     if(parent.isValid()) {
         
         return 0;
@@ -30,14 +28,10 @@ int SteppedPressuriseModel::columnCount(const QModelIndex &parent) const
         
         return ColumnCount;
     }
-
-    
 }
 
 QVariant SteppedPressuriseModel::data(const QModelIndex &index, int role) const
 {
-    
-
     const auto row = index.row();
     const auto col = index.column();
     const auto currentStep = step(row);
@@ -53,52 +47,36 @@ QVariant SteppedPressuriseModel::data(const QModelIndex &index, int role) const
         case StabilisationParameter:
             if(currentStep.criterion == Step::Stabilisation) {
                 if(currentStep.stabilisationType == Step::Absolute) {
-                    
                     return QVariant::fromValue(QPair<int, double>(currentStep.stabilisationType, currentStep.stabilisationParamAbsolute.kiloPascals()));
-                } else if(currentStep.stabilisationType == Step::Relative) {
-                    
+                } else if(currentStep.stabilisationType == Step::Relative) {   
                     return QVariant::fromValue(QPair<int, double>(currentStep.stabilisationType, currentStep.stabilisationParamRelative * 100.0));
                 } else {
-                    
                     return QVariant();
                 }
-
             } else {
-                
                 return QVariant();
             }
 
         case Time:
             switch(currentStep.criterion) {
             case Step::Duration:
-                
-                return QVariant::fromValue(currentStep.durationTime);
             case Step::Stabilisation:
-                
-                return QVariant::fromValue(currentStep.stabilisationTime);
+                return QVariant::fromValue(currentStep.timeOfCriterionTime);
             case Step::Manual:
             default:
-                
                 return QVariant();
             }
 
         default:
-            
             return QVariant();
         }
-
     } else {
-        
         return QVariant();
     }
-
-    
 }
 
 bool SteppedPressuriseModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    
-
 //    const auto underpressure = Measurements::Pressure::fromPascals(0);
 //    const auto overpressure = Measurements::Pressure::fromKiloPascals(2800);    //TODO refer to volumeter.h
 
@@ -120,32 +98,27 @@ bool SteppedPressuriseModel::setData(const QModelIndex &index, const QVariant &v
             break;
 
         case EndCriterion:
-            currentStep.criterion = value.toInt();
+            currentStep.criterion = static_cast<Step::CriterionType>(value.toInt());
             break;
 
         case StabilisationParameter:
             param = value.value<QPair<int, double>>();
-
             if(param.first == Step::Absolute) {
-                currentStep.stabilisationType = param.first;
+                currentStep.stabilisationType = static_cast<Step::StabilisationType>(param.first);
                 currentStep.stabilisationParamAbsolute = Measurements::Pressure::fromKiloPascals(param.second);
             } else if(param.first == Step::Relative) {
-                currentStep.stabilisationType = param.first;
+                currentStep.stabilisationType = static_cast<Step::StabilisationType>(param.first);
                 currentStep.stabilisationParamRelative = param.second / 100.0;
             } else {
 
             }
-
             break;
 
         case Time:
             switch(currentStep.criterion) {
             case Step::Duration:
-                currentStep.durationTime = value.value<Measurements::TimeInterval>();
-                break;
-
             case Step::Stabilisation:
-                currentStep.stabilisationTime = value.value<Measurements::TimeInterval>();
+                currentStep.timeOfCriterionTime = value.value<Measurements::TimeInterval>();
                 break;
 
             case Step::Manual:
@@ -163,15 +136,11 @@ bool SteppedPressuriseModel::setData(const QModelIndex &index, const QVariant &v
     } else {
         
         return false;
-    }
-
-    
+    }    
 }
 
 QVariant SteppedPressuriseModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    
-
     if((role == Qt::DisplayRole) && (orientation == Qt::Horizontal)) {
         const QStringList headers = {
             tr("Всестороннее давление,\nσ3"),
@@ -187,18 +156,11 @@ QVariant SteppedPressuriseModel::headerData(int section, Qt::Orientation orienta
         
         return QAbstractTableModel::headerData(section, orientation, role);
     }
-
-    
 }
 
 Qt::ItemFlags SteppedPressuriseModel::flags(const QModelIndex &index) const
 {
-    
-
     Q_UNUSED(index)
-
-    
-
     return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
 }
 
@@ -206,16 +168,15 @@ int SteppedPressuriseModel::addStep(const Step &step)
 {
     const auto row = m_steps.size();
     beginInsertRows(QModelIndex(), row, row);
-    Step newStep;
+//    Step newStep;
     m_steps.append(step);
     endInsertRows();
+    emit dataChanged(QModelIndex(), QModelIndex());
     return m_steps.size();
 }
 
 int SteppedPressuriseModel::insertStep(const QModelIndex &index)
 {
-    
-
     const auto row = index.row() + 1;
 
     beginInsertRows(QModelIndex(), row, row);
@@ -229,15 +190,12 @@ int SteppedPressuriseModel::insertStep(const QModelIndex &index)
     m_steps.insert(row, newStep);
     endInsertRows();
 
-    
-
+    emit dataChanged(QModelIndex(), QModelIndex());
     return row;
 }
 
 int SteppedPressuriseModel::removeStep(const QModelIndex &index)
 {
-    
-
     const auto row = index.row();
 
     if((row >= 0) && (row < m_steps.count())) {
@@ -245,25 +203,19 @@ int SteppedPressuriseModel::removeStep(const QModelIndex &index)
         m_steps.removeAt(row);
         endRemoveRows();
     }
-
+    emit dataChanged(QModelIndex(), QModelIndex());
     if (row == m_steps.count())
     {
-        
         return row - 1;
     }
     else
-    {
-        
+    {   
         return row;
     }
-
-    
 }
 
 int SteppedPressuriseModel::moveStep(const QModelIndex &index, int moveAmount)
 {
-    
-
     const auto row = index.row();
     if(row < 0 || row >= m_steps.count()) {
         
@@ -290,20 +242,13 @@ int SteppedPressuriseModel::moveStep(const QModelIndex &index, int moveAmount)
     m_steps.replace(row, tmp);
 
     emit dataChanged(QModelIndex(), QModelIndex());
-
-    
-
     return targetRow;
 }
 
 void SteppedPressuriseModel::setStep(const QModelIndex &index, const SteppedPressuriseModel::Step &step)
 {
-    
-
     m_steps.replace(index.row(), step);
     emit dataChanged(QModelIndex(), QModelIndex());
-
-    
 }
 
 int SteppedPressuriseModel::duplicateStep(const QModelIndex &index)
@@ -314,10 +259,22 @@ int SteppedPressuriseModel::duplicateStep(const QModelIndex &index)
         return -1;
     const auto row = index.row() + 1;
     beginInsertRows(QModelIndex(), row, row);
-    int stepCount = m_steps.count();
 
     Step step = m_steps.at(index.row());
     m_steps.insert(row, step);
     endInsertRows();
+    emit dataChanged(QModelIndex(), QModelIndex());
     return row;
 }
+
+QJsonObject SteppedPressuriseModel::serializModel()
+{
+    QJsonObject jObj;
+    int step = 0;
+    for (; step < m_steps.size(); step++) {
+        QString strStep = QString("step_%1").arg(step);
+        jObj[strStep] = m_steps[step].toJson();
+    }
+    return jObj;
+}
+

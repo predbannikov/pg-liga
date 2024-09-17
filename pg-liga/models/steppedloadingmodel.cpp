@@ -2,6 +2,7 @@
 
 #include <QPair>
 #include <QDebug>
+#include <QAbstractTableModel>
 
 SteppedLoadingModel::SteppedLoadingModel(QObject *parent):
     AbstractSteppedModel(parent)
@@ -223,23 +224,18 @@ int SteppedLoadingModel::addStep(const Step &step)
 
 int SteppedLoadingModel::insertStep(const QModelIndex &index)
 {
-    
-
     const auto row = index.row() + 1;
 
     beginInsertRows(QModelIndex(), row, row);
     m_steps.insert(row, Step());
     endInsertRows();
 
-    
-
+    emit dataChanged(QModelIndex(), QModelIndex());
     return row;
 }
 
 int SteppedLoadingModel::removeStep(const QModelIndex &index)
 {
-    
-
     const auto row = index.row();
 
     if((row >= 0) && (row < m_steps.count())) {
@@ -247,7 +243,7 @@ int SteppedLoadingModel::removeStep(const QModelIndex &index)
         m_steps.removeAt(row);
         endRemoveRows();
     }
-
+    emit dataChanged(QModelIndex(), QModelIndex());
     if (row == m_steps.count())
     {
         
@@ -257,15 +253,11 @@ int SteppedLoadingModel::removeStep(const QModelIndex &index)
     {
         
         return row;
-    }
-
-    
+    }  
 }
 
 int SteppedLoadingModel::moveStep(const QModelIndex &index, int moveAmount)
 {
-    
-
     const auto row = index.row();
     if(row < 0 || row >= m_steps.count()) {
         
@@ -292,9 +284,6 @@ int SteppedLoadingModel::moveStep(const QModelIndex &index, int moveAmount)
     m_steps.replace(row, tmp);
 
     emit dataChanged(QModelIndex(), QModelIndex());
-
-    
-
     return targetRow;
 }
 
@@ -308,23 +297,23 @@ int SteppedLoadingModel::duplicateStep(const QModelIndex &index)
     Step step = m_steps.at(index.row());
     m_steps.insert(row, step);
     endInsertRows();
+    emit dataChanged(QModelIndex(), QModelIndex());
     return row;
+}
+
+QJsonObject SteppedLoadingModel::serializModel()
+{
+    return QJsonObject();
 }
 
 void SteppedLoadingModel::setStep(const QModelIndex &index, const SteppedLoadingModel::Step &step)
 {
-    
-
     m_steps.replace(index.row(), step);
     emit dataChanged(QModelIndex(), QModelIndex());
-
-    
 }
 
 bool SteppedLoadingModel::isLast(int idx) const
 {
-    
-    
-
     return idx == m_steps.size() - 1;
 }
+

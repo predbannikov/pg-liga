@@ -52,7 +52,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="resources/resources.qrc">
+        <iconset resource="../resources/resources.qrc">
          <normaloff>:/icons/add.png</normaloff>:/icons/add.png</iconset>
        </property>
       </widget>
@@ -72,7 +72,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="resources/resources.qrc">
+        <iconset resource="../resources/resources.qrc">
          <normaloff>:/icons/remove.png</normaloff>:/icons/remove.png</iconset>
        </property>
       </widget>
@@ -92,7 +92,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="resources/resources.qrc">
+        <iconset resource="../resources/resources.qrc">
          <normaloff>:/icons/arrow-up.png</normaloff>:/icons/arrow-up.png</iconset>
        </property>
       </widget>
@@ -109,7 +109,7 @@
         <string>Передвинуть ниже</string>
        </property>
        <property name="icon">
-        <iconset resource="resources/resources.qrc">
+        <iconset resource="../resources/resources.qrc">
          <normaloff>:/icons/arrow-down.png</normaloff>:/icons/arrow-down.png</iconset>
        </property>
       </widget>
@@ -126,7 +126,7 @@
         <string>Дублировать выбранную ступень</string>
        </property>
        <property name="icon">
-        <iconset resource="resources/resources.qrc">
+        <iconset resource="../resources/resources.qrc">
          <normaloff>:/icons/duplicate.png</normaloff>:/icons/duplicate.png</iconset>
        </property>
       </widget>
@@ -195,7 +195,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="resources/resources.qrc"/>
+  <include location="../resources/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -21,6 +21,7 @@ ExperimentView::ExperimentView(QWidget *parent) :
     connect (ui->controlPanelWgt, &ControlPanelWgt::btnStart, [this]() {
         QJsonObject jobj;
         jobj["CMD"] = "start_experiment";
+        jobj["curAction"] = "0";
         emit sendRequest(jobj);
     });
     connect (ui->controlPanelWgt, &ControlPanelWgt::btnStop, [this]() {
@@ -123,6 +124,7 @@ void ExperimentView::addOperationActions()
     connect(opActions, &OperationActions::addOperationActions, this, &ExperimentView::addOperationActions);
     connect(opActions, &OperationActions::moveOperationUpActions, this, &ExperimentView::moveUpOperation);
     connect(opActions, &OperationActions::moveOperationDownActions, this, &ExperimentView::moveDownOperation);
+    connect(opActions, &OperationActions::dataChanged, this, &ExperimentView::serializExperiment);
     QTimer::singleShot(10, this, &ExperimentView::updateIndexOperationActions);
     connect(opActions, &OperationActions::deleteOperationActions, this, [=] () {
         sender()->deleteLater();
@@ -141,10 +143,8 @@ void ExperimentView::updateIndexOperationActions()
         OperationActions *operAct = qobject_cast<OperationActions *> (lay->itemAt(i)->widget());
         if (operAct) {
             operAct->setNumberOperation(i);
-//            qDebug() << operAct->numberOperation();
         }
     }
-//    qDebug() << "**********";
 }
 
 void ExperimentView::moveUpOperation()
@@ -209,6 +209,21 @@ void ExperimentView::moveDownOperation()
         lay->addWidget(wgt);
     }
     QTimer::singleShot(10, this, &ExperimentView::updateIndexOperationActions);
+}
+
+void ExperimentView::serializExperiment()
+{
+    QVBoxLayout *lay = qobject_cast<QVBoxLayout *>(ui->scrollAreaWidgetContents->layout());
+    QJsonObject jOps, jObj;
+    for (int i = 0; i < lay->count(); i++) {
+        OperationActions *operAct = qobject_cast<OperationActions *> (lay->itemAt(i)->widget());
+        QString cnt = QString("Operation_%1").arg(i);
+        jOps[cnt] = operAct->serializOperation();
+    }
+    jObj["CMD"] = "set_experiment";
+    jObj["experiment"] = jOps;
+    qDebug().noquote() << QJsonDocument(jObj).toJson(QJsonDocument::Indented);
+    emit sendRequest(jObj);
 }
 
 void ExperimentView::updateStatusView(QJsonObject jObj)
@@ -718,6 +733,23 @@ void ExperimentView::on_btnVolumetr2SensorPressureReset_clicked()
     QJsonObject jobj;
     jobj["CMD"] = "volumetr2_sensor_reset_offset";
     jobj["sensor_name"] = "SensPrs1";
+    emit sendRequest(jobj);
+}
+
+
+void ExperimentView::on_btnVolumetr2SetTarget_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "volumetr2_set_target";
+    jobj["target"] = ui->spinVolumetr2Target->value();
+    emit sendRequest(jobj);
+}
+
+
+void ExperimentView::on_btnVolumetr2Unlock_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "volumetr2_unlock_PID";
     emit sendRequest(jobj);
 }
 

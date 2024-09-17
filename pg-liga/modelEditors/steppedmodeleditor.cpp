@@ -53,6 +53,7 @@ void SteppedModelEditor::setModel(AdvancedSaturationModel *model)
         timeIntervalDelegate
     });
 
+    connect(model, &AdvancedSaturationModel::dataChanged, this, &SteppedModelEditor::dataChanged);
     setupModel(model);
 }
 
@@ -78,6 +79,7 @@ void SteppedModelEditor::setModel(ConsolidationModel *model)
         timeLongIntervalDelegate
     });
 
+    connect(model, &ConsolidationModel::dataChanged, this, &SteppedModelEditor::dataChanged);
     setupModel(model);
 }
 
@@ -100,6 +102,7 @@ void SteppedModelEditor::setModel(ConsolidationAltModel *model)
         timeIntervalDelegate
     });
 
+    connect(model, &ConsolidationAltModel::dataChanged, this, &SteppedModelEditor::dataChanged);
     setupModel(model);
 }
 
@@ -122,12 +125,13 @@ void SteppedModelEditor::setModel(SteppedLoadingModel *model)
         timeIntervalDelegate
     });
 
+    connect(model, &SteppedLoadingModel::dataChanged, this, &SteppedModelEditor::dataChanged);
     setupModel(model);
-//    m_model = model;
 }
 
 void SteppedModelEditor::setModel(SteppedPressuriseModel *model)
 {
+
     auto *pressureDelegate = new SpinBoxDelegate(Strings::kPa, model->getOverPressureCellVolumeter().kiloPascals(), this);
     pressureDelegate->setSingleStep(5);
     pressureDelegate->setDecimals(0);
@@ -145,6 +149,7 @@ void SteppedModelEditor::setModel(SteppedPressuriseModel *model)
     });
 
     setupModel(model);
+    connect(model, &SteppedPressuriseModel::dataChanged, this, &SteppedModelEditor::dataChanged);
 }
 
 void SteppedModelEditor::setModel(AdvancedKinematicLoadingModel *model)
@@ -162,6 +167,7 @@ void SteppedModelEditor::setModel(AdvancedKinematicLoadingModel *model)
         criterionDelegate
     });
 
+    connect(model, &AdvancedKinematicLoadingModel::dataChanged, this, &SteppedModelEditor::dataChanged);
     setupModel(model);
 }
 
@@ -182,6 +188,7 @@ void SteppedModelEditor::setModel(RelaxationLoadingModel *model)
         timeIntervalDelegate
     });
 
+    connect(model, &RelaxationLoadingModel::dataChanged, this, &SteppedModelEditor::dataChanged);
     setupModel(model);
 }
 
@@ -197,6 +204,7 @@ void SteppedModelEditor::setModel(DeformModel *model)
     ui->stepView->verticalHeader()->setMinimumSectionSize(height + 8);
     ui->stepView->verticalHeader()->setDefaultSectionSize(height + 8);
     ui->stepView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    connect(model, &DeformModel::dataChanged, this, &SteppedModelEditor::dataChanged);
     setupModel(model);
 }
 
@@ -210,6 +218,23 @@ void SteppedModelEditor::clearStep(int idx)
     const auto *model = ui->stepView->model();
     ui->stepView->setCurrentIndex(model->index(idx, 0));
     ui->btnMiddleStepRemove->clicked();
+}
+
+QJsonObject SteppedModelEditor::serializModel()
+{
+    QJsonObject jRet;
+    QAbstractTableModel *tableModel = qobject_cast<QAbstractTableModel *>(ui->stepView->model());
+    if (qobject_cast<SteppedPressuriseModel *>(tableModel) != nullptr) {
+        SteppedPressuriseModel *model = qobject_cast<SteppedPressuriseModel *>(tableModel);
+        jRet = model->serializModel();
+        qDebug() << Q_FUNC_INFO << "SteppedPressuriseModel";
+    }
+    else if (qobject_cast<SteppedLoadingModel *>(tableModel) != nullptr) {
+//        SteppedLoadingModel *model = qobject_cast<SteppedLoadingModel *>(tableModel);
+//        qDebug() << Q_FUNC_INFO << "SteppedLoadingModel";
+
+    }
+    return jRet;
 }
 
 void SteppedModelEditor::setStepHighlighted(int idx)

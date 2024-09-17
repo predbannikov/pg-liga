@@ -1,6 +1,8 @@
 #include "operationactions.h"
 #include "ui_operationactions.h"
 
+#include <QJsonDocument>
+
 OperationActions::OperationActions(int numberOperation, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::OperationActions),
@@ -99,6 +101,24 @@ void OperationActions::deleteWidget()
     updateTextMenu();
 }
 
+QJsonObject OperationActions::serializOperation()
+{
+    QJsonObject jObj;
+    QWidget *wgt = ui->widget->layout()->itemAt(0)->widget();
+    if (qobject_cast<SteppedModelEditor *>(wgt) != nullptr) {
+        SteppedModelEditor *steppedModelEditor = qobject_cast<SteppedModelEditor *>(wgt);
+        jObj = steppedModelEditor->serializModel();
+//        qDebug().noquote() << QJsonDocument(jTest).toJson(QJsonDocument::Indented);
+//        qDebug().noquote() << QJsonDocument(jTest).toJson(QJsonDocument::Indented);
+
+    } else if (qobject_cast<KinematicLoadingModelEditor *>(wgt) != nullptr){
+        qDebug() << "KinematicLoadingModelEditor";
+    } else {
+        qDebug() << "##################";
+    }
+    return jObj;
+}
+
 void OperationActions::updateTextMenu(QString text)
 {
     if (text.isEmpty())
@@ -115,6 +135,7 @@ SteppedModelEditor *OperationActions::createSteppedModelEditor()
     SteppedModelEditor *wgtStepEdit = new SteppedModelEditor(this);
     ui->widget->layout()->addWidget(wgtStepEdit);
     updateTextMenu(qobject_cast<QAction *>(sender())->text());
+    connect(wgtStepEdit, &SteppedModelEditor::dataChanged, this, &OperationActions::dataChanged);
     return wgtStepEdit;
 }
 

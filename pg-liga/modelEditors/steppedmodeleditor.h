@@ -40,6 +40,11 @@ public:
     void addStep();
     void clearStep(int idx);
 
+    QJsonObject serializModel();
+
+signals:
+    void dataChanged();
+
 public slots:
     void setStepHighlighted(int idx);
 
@@ -48,7 +53,7 @@ private:
     void setupDelegates(const QVector<QStyledItemDelegate*> &delegates);
 
     Ui::SteppedModelEditor *ui;
-    AbstractSteppedModel *m_model;
+//    AbstractSteppedModel *m_model;
 };
 
 #endif // STEPPEDMODELEDITOR_H
