@@ -234,6 +234,7 @@ QJsonObject SteppedModelEditor::serializModel()
 //        qDebug() << Q_FUNC_INFO << "SteppedLoadingModel";
 
     }
+    jRet["name"] = "steppedPressure";
     return jRet;
 }
 

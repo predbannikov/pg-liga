@@ -84,6 +84,7 @@ public:
         }
         QJsonObject toJson() {
             QJsonObject jobj;
+            jobj["target"] = QString::number(cellPressure.pascals());
             jobj["criterionType"] = criterionToStr();
             jobj["stabilisationType"] = stabilisationTypeToStr();
             jobj["stabilisationParam"] = stabilisationParamToStr();
