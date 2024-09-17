@@ -553,7 +553,7 @@ void ExperimentView::on_btnTest_clicked()
         jAction["speed"] = QString::number(100);
         jAction["time_ms"] = "1500";
         jAction["status"] = "";
-        jExp[QString::number(i)] = jAction;
+        jExp[QString("Operation_%1").arg(i)] = jAction;
 
         QJsonObject jAction2;
         jAction2["name"] = "move_of_time";
@@ -561,9 +561,12 @@ void ExperimentView::on_btnTest_clicked()
         jAction2["speed"] = QString::number(-100);
         jAction2["time_ms"] = "1500";
         jAction2["status"] = "";
-        jExp[QString::number(i+1)] = jAction2;
+        jExp[QString("Operation_%1").arg(i+1)] = jAction2;
     }
-    jExp["curAction"] = "0";
+    QJsonObject jStatus;
+    jStatus["state"] = "idle";
+    jStatus["curAction"] = "0";
+    jExp["status"] = jStatus;
     jobj["experiment"] = jExp;
     qDebug().noquote() << QJsonDocument(jExp).toJson(QJsonDocument::Indented);
 

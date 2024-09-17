@@ -41,6 +41,7 @@ public:
     void sendError(QString str, QJsonObject jobj = QJsonObject());
 
 
+    bool jActionChanged() { return jChanged; }
     void putQueue(QJsonObject &jObj);
 
     LoadFrame *loadFrame = nullptr;
@@ -54,6 +55,7 @@ public:
      */
     QJsonObject jCmdToQueue;
     int stepperPos = 0;
+    bool jChanged = false;
 
 signals:
     void error(QJsonObject);

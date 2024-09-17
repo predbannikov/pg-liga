@@ -6,7 +6,23 @@
 #include "baseaction.h"
 
 /**
- * @brief The Experiment class      После старта состояния процесса, перебирается
+ * @brief The Experiment class      После старта состояния процесса, запускается conveyor
+ *      который имеет несколько состояний, первое состояние проверяет jExperiment
+ *      сразу же переходит во второе состояние в случае успеха иначе запускает процесс
+ *      перехода эксперимента в состояние IDLE. Второе состояние перебирает все доступные
+ *      Operations (Actions) и ищет совпадение с прочитанным ранее значением curAction.
+ *      После успешного совпадения, создаётся Action и запускается третье состояние иначе
+ *      запускается процесс перехода в состояние конца эксперимента (которое завершается паузой)
+ *      Третье состояние запускает процесс обновления экшиона до тех пор пока он не вернёт
+ *      true, что значит экшион выполнен.
+ *
+ *
+ *
+ *
+ *      объект jStatus из jExperiment["status"], в котором находятся:
+ *      "curAction":"%1" - число указывающее на номер операции которую необходимо выбрать из
+ *          списка операций и запустить
+ *      "state":"%1" - наименование текущего состояния указываются только idle, process, pause
  *
  */
 
@@ -44,7 +60,13 @@ private:
     void deleteAction();
     void updateJExperiment();
 
-    int curAction = 0;
+
+    // Работа с jExperiment
+    void jIncCurAction();
+    void jUpdateExperimentAction(QJsonObject jObj);
+    void jSaveState(QString state);
+    QString curAction();
+
     int loadFramePosition = 0;
     int volumeter1Position = 0;
     int volumeter2Position = 0;
