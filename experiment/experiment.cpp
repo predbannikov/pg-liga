@@ -4,7 +4,7 @@
 #include "movebytimeloadframe.h"
 #include "steppedpressure.h"
 
-Experiment::Experiment(quint8 addr) : Operations(addr)
+Experiment::Experiment(QString serial_port_name, quint8 addr): Operations(addr), portName(serial_port_name)
 {
 }
 
@@ -15,7 +15,7 @@ Experiment::~Experiment()
 
 void Experiment::doWork()
 {
-    modbus = new SerialPort();
+    modbus = new SerialPort(portName);
     modbus->init();
     while(execut());
 }

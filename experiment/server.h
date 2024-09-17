@@ -20,7 +20,7 @@ class Server : public QTcpServer
     const quint8 address;
 
 public:
-    explicit Server(quint8 addr_, QObject *parent = nullptr);
+    explicit Server(QString serial_port_name, quint8 addr_, QObject *parent = nullptr);
     ~Server();
 
     void startServer();

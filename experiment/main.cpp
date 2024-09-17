@@ -6,13 +6,22 @@
 
 #include "server.h"
 
+/**
+ * @brief main
+ * @param argc
+ * @param argv     в параметрах указываем адресс прибора и если необходимо имя порта (если не указываем, то
+ *                  по умолчанию ttyS3 порт оранджевский на преобразователь
+ * @return
+ */
+
+
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
     std::unique_ptr<QLockFile>lockFile;
     try {
-        if (argc == 2) {
+        if (argc == 2 || argc == 3) {
             int addr = atoi(argv[1]);
             if (addr > 0 && addr < 32) {
                 QString lockFilePath = QDir::temp().absoluteFilePath(QString("experiment%1.lock").arg(addr));
@@ -27,13 +36,18 @@ int main(int argc, char *argv[])
                     qDebug() << lockFilePath << "already running, exit program.";
                     return 0x01;
                 }
-                Server *server = new Server(addr, &a);
+
+                Server *server = nullptr;
+                if (argc == 2)
+                    server = new Server("", addr, &a);
+                else
+                    server = new Server(argv[2], addr, &a);
                 server->startServer();
             } else {
                 qDebug() << "support address from range [1..31]";
             }
         } else {
-            qDebug() << "required set one parameter numb address";
+            qDebug() << "required set one or two parameter number address and name serialport";
             return 0;
         }
 

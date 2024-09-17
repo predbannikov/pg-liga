@@ -27,7 +27,7 @@ class Experiment : public Operations
     } transitionToStopDevice = TRANSITION_TO_STOP_LOADFRAME_1;
 
 public:
-    Experiment(quint8 addr);
+    Experiment(QString serial_port_name, quint8 addr);
     ~Experiment();
     void stateSwitch() override;
 
@@ -49,7 +49,7 @@ private:
     int volumeter1Position = 0;
     int volumeter2Position = 0;
     BaseAction *action = nullptr;
-
+    QString portName;
 };
 
 #endif // EXPERIMENT_H
