@@ -35,8 +35,6 @@ public:
      */
     void append(qint64 start_time, qint64 cur_time, float value, float eps = 0.00001);
 
-    void fixAppend(qint64 start_time, qint64 cur_time, float value);
-
     qint64 size();
 
     void getLastStartAndCurTime(qint64 &start_time, qint64 &cur_time);

@@ -64,25 +64,9 @@ void DataStore::append(qint64 start_time, qint64 cur_time, float value, float ep
     } else {
         auto lastValue = data[start_time].last().second;
         double diffValue = fabs (lastValue - value);
-
-        // double diffValue = fabs (data[start_time].last().second - (value));
         if (diffValue > eps) {
             data[start_time].append({cur_time, value});
-//            if (last.first != data[start_time].last().first)
-//                data[start_time].append(last);
-        } else {
-//            qDebug() << Q_FUNC_INFO << "Значение изменения ещё меньше";
         }
-//        last = {cur_time, value};
-    }
-}
-
-void DataStore::fixAppend(qint64 start_time, qint64 cur_time, float value)
-{
-    if (!data.contains(start_time)) {
-        data.insert(start_time, {{cur_time, value}});
-    } else {
-        data[start_time].append({cur_time, value});
     }
 }
 

@@ -152,10 +152,16 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
         loadFrame->sendProtocol(jobj);
         emit sendRequestToClient(jobj);
     } else if (jobj["CMD"].toString() == "init_store_data") {
-        jobj["status"] = loadFrame->init();
+        jobj["status"] = true;  // loadFrame->init();
         emit sendRequestToClient(jobj);
     } else if (jobj["CMD"].toString() == "get_store_data") {
-        loadFrame->sendStoreData(jobj);
+        if (store != nullptr) {
+            // jobj["store_data"] = QString(QByteArray(QJsonDocument(jstoreData).toJson()).toBase64());
+            store->sendStoreData(jobj);
+        } else {
+            jobj["store_data"] = QString(QByteArray("no experiment has been launched yet").toBase64());
+        }
+//        loadFrame->sendStoreData(jobj);
         emit sendRequestToClient(jobj);
     } else if (jobj["CMD"].toString() == "stop_store_data") {
         loadFrame->deleteData();

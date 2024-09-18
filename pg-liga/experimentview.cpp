@@ -95,9 +95,18 @@ void ExperimentView::setupPlots()
     positionVsTime->addTrace(m_experimentData.value("Позиция"), tr("Время (t, мин)"), tr("Позиция, %1").arg(Strings::mm));
     ui->tabGraphics->addTab(positionVsTime, tr("Позиция"));
 
+    m_experimentData.insert("Всестороннее давление", new ExperimentData(this));
+    cellPressureVsTime = new DecoratedPlot(this);
+    cellPressureVsTime->addTrace(m_experimentData.value("Всестороннее давление"), tr("Время (t, мин)"), tr("Всестороннее давление, %1").arg(Strings::mm));
+    ui->tabGraphics->addTab(cellPressureVsTime, tr("Всестороннее давление"));
+
+    m_experimentData.insert("Поровое давление", new ExperimentData(this));
+    porePressureVsTime = new DecoratedPlot(this);
+    porePressureVsTime->addTrace(m_experimentData.value("Поровое давление"), tr("Время (t, мин)"), tr("Поровое давление, %1").arg(Strings::mm));
+    ui->tabGraphics->addTab(porePressureVsTime, tr("Поровое давление"));
+
     customPlot = new CustomGraph(&m_experimentData, this);
     ui->tabGraphics->addTab(customPlot, "Кастомный");
-
 }
 
 void ExperimentView::clearData()
@@ -382,6 +391,12 @@ void ExperimentView::onReadyResponse(const QJsonObject &jobj)
             if (jkey == "LF_position_mm") {
                 m_experimentData.value("Позиция")->append(allList);
             }
+            if (jkey == "PorePressure_kPa") {
+                m_experimentData.value("Поровое давление")->append(allList);
+            }
+            if (jkey == "CellPressure_kPa") {
+                m_experimentData.value("Всестороннее давление")->append(allList);
+            }
         }
     } else {
         qDebug().noquote() << QJsonDocument(jobj).toJson(QJsonDocument::Indented);
@@ -450,6 +465,16 @@ void ExperimentView::on_btnClearDataStore_clicked()
 
     m_experimentData.value("Позиция")->clearData();
     m_experimentData.value("Позиция")->clear();
+    positionVsTime->m_plot->replot();
+
+    m_experimentData.value("Всестороннее давление")->clearData();
+    m_experimentData.value("Всестороннее давление")->clear();
+    cellPressureVsTime->m_plot->replot();
+
+    m_experimentData.value("Поровое давление")->clearData();
+    m_experimentData.value("Поровое давление")->clear();
+    porePressureVsTime->m_plot->replot();
+
     positionVsTime->m_plot->replot();
 }
 

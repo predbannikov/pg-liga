@@ -213,12 +213,18 @@ private:
     QMap<QString, ExperimentData*> m_experimentData;
     DecoratedPlot *deformVsTime = nullptr;
 
-    QMap<QString, ExperimentData*> m_presureData;
+//    QMap<QString, ExperimentData*> m_presureData;
     DecoratedPlot *pressureVsTime = nullptr;
 
 
-    QMap<QString, ExperimentData*> m_positionData;
+//    QMap<QString, ExperimentData*> m_positionData;
     DecoratedPlot *positionVsTime = nullptr;
+
+//    QMap<QString, ExperimentData*> m_cellPressureData;
+    DecoratedPlot *cellPressureVsTime = nullptr;
+
+//    QMap<QString, ExperimentData*> m_porePressureData;
+    DecoratedPlot *porePressureVsTime = nullptr;
 
     CustomGraph *customPlot = nullptr;
 
