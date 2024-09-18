@@ -7,7 +7,7 @@
 SteppedLoadingModel::SteppedLoadingModel(QObject *parent):
     AbstractSteppedModel(parent)
 {
-    
+    m_type = "steppedLoading";
     
 }
 
@@ -51,31 +51,23 @@ QVariant SteppedLoadingModel::data(const QModelIndex &index, int role) const
 
     if((role == Qt::EditRole) || (role == Qt::DisplayRole)) {
         switch(col) {
-        case VerticalPressure:
-            if (currentStep.loadMeasurement == Step::LoadMeasurement::Pressure) {
-                return QVariant::fromValue(QPair<int, double>(currentStep.loadMeasurement, currentStep.pressure.kiloPascals()));
-            } else {
-                return QVariant::fromValue(QPair<int, double>(currentStep.loadMeasurement, currentStep.force.newtons()));
-            }
-            
+        case CellPressure:
+
+            return currentStep.cellPressure.kiloPascals();
         case EndCriterion:
             
             return currentStep.criterion;
         case StabilisationParameter:
-            if(currentStep.criterion == Step::Stabilisation) {
+            if(currentStep.criterion == Step::Stabilisation)
+            {
                 if(currentStep.stabilisationType == Step::Absolute) {
-                    
-                    return QVariant::fromValue(QPair<int, double>(currentStep.stabilisationType, currentStep.stabilisationParamAbsolute.millimetres()));
+                    return QVariant::fromValue(QPair<int, double>(currentStep.stabilisationType, currentStep.stabilisationParamAbsolute.kiloPascals()));
                 } else if(currentStep.stabilisationType == Step::Relative) {
-                    
                     return QVariant::fromValue(QPair<int, double>(currentStep.stabilisationType, currentStep.stabilisationParamRelative * 100.0));
                 } else {
-                    
                     return QVariant();
                 }
-
             } else {
-                
                 return QVariant();
             }
 
@@ -83,10 +75,10 @@ QVariant SteppedLoadingModel::data(const QModelIndex &index, int role) const
             switch(currentStep.criterion) {
             case Step::Duration:
                 
-                return QVariant::fromValue(currentStep.durationTime);
+                return QVariant::fromValue(currentStep.timeOfCriterionTime);
             case Step::Stabilisation:
                 
-                return QVariant::fromValue(currentStep.stabilisationTime);
+                return QVariant::fromValue(currentStep.timeOfCriterionTime);
             case Step::Manual:
             default:
                 
@@ -122,55 +114,36 @@ bool SteppedLoadingModel::setData(const QModelIndex &index, const QVariant &valu
         QPair<int, double> param;
 
         switch(col) {
-        case VerticalPressure:
+        case CellPressure:
             param = value.value<QPair<int, double>>();
-            if (currentStep.loadMeasurement == Step::Pressure) {
-                if (Measurements::Pressure::fromKiloPascals(param.second) > overpressure ||
-                        Measurements::Pressure::fromKiloPascals(param.second) < underpressure) {
-                     currentStep.pressure = Measurements::Pressure::fromKiloPascals(25);
-                } else {
-                    currentStep.pressure = Measurements::Pressure::fromKiloPascals(param.second);
-                }
-                currentStep.loadMeasurement = param.first;
-            } else {
-                currentStep.loadMeasurement = param.first;
-                currentStep.force = Measurements::Force::fromNewtons(param.second);
+            if (Measurements::Pressure::fromKiloPascals(param.second) > overpressure || Measurements::Pressure::fromKiloPascals(param.second) < underpressure)
+            {
+                 currentStep.cellPressure = Measurements::Pressure::fromKiloPascals(25);
             }
-
+            else {
+                currentStep.cellPressure = Measurements::Pressure::fromKiloPascals(param.second);
+            }
             break;
 
         case EndCriterion:
-            currentStep.criterion = value.toInt();
+            currentStep.criterion = Step::CriterionType(value.toInt());
             break;
 
         case StabilisationParameter:
             param = value.value<QPair<int, double>>();
 
             if(param.first == Step::Absolute) {
-                currentStep.stabilisationType = param.first;
-                currentStep.stabilisationParamAbsolute = Measurements::Length::fromMillimetres(param.second);
+                currentStep.stabilisationType = Step::StabilisationType(param.first);
+//                currentStep.load_stabilisationParamAbsolute = Measurements::Length::fromMillimetres(param.second);
             } else if(param.first == Step::Relative) {
-                currentStep.stabilisationType = param.first;
+                currentStep.stabilisationType = Step::StabilisationType(param.first);
                 currentStep.stabilisationParamRelative = param.second / 100.0;
             } else {}
 
             break;
 
         case Time:
-            switch(currentStep.criterion) {
-            case Step::Duration:
-                currentStep.durationTime = value.value<Measurements::TimeLongInterval>();
-                break;
-
-            case Step::Stabilisation:
-                currentStep.stabilisationTime = value.value<Measurements::TimeLongInterval>();
-                break;
-
-            case Step::Manual:
-            default:
-                break;
-            }
-
+            currentStep.timeOfCriterionTime = value.value<Measurements::TimeInterval>();
             break;
         }
 
@@ -225,9 +198,19 @@ int SteppedLoadingModel::addStep(const Step &step)
 int SteppedLoadingModel::insertStep(const QModelIndex &index)
 {
     const auto row = index.row() + 1;
+    Step step;
+    step.cellPressure = Measurements::Pressure::fromKiloPascals(25);
+    step.criterion = Step::Manual;
+    step.stabilisationType = Step::StabilisationType::Absolute;
+    step.stabilisationParamRelative = 0.15;
+    step.timeOfCriterionTime = Measurements::TimeInterval::fromHMS(0, 15, 0);
+
 
     beginInsertRows(QModelIndex(), row, row);
-    m_steps.insert(row, Step());
+    m_steps.insert(row, step);
+
+
+
     endInsertRows();
 
     emit dataChanged(QModelIndex(), QModelIndex());
@@ -301,10 +284,6 @@ int SteppedLoadingModel::duplicateStep(const QModelIndex &index)
     return row;
 }
 
-QJsonObject SteppedLoadingModel::serializModel()
-{
-    return QJsonObject();
-}
 
 void SteppedLoadingModel::setStep(const QModelIndex &index, const SteppedLoadingModel::Step &step)
 {

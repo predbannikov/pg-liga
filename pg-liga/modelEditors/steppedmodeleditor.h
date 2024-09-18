@@ -39,6 +39,7 @@ public:
 
     void addStep();
     void clearStep(int idx);
+    QString getTypeStep();
 
     QJsonObject serializModel();
 

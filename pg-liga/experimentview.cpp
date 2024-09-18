@@ -217,6 +217,7 @@ void ExperimentView::serializExperiment()
     QJsonObject jOps, jObj;
     for (int i = 0; i < lay->count(); i++) {
         OperationActions *operAct = qobject_cast<OperationActions *> (lay->itemAt(i)->widget());
+
         QString cnt = QString("Operation_%1").arg(i);
         jOps[cnt] = operAct->serializOperation();
     }

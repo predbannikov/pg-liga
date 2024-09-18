@@ -6,6 +6,7 @@
 SteppedPressuriseModel::SteppedPressuriseModel(QObject *parent):
     AbstractSteppedModel(parent)
 {
+    m_type = "steppedPressurise";
 }
 
 int SteppedPressuriseModel::rowCount(const QModelIndex &parent) const
@@ -182,6 +183,14 @@ int SteppedPressuriseModel::insertStep(const QModelIndex &index)
     beginInsertRows(QModelIndex(), row, row);
 
     Step newStep;
+    newStep.cellPressure = Measurements::Pressure::fromKiloPascals(50);
+    newStep.criterion = Step::Stabilisation;
+    newStep.stabilisationType = Step::Absolute;
+    newStep.stabilisationParamAbsolute = Measurements::Pressure::fromKiloPascals(3);
+    newStep.stabilisationParamRelative = 0.1;
+    newStep.timeOfCriterionTime = Measurements::TimeInterval::fromHMS(0, 15, 0);
+
+
 
     if(index.isValid()) {
         newStep.cellPressure += m_steps.at(index.row()).cellPressure;
@@ -265,16 +274,5 @@ int SteppedPressuriseModel::duplicateStep(const QModelIndex &index)
     endInsertRows();
     emit dataChanged(QModelIndex(), QModelIndex());
     return row;
-}
-
-QJsonObject SteppedPressuriseModel::serializModel()
-{
-    QJsonObject jObj;
-    int step = 0;
-    for (; step < m_steps.size(); step++) {
-        QString strStep = QString("step_%1").arg(step);
-        jObj[strStep] = m_steps[step].toJson();
-    }
-    return jObj;
 }
 

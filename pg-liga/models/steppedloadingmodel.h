@@ -11,45 +11,6 @@ class SteppedLoadingModel : public AbstractSteppedModel
     Q_OBJECT
 
 public:
-    enum Column {
-        VerticalPressure,
-        EndCriterion,
-        StabilisationParameter,
-        Time,
-
-        ColumnCount
-    };
-
-    struct Step {
-        enum CriterionType {
-            Manual,
-            Duration,
-            Stabilisation
-        };
-
-        enum StabilisationType {
-            Absolute,
-            Relative
-        };
-        enum LoadMeasurement {
-            Pressure,
-            Newtones
-        };
-
-        Measurements::Pressure pressure = Measurements::Pressure::fromKiloPascals(25);
-        Measurements::Force force = Measurements::Force::fromNewtons(25);
-
-        int criterion = Manual;
-        int stabilisationType = Absolute;
-
-        int loadMeasurement = Pressure;
-
-        Measurements::Length stabilisationParamAbsolute = Measurements::Length::fromMillimetres(1.0);
-        double stabilisationParamRelative = 0.15;
-
-        Measurements::TimeLongInterval durationTime = Measurements::TimeLongInterval::fromHMS(0, 1, 0);
-        Measurements::TimeLongInterval stabilisationTime = Measurements::TimeLongInterval::fromHMS(0, 1, 0);
-    };
 
     SteppedLoadingModel(QObject *parent = nullptr);
 
@@ -69,7 +30,6 @@ public:
     int removeStep(const QModelIndex &index = QModelIndex()) override;
     int moveStep(const QModelIndex &index, int moveAmount) override;
     int duplicateStep(const QModelIndex &index = QModelIndex()) override;
-    QJsonObject serializModel();
 
     void setStep(const QModelIndex &index, const Step &step);
 
@@ -82,14 +42,15 @@ public:
 private:
     virtual QStringList headers() const = 0;
 
-    QList<Step> m_steps;
 };
 
 class StaticCompressionModel : public SteppedLoadingModel
 {
 public:
     StaticCompressionModel(QObject *parent = nullptr):
-        SteppedLoadingModel(parent) {}
+        SteppedLoadingModel(parent) {
+        m_type = "staticCompressionModel";
+    }
 
 
 private:
@@ -107,7 +68,9 @@ class StaticDeviatorModel : public SteppedLoadingModel
 {
 public:
     StaticDeviatorModel(QObject *parent = nullptr):
-        SteppedLoadingModel(parent) {}
+        SteppedLoadingModel(parent) {
+        m_type = "staticDeviatorModel";
+    }
 
 private:
     QStringList headers() const override {
@@ -124,7 +87,9 @@ class StaticShearModel : public SteppedLoadingModel
 {
 public:
     StaticShearModel(QObject *parent = nullptr):
-        SteppedLoadingModel(parent) {}
+        SteppedLoadingModel(parent) {
+        m_type = "StaticShearModel";
+    }
 
 private:
     QStringList headers() const override {

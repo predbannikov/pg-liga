@@ -104,19 +104,26 @@ void OperationActions::deleteWidget()
 QJsonObject OperationActions::serializOperation()
 {
     QJsonObject jObj;
-    QWidget *wgt = ui->widget->layout()->itemAt(0)->widget();
-    if (qobject_cast<SteppedModelEditor *>(wgt) != nullptr) {
-        SteppedModelEditor *steppedModelEditor = qobject_cast<SteppedModelEditor *>(wgt);
-        jObj = steppedModelEditor->serializModel();
-//        qDebug().noquote() << QJsonDocument(jTest).toJson(QJsonDocument::Indented);
-//        qDebug().noquote() << QJsonDocument(jTest).toJson(QJsonDocument::Indented);
+    if (!ui->widget->layout()->isEmpty())
+    {
+        QWidget *wgt = ui->widget->layout()->itemAt(0)->widget();
+        if (qobject_cast<SteppedModelEditor *>(wgt) != nullptr) {
+            SteppedModelEditor *steppedModelEditor = qobject_cast<SteppedModelEditor *>(wgt);
 
-    } else if (qobject_cast<KinematicLoadingModelEditor *>(wgt) != nullptr){
-        qDebug() << "KinematicLoadingModelEditor";
-    } else {
-        qDebug() << "##################";
+            jObj = steppedModelEditor->serializModel();
+            jObj["Type"] = steppedModelEditor->getTypeStep();
+            qDebug().noquote() << "TISH*****"<<endl <<QJsonDocument(jObj).toJson(QJsonDocument::Indented)<< "TISH*****"<<endl;
+    //        qDebug().noquote() << QJsonDocument(jTest).toJson(QJsonDocument::Indented);
+    //        qDebug().noquote() << QJsonDocument(jTest).toJson(QJsonDocument::Indented);
+
+        } else if (qobject_cast<KinematicLoadingModelEditor *>(wgt) != nullptr){
+            qDebug() << "KinematicLoadingModelEditor";
+        } else {
+            qDebug() << "##################";
+        }
+        return jObj;
     }
-    return jObj;
+    return QJsonObject();
 }
 
 void OperationActions::updateTextMenu(QString text)

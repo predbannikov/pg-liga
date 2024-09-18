@@ -230,8 +230,9 @@ QJsonObject SteppedModelEditor::serializModel()
         qDebug() << Q_FUNC_INFO << "SteppedPressuriseModel";
     }
     else if (qobject_cast<SteppedLoadingModel *>(tableModel) != nullptr) {
-//        SteppedLoadingModel *model = qobject_cast<SteppedLoadingModel *>(tableModel);
-//        qDebug() << Q_FUNC_INFO << "SteppedLoadingModel";
+        SteppedLoadingModel *model = qobject_cast<SteppedLoadingModel *>(tableModel);
+        jRet = model->serializModel();
+        qDebug() << Q_FUNC_INFO << "SteppedLoadingModel";
 
     }
     return jRet;
@@ -274,4 +275,20 @@ void SteppedModelEditor::setupDelegates(const QVector<QStyledItemDelegate*> &del
     for(auto i = 0; i < delegates.size(); ++i) {
         ui->stepView->setItemDelegateForColumn(i, delegates.at(i));
     }
+}
+
+QString SteppedModelEditor::getTypeStep()
+{
+    QAbstractTableModel *tableModel = qobject_cast<QAbstractTableModel *>(ui->stepView->model());
+    if (qobject_cast<SteppedPressuriseModel *>(tableModel) != nullptr) {
+        SteppedPressuriseModel *model = qobject_cast<SteppedPressuriseModel *>(tableModel);
+        return model->getType();
+    }
+    else if (qobject_cast<SteppedLoadingModel *>(tableModel) != nullptr) {
+        SteppedLoadingModel *model = qobject_cast<SteppedLoadingModel *>(tableModel);
+        return model->getType();
+
+    }
+
+    return "unknow_type";
 }
