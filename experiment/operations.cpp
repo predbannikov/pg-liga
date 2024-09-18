@@ -148,24 +148,30 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
      } else if (jobj["CMD"].toString() == "read_sensors") {
         loadFrame->readSensors(jobj);
         emit sendRequestToClient(jobj);
+
     } else if (jobj["CMD"].toString() == "get_protocol") {
-        loadFrame->sendProtocol(jobj);
+//        loadFrame->sendProtocol(jobj);
+        emit sendRequestToClient(jobj);
+    } else if (jobj["CMD"].toString() == "enable_store_data") {
+        jobj["msg"] = store->enableStoreData(true);
+        emit sendRequestToClient(jobj);
+    } else if (jobj["CMD"].toString() == "disable_store_data") {
+        jobj["msg"] = store->enableStoreData(false);
         emit sendRequestToClient(jobj);
     } else if (jobj["CMD"].toString() == "init_store_data") {
-        jobj["status"] = true;  // loadFrame->init();
+        jobj["msg"] = store->initStoreData();
+        emit sendRequestToClient(jobj);
+    } else if (jobj["CMD"].toString() == "delete_store_data") {
+        jobj["msg"] = store->deleteStoreData();
         emit sendRequestToClient(jobj);
     } else if (jobj["CMD"].toString() == "get_store_data") {
         if (store != nullptr) {
-            // jobj["store_data"] = QString(QByteArray(QJsonDocument(jstoreData).toJson()).toBase64());
             store->sendStoreData(jobj);
         } else {
             jobj["store_data"] = QString(QByteArray("no experiment has been launched yet").toBase64());
         }
-//        loadFrame->sendStoreData(jobj);
         emit sendRequestToClient(jobj);
-    } else if (jobj["CMD"].toString() == "stop_store_data") {
-        loadFrame->deleteData();
-        emit sendRequestToClient(jobj);
+
     } else if (jobj["CMD"].toString() == "load_frame_move") {
         return loadFrame->moveFrame(jobj);
     } else if (jobj["CMD"].toString() == "load_frame_stop") {

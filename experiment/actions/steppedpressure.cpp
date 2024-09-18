@@ -116,8 +116,8 @@ void SteppedPressure::pausing()
 
 bool SteppedPressure::betaLeastSquares(int n)
 {
-    auto stepDataCellPressure = volumeter1->store->data["CellPressure_kPa"].getDataOfStartTime();
-    auto stepDataPorePressure = volumeter1->store->data["PorePressure_kPa"].getDataOfStartTime();
+    auto stepDataCellPressure = volumeter1->store->data["CellPressure_kPa"]->getDataOfStartTime();
+    auto stepDataPorePressure = volumeter1->store->data["PorePressure_kPa"]->getDataOfStartTime();
 
     if (stepDataCellPressure.size() < n || stepDataPorePressure.size() < n)
         return false;

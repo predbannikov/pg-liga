@@ -22,6 +22,11 @@ CustomGraph::CustomGraph(QMap<QString, ExperimentData *> *data, QWidget *parent)
 
 }
 
+void CustomGraph::clear()
+{
+    ui->widget->m_plot->replot();
+}
+
 CustomGraph::~CustomGraph()
 {
     delete ui;

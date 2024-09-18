@@ -9,7 +9,6 @@
 
 class DataStore
 {
-    QPair <qint64, float> last;
 public:
     DataStore();
     ~DataStore();

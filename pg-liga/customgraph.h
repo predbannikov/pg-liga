@@ -18,6 +18,7 @@ class CustomGraph : public QWidget
 
 public:
     explicit CustomGraph(QMap<QString, ExperimentData *> *data, QWidget *parent = nullptr);
+    void clear();
     ~CustomGraph();
 
 private slots:

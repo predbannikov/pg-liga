@@ -200,6 +200,8 @@ private slots:
 
     void on_btnClearTextEdit_clicked();
 
+    void on_btnEnableStoreData_clicked();
+
 signals:
     void sendRequest(QJsonObject &jobj);
 

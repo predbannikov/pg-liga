@@ -1,4 +1,4 @@
-#include "storedata.h"
+#include "data.h"
 #include "measurements.h"
 
 using namespace Measurements;
@@ -8,8 +8,14 @@ Data::Data(quint8 addr, const QJsonObject &conf, QObject *parent) : QObject(pare
     jconfig = conf;
     address = addr;
 
+    // Обязательное выполнение в конструкторе до всего остального
+    initStoreData();
+
+
+    // Выполнение не обязательное
     createFileProtocol();
     elapseExperimentTimer.start();
+
 }
 
 Data::~Data()
@@ -79,36 +85,39 @@ bool Data::printFileHeader()
 
 void Data::updateData()
 {
-    for (int i = 0; i < sensors.size(); i++) {
-        switch (sensors[i]->funCode) {
-        case SensLoad0:
-            currentData.insert("VerticalPressure_kPa", sensors[i]->value);
-            data["VerticalPressure_kPa"].append(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value);
-            break;
+    if (enableStore) {
+        for (int i = 0; i < sensors.size(); i++) {
+            switch (sensors[i]->funCode) {
+            case SensLoad0:
+                currentData.insert(VerticalPressure_kPa, sensors[i]->value);
+                data[VerticalPressure_kPa]->append(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value);
 
-        case SensDef0:
-            currentData.insert("VerticalDeform_mm", sensors[i]->value);
-            data["VerticalDeform_mm"].append(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
-            break;
+                break;
 
-            // Все перепутано это волюмоментр 1
-        case SensPrs1:
-            currentData.insert("CellPressure_kPa", sensors[i]->value / 1000.);
-            data["CellPressure_kPa"].append(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
-            break;
+            case SensDef0:
+                currentData.insert(VerticalDeform_mm, sensors[i]->value);
+                data[VerticalDeform_mm]->append(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
+                break;
 
-            // Все перепутано это волюмоментр 2
-        case SensPrs0:
-            currentData.insert("PorePressure_kPa", sensors[i]->value / 1000.);
-            data["PorePressure_kPa"].append(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
-            break;        }
+                // Все перепутано это волюмоментр 1
+            case SensPrs1:
+                currentData.insert(CellPressure_kPa, sensors[i]->value / 1000.);
+                data[CellPressure_kPa]->append(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
+                break;
+
+                // Все перепутано это волюмоментр 2
+            case SensPrs0:
+                currentData.insert(PorePressure_kPa, sensors[i]->value / 1000.);
+                data[PorePressure_kPa]->append(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
+                break;        }
+        }
+
+        currentData.insert(LF_position_mm, stepper->position);
+        data[LF_position_mm]->append(stepTimeStart, elapseExperimentTimer.elapsed(), stepper->position / 1000.);
+
+        if (period.complate())
+            writeToDataFile();
     }
-
-    currentData.insert("LF_position_mm", stepper->position);
-    data["LF_position_mm"].append(stepTimeStart, elapseExperimentTimer.elapsed(), stepper->position);
-
-    if (period.complate())
-        writeToDataFile();
 }
 
 void Data::sendProtocol(QJsonObject &jobj)
@@ -129,11 +138,11 @@ void Data::sendStoreData(QJsonObject &jobj)
         QJsonObject jData;
         if (jstoreData.contains(it.key())) {
             jData = jstoreData[it.key()].toObject();
-            it.value().serializeData(jData);
+            it.value()->serializeData(jData);
         } else {
             jData["start_time"] = "-1";
             jData["cur_time"] = "-1";
-            it.value().serializeData(jData);
+            it.value()->serializeData(jData);
         }
         jstoreData[it.key()] = jData;
     }
@@ -150,7 +159,40 @@ void Data::setCurStep(const QJsonObject &jcurStep_)
 
 double Data::getValueStepOfTime(qint64 time, QString sens)
 {
-    return data[sens].valueFromBack(stepTimeStart, time);
+    return data[sens]->valueFromBack(stepTimeStart, time);
+}
+
+QString Data::enableStoreData(bool enable)
+{
+    if (enableStore == enable)
+        return QString("DataStore already %1").arg(enable?"enabled":"disabled");
+
+    if (data.isEmpty())
+        initStoreData();
+    enableStore = enable;
+    return QString("DataStore %1").arg(enable?"enable":"disable");
+}
+
+QString Data::deleteStoreData()
+{
+    enableStoreData(false);
+    auto it = data.begin();
+    for (; it != data.end(); it++)
+        delete it.value();
+    data.clear();
+    return QString("DataStore deleted");
+}
+
+QString Data::initStoreData()
+{
+    if (!data.isEmpty())
+        deleteStoreData();
+    data.insert(VerticalPressure_kPa, new DataStore);
+    data.insert(VerticalDeform_mm, new DataStore());
+    data.insert(LF_position_mm, new DataStore());
+    data.insert(CellPressure_kPa, new DataStore());
+    data.insert(PorePressure_kPa, new DataStore());
+    return QString("DataStore init");
 }
 
 bool Data::writeToDataFile()

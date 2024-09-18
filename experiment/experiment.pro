@@ -19,6 +19,7 @@ SOURCES += \
         baseaction.cpp \
         clientmanager.cpp \
         controller.cpp \
+        data.cpp \
         experiment.cpp \
         interface.cpp \
         loadframe.cpp \
@@ -28,7 +29,6 @@ SOURCES += \
         server.cpp  \
         main.cpp \
         stepper.cpp \
-        storedata.cpp \
         volumeter1.cpp \
         volumeter2.cpp
 
@@ -40,6 +40,7 @@ HEADERS += \
         baseaction.h \
         clientmanager.h \
         controller.h \
+        data.h \
         experiment.h    \
         global.h \
         interface.h \
@@ -49,7 +50,6 @@ HEADERS += \
         serialport.h \
         server.h    \
         stepper.h \
-        storedata.h \
         volumeter1.h \
         volumeter2.h
 

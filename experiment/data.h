@@ -1,5 +1,5 @@
-#ifndef STOREDATA_H
-#define STOREDATA_H
+#ifndef DATA_H
+#define DATA_H
 
 #include <QFile>
 #include <QDir>
@@ -18,6 +18,12 @@
 #include <QMap>
 
 #include "datastore.h"
+
+const QString VerticalPressure_kPa = "VerticalPressure_kPa";
+const QString CellPressure_kPa = "CellPressure_kPa";
+const QString PorePressure_kPa = "PorePressure_kPa";
+const QString VerticalDeform_mm = "VerticalDeform_mm";
+const QString LF_position_mm = "LF_position_mm";
 
 struct TimePeriod {
     const QVector<qint64> periods;
@@ -60,12 +66,12 @@ class Data : public QObject
         "Time",
         "Mode",
         "Step",
-        "VerticalPressure_kPa",
+        VerticalPressure_kPa,
         "ShearPressure_kPa",
-        "CellPressure_kPa",
-        "PorePressure_kPa",
+        CellPressure_kPa,
+        PorePressure_kPa,
         "PorePressureAux_kPa",
-        "VerticalDeform_mm",
+        VerticalDeform_mm,
         "ShearDeform_mm",
         "CellVolume_mm3",
         "PoreVolume_mm3",
@@ -95,7 +101,10 @@ public:
     double getValueStepOfTime(qint64 time, QString sens);
 
 
-    QMap <QString, DataStore> data;
+    QMap <QString, DataStore*> data;
+    QString enableStoreData(bool enable);
+    QString deleteStoreData();
+    QString initStoreData();
 private:
     QFile dataFileName;
     quint8 address;
@@ -113,6 +122,7 @@ private:
     QElapsedTimer elapseExperimentTimer;
     qint64 stepTimeStart = 0;
     TimePeriod period;      // Период обновления значений в протокол
+    bool enableStore = true;
 };
 
-#endif // STOREDATA_H
+#endif // DATA_H

@@ -351,6 +351,63 @@ void ExperimentView::onReadDataStore()
     emit sendRequest(jobj);
 }
 
+void ExperimentView::on_btnInitStoreData_clicked()
+{
+    on_btnClearDataStore_clicked();
+    QJsonObject jobj;
+    jobj["CMD"] = "init_store_data";
+    timerUpdateDataStore->start(3000);
+    emit sendRequest(jobj);
+}
+
+void ExperimentView::on_btnStopStoreData_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "stop_store_data";
+    timerUpdateDataStore->stop();
+    emit sendRequest(jobj);
+}
+
+void ExperimentView::on_btnEnableStoreData_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "enable_store_data";
+    timerUpdateDataStore->start(3000);
+    emit sendRequest(jobj);
+}
+
+
+void ExperimentView::on_btnClearDataStore_clicked()
+{
+    dataStore.clear();
+
+    m_experimentData.value("Деформация")->clearData();
+    m_experimentData.value("Деформация")->clear();
+    deformVsTime->m_plot->replot();
+
+    m_experimentData.value("Сила")->clearData();
+    m_experimentData.value("Сила")->clear();
+    pressureVsTime->m_plot->replot();
+
+    m_experimentData.value("Позиция")->clearData();
+    m_experimentData.value("Позиция")->clear();
+    positionVsTime->m_plot->replot();
+
+    m_experimentData.value("Всестороннее давление")->clearData();
+    m_experimentData.value("Всестороннее давление")->clear();
+    cellPressureVsTime->m_plot->replot();
+
+    m_experimentData.value("Поровое давление")->clearData();
+    m_experimentData.value("Поровое давление")->clear();
+    porePressureVsTime->m_plot->replot();
+
+    customPlot->clear();
+
+    QJsonObject jobj;
+    jobj["CMD"] = "delete_store_data";
+    emit sendRequest(jobj);
+}
+
 void ExperimentView::on_comboBox_activated(const QString &arg1)
 {
     onCreateJsonObject();
@@ -405,6 +462,8 @@ void ExperimentView::onReadyResponse(const QJsonObject &jobj)
         ui->textEdit->append("                                                  ");
         ui->textEdit->append("##################################################");
     }
+    if (jobj.contains("msg"))
+        ui->textEdit->append(jobj["msg"].toString());
 }
 
 void ExperimentView::on_btnUnlockPid_clicked()
@@ -426,15 +485,6 @@ void ExperimentView::on_btnGetStoreData_clicked()
     onReadDataStore();
 }
 
-void ExperimentView::on_btnInitStoreData_clicked()
-{
-    on_btnClearDataStore_clicked();
-    QJsonObject jobj;
-    jobj["CMD"] = "init_store_data";
-    timerUpdateDataStore->start(3000);
-    emit sendRequest(jobj);
-}
-
 
 void ExperimentView::on_btnSetSettings_clicked()
 {
@@ -451,46 +501,11 @@ void ExperimentView::on_btnSetSettings_clicked()
 //    emit sendRequest(jobj);
 }
 
-void ExperimentView::on_btnClearDataStore_clicked()
-{
-    dataStore.clear();
-
-    m_experimentData.value("Деформация")->clearData();
-    m_experimentData.value("Деформация")->clear();
-    deformVsTime->m_plot->replot();
-
-    m_experimentData.value("Сила")->clearData();
-    m_experimentData.value("Сила")->clear();
-    pressureVsTime->m_plot->replot();
-
-    m_experimentData.value("Позиция")->clearData();
-    m_experimentData.value("Позиция")->clear();
-    positionVsTime->m_plot->replot();
-
-    m_experimentData.value("Всестороннее давление")->clearData();
-    m_experimentData.value("Всестороннее давление")->clear();
-    cellPressureVsTime->m_plot->replot();
-
-    m_experimentData.value("Поровое давление")->clearData();
-    m_experimentData.value("Поровое давление")->clear();
-    porePressureVsTime->m_plot->replot();
-
-    positionVsTime->m_plot->replot();
-}
-
 void ExperimentView::on_btnSetHz_clicked()
 {
     QJsonObject jobj;
     jobj["CMD"] = "set_hz";
     jobj["hz"] = ui->spinHz->value();
-    emit sendRequest(jobj);
-}
-
-void ExperimentView::on_btnStopStoreData_clicked()
-{
-    QJsonObject jobj;
-    jobj["CMD"] = "stop_store_data";
-    timerUpdateDataStore->stop();
     emit sendRequest(jobj);
 }
 
@@ -794,4 +809,3 @@ void ExperimentView::on_btnClearTextEdit_clicked()
 {
     ui->textEdit->clear();
 }
-

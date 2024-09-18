@@ -9,7 +9,7 @@
 #include "sensors.h"
 #include "stepper.h"
 #include "controller.h"
-#include "storedata.h"
+#include "data.h"
 
 class LoadFrame
 {

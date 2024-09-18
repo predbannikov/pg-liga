@@ -6,7 +6,7 @@ DataStore::DataStore() {
 }
 
 DataStore::~DataStore() {
-
+    qDebug() << "test delete";
 }
 
 void DataStore::serializeData(QJsonObject &jobj) {
