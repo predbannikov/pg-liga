@@ -11,7 +11,7 @@ Operations::Operations(quint8 addr) : Interface(addr),
     plata(0, ActBase)
 {
     jConfig["area"] = "0.01";
-    store = new StoreData(addr, jConfig);
+    store = new Data(addr, jConfig);
 
 
     QVector<Sensor *> sens;

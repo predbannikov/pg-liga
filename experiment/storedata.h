@@ -19,53 +19,6 @@
 
 #include "datastore.h"
 
-//class Data
-//{
-//    QPair <qint64, float> last;
-//public:
-//    Data() {
-
-//    };
-//    ~Data() {
-
-//    };
-
-//    float valueFromBack(qint64 step_time, qint64 time) {
-//        auto &arr = data[step_time];
-////        QPair <qint64, float> last_value = arr.last();
-//        for (int i = arr.size() - 1; i > 0; i--) {
-////            if (last_value.first - arr[i].first >= time) {
-//            if (last.first - arr[i].first >= time) {
-//                return arr[i].second;
-//            }
-//        }
-//        qDebug() << Q_FUNC_INFO << "#WARNING: get first value stop";
-//        return arr.first().second;
-//    }
-
-//    void append(qint64 start_time, qint64 cur_time, float value, float eps = 0.01) {
-//        if (!data.contains(start_time)) {
-//            data.insert(start_time, {{cur_time, value}});
-//        } else {
-//            if (abs (data[start_time].last().second - (value)) > eps) {
-//                if (last.first != data[start_time].last().first)
-//                    data[start_time].append(last);
-//                data[start_time].append({cur_time, value});
-//            }
-//            last = {cur_time, value};
-//        }
-//    }
-
-//    qint64 size() {
-//        qint64 sz = 0;
-//        for (auto &lst: data) {
-//            sz += lst.size();
-//        }
-//        return sz;
-//    }
-//    QMap <qint64, QList<QPair<qint64, float>>> data;
-//};
-
 struct TimePeriod {
     const QVector<qint64> periods;
     TimePeriod() :
@@ -101,26 +54,8 @@ private:
     QElapsedTimer elapsePeriod;
 };
 
-class StoreData : public QObject
+class Data : public QObject
 {
-
-
-
-    enum InstrumentType{
-        LIGA_KL0_1T,
-        LIGA_KL1_1Vol_1T,
-        LIGA_KL1_2Vol_1T,
-        LIGA_KL0S_1T,
-        LIGA_KL0S_2Load_1T,
-        LIGA_KL1S_2Vol_1T,
-        LIGA_KL0_5T,
-        LIGA_KL1_1Vol_5T,
-        LIGA_KL1_2Vol_5T,
-        LIGA_KL0_25T,
-        LIGA_KL1_1Vol_25T
-    };
-
-
     const QStringList columnNames = {
         "Time",
         "Mode",
@@ -145,8 +80,8 @@ class StoreData : public QObject
     void createFileProtocol();
 
 public:
-    StoreData(quint8 addr, const QJsonObject &conf, QObject *parent = nullptr);
-    ~StoreData();
+    Data(quint8 addr, const QJsonObject &conf, QObject *parent = nullptr);
+    ~Data();
 
     void setSensors(const QVector <Sensor*> sensors_);
     void setStepper(Stepper *stepper_);
@@ -154,15 +89,10 @@ public:
     bool printFileHeader();
 
     void updateData();
-    // void fixUpdateData();
     void sendProtocol(QJsonObject &jobj);
     void sendStoreData(QJsonObject &jobj);
     void setCurStep(const QJsonObject &jcurStep_);
-
-//    void clearStore(const QString name);
-
     double getValueStepOfTime(qint64 time, QString sens);
-
 
 
     QMap <QString, DataStore> data;
@@ -174,8 +104,6 @@ private:
     QVector <Sensor*> sensors;
     Stepper *stepper;
 
-    InstrumentType type = LIGA_KL0_1T;
-
     /**
      * @brief writeToDataFile       Запись в протокол
      * @return
@@ -184,9 +112,7 @@ private:
 
     QElapsedTimer elapseExperimentTimer;
     qint64 stepTimeStart = 0;
-//    QElapsedTimer elapseStepTimer;
-
-    TimePeriod period;
+    TimePeriod period;      // Период обновления значений в протокол
 };
 
 #endif // STOREDATA_H

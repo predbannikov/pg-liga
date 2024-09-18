@@ -36,7 +36,7 @@ void DataStore::serializeData(QJsonObject &jobj) {
 
 QList<QPair<qint64, float> > DataStore::deSerializeData(QJsonObject jData) {
     QMap<qint64, QList<QPair<qint64, float>>> new_map;
-    for (auto jkeyTime: jData.keys()) {
+    for (const auto &jkeyTime: jData.keys()) {
         QByteArray buff = QByteArray::fromBase64(jData[jkeyTime].toString().toUtf8());
         QDataStream ds(&buff, QIODevice::ReadOnly);
         ds.setVersion(QDataStream::Qt_5_11);
@@ -53,7 +53,7 @@ QList<QPair<qint64, float> > DataStore::deSerializeData(QJsonObject jData) {
     QList <QPair <qint64, float>> all_lists;
     QList <qint64> list_sort = new_map.keys();
     std::sort(list_sort.begin(), list_sort.end());
-    for (qint64 idx: list_sort)
+    for (qint64 idx: qAsConst(list_sort))
         all_lists.append(new_map[idx]);
     return all_lists;
 }

@@ -60,8 +60,8 @@ public:
     Stepper *stepper = nullptr;
     Controller *controller = nullptr;
 
-    StoreData *store = nullptr;
-    void setStore(StoreData *pStore);
+    Data *store = nullptr;
+    void setStore(Data *pStore);
 
     QString unitName;
 };

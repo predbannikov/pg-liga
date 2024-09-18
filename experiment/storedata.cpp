@@ -3,24 +3,22 @@
 
 using namespace Measurements;
 
-StoreData::StoreData(quint8 addr, const QJsonObject &conf, QObject *parent) : QObject(parent)
+Data::Data(quint8 addr, const QJsonObject &conf, QObject *parent) : QObject(parent)
 {
     jconfig = conf;
     address = addr;
 
     createFileProtocol();
-
     elapseExperimentTimer.start();
-//    elapseStepTimer.start();
 }
 
-StoreData::~StoreData()
+Data::~Data()
 {
     qDebug() << Q_FUNC_INFO;
     fflush(stderr);
 }
 
-void StoreData::createFileProtocol()
+void Data::createFileProtocol()
 {
     QDir current_path = QDir::currentPath();
     QDir protocol_folder = current_path.filePath("%1").arg(address);
@@ -44,17 +42,17 @@ void StoreData::createFileProtocol()
     }
 }
 
-void StoreData::setSensors(const QVector<Sensor *> sensors_)
+void Data::setSensors(const QVector<Sensor *> sensors_)
 {
     sensors = sensors_;
 }
 
-void StoreData::setStepper(Stepper *stepper_)
+void Data::setStepper(Stepper *stepper_)
 {
     stepper = stepper_;
 }
 
-bool StoreData::printFileHeader()
+bool Data::printFileHeader()
 {
 
     if (!dataFileName.open(QIODevice::WriteOnly | QIODevice::Text)) {
@@ -79,10 +77,9 @@ bool StoreData::printFileHeader()
     return true;
 }
 
-void StoreData::updateData()
+void Data::updateData()
 {
     for (int i = 0; i < sensors.size(); i++) {
-//        QString keySens;
         switch (sensors[i]->funCode) {
         case SensLoad0:
             currentData.insert("VerticalPressure_kPa", sensors[i]->value);
@@ -97,8 +94,6 @@ void StoreData::updateData()
             // Все перепутано это волюмоментр 1
         case SensPrs1:
             currentData.insert("CellPressure_kPa", sensors[i]->value / 1000.);
-            // auto &dt = data["CellPressure_kPa"];
-            // dt.append(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
             data["CellPressure_kPa"].append(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
             break;
 
@@ -116,23 +111,7 @@ void StoreData::updateData()
         writeToDataFile();
 }
 
-// void StoreData::fixUpdateData()
-// {
-//     for (int i = 0; i < sensors.size(); i++) {
-//         switch (sensors[i]->funCode) {
-//         case SensLoad0:
-//             data["VerticalPressure_kPa"].fixAppend(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
-//             break;
-//         case SensDef0:
-//             data["VerticalDeform_mm"].fixAppend(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
-//             break;
-//         }
-//     }
-//     if (period.complate())
-//         writeToDataFile();
-// }
-
-void StoreData::sendProtocol(QJsonObject &jobj)
+void Data::sendProtocol(QJsonObject &jobj)
 {
     while (!dataFileName.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qDebug() << "protocol not read" << dataFileName.fileName();
@@ -142,7 +121,7 @@ void StoreData::sendProtocol(QJsonObject &jobj)
     dataFileName.close();
 }
 
-void StoreData::sendStoreData(QJsonObject &jobj)
+void Data::sendStoreData(QJsonObject &jobj)
 {
     QJsonObject jstoreData = jobj["store_data"].toObject();
     auto it = data.begin();
@@ -159,42 +138,22 @@ void StoreData::sendStoreData(QJsonObject &jobj)
         jstoreData[it.key()] = jData;
     }
 
-//    for (; it != data.end(); it++) {
-//        QJsonObject jData;
-//        auto itPairList = it.value().data.begin();  // type sensor {deform, forse}
-//        for (; itPairList != it.value().data.end(); itPairList++) {
-
-//            QByteArray buff;
-//            QDataStream ds(&buff, QIODevice::ReadWrite);
-//            ds.setVersion(QDataStream::Qt_5_11);
-//            ds.setByteOrder(QDataStream::BigEndian);
-//            ds << itPairList.value();
-//            jData[QString::number(itPairList.key())] = QString(buff.toBase64());                   // list pairs
-//        }
-//        jstoreData[it.key()] = jData;
-//    }
-
-
-
-//    jobj["store_data"] = jstoreData;
     jobj["store_data"] = QString(QByteArray(QJsonDocument(jstoreData).toJson()).toBase64());
 }
 
-void StoreData::setCurStep(const QJsonObject &jcurStep_)
+void Data::setCurStep(const QJsonObject &jcurStep_)
 {
     stepTimeStart = elapseExperimentTimer.elapsed();
-//    elapseStepTimer.restart();
-//    elapseStepTimer.start();
     jcurStep = jcurStep_;
     period.reset();
 }
 
-double StoreData::getValueStepOfTime(qint64 time, QString sens)
+double Data::getValueStepOfTime(qint64 time, QString sens)
 {
     return data[sens].valueFromBack(stepTimeStart, time);
 }
 
-bool StoreData::writeToDataFile()
+bool Data::writeToDataFile()
 {
     while (!dataFileName.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append)) {
         qDebug() << "protocol file not created" << dataFileName.fileName();
@@ -219,8 +178,6 @@ bool StoreData::writeToDataFile()
            QString::number(currentData.value("Epsilon3")) << "\n";   //Qt:endl for modern kits
 
     auto result = str.status() == QTextStream::Ok;
-
     dataFileName.close();
-
     return result;
 }
