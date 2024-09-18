@@ -6,6 +6,8 @@ using namespace Measurements;
 
 Operations::Operations(quint8 addr) : Interface(addr),
     loadFrame(new LoadFrame),
+    volumetr1(new Volumeter1),
+    volumetr2(new Volumeter2),
     plata(0, ActBase)
 {
     jConfig["area"] = "0.01";
@@ -15,16 +17,18 @@ Operations::Operations(quint8 addr) : Interface(addr),
     QVector<Sensor *> sens;
     sens.append(loadFrame->forceSens);
     sens.append(loadFrame->deformSens);
-    sens.append(volumetr1.pressureSens);
-    sens.append(volumetr2.pressureSens);
+    sens.append(volumetr1->pressureSens);
+    sens.append(volumetr2->pressureSens);
 
     store->setSensors(sens);
     store->setStepper(loadFrame->stepper);
 
 
     loadFrame->setStore(store);
-    volumetr1.address = addr;
-    volumetr2.address = addr;
+    volumetr1->setStore(store);
+    volumetr2->setStore(store);
+    volumetr1->address = addr;
+    volumetr2->address = addr;
     loadFrame->address = addr;
 }
 
@@ -54,14 +58,14 @@ bool Operations::execut()
                                        arg(loadFrame->stepper->position).        // TODO 1:10 на эмуляторе
                                        arg(loadFrame->stepper->status).
                                        arg(loadFrame->controller->status).
-                                       arg(Pressure::fromPascals(volumetr1.pressureSens->value).pascals(), 7).
-                                       arg(volumetr1.stepper->position).        // TODO 1:10 на эмуляторе
-                                       arg(volumetr1.stepper->status).
-                                       arg(volumetr1.controller->status).
-                                       arg(Pressure::fromPascals(volumetr2.pressureSens->value).pascals(), 7).
-                                       arg(volumetr2.stepper->position).        // TODO 1:10 на эмуляторе
-                                       arg(volumetr2.stepper->status).
-                                       arg(volumetr2.controller->status).
+                                       arg(Pressure::fromPascals(volumetr1->pressureSens->value).pascals(), 7).
+                                       arg(volumetr1->stepper->position).        // TODO 1:10 на эмуляторе
+                                       arg(volumetr1->stepper->status).
+                                       arg(volumetr1->controller->status).
+                                       arg(Pressure::fromPascals(volumetr2->pressureSens->value).pascals(), 7).
+                                       arg(volumetr2->stepper->position).        // TODO 1:10 на эмуляторе
+                                       arg(volumetr2->stepper->status).
+                                       arg(volumetr2->controller->status).
                                        arg(counter).
                                        arg(queueRequest.size()));
             }
@@ -69,8 +73,8 @@ bool Operations::execut()
             // Тут нужно запустить парсер нашего эксперимента
             // if (loadFrame->store != nullptr)
             //     loadFrame->store->updateData();
-            // if (volumetr1.store != nullptr)
-            //     volumetr1.store->updateData();
+            // if (volumetr1->store != nullptr)
+            //     volumetr1->store->updateData();
             store->updateData();
             stateSwitch();
         }
@@ -111,14 +115,14 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
                           {"LF_sensor_hol", QString::number(loadFrame->stepper->status)},
                           {"LF_stepper_pos", QString::number(loadFrame->stepper->position)},
                           {"LF_controller_status", QString::number(loadFrame->controller->status)},
-                          {"Vol1_sensor_pressure", QString::number(volumetr1.pressureSens->value)},
-                          {"Vol1_sensor_hol", QString::number(volumetr1.stepper->status)},
-                          {"Vol1_stepper_pos", QString::number(volumetr1.stepper->position)},
-                          {"Vol1_controller_status", QString::number(volumetr1.controller->status)},
-                          {"Vol2_sensor_pressure", QString::number(volumetr2.pressureSens->value)},
-                          {"Vol2_sensor_hol", QString::number(volumetr2.stepper->status)},
-                          {"Vol2_stepper_pos", QString::number(volumetr2.stepper->position)},
-                          {"Vol2_controller_status", QString::number(volumetr2.controller->status)},
+                          {"Vol1_sensor_pressure", QString::number(volumetr1->pressureSens->value)},
+                          {"Vol1_sensor_hol", QString::number(volumetr1->stepper->status)},
+                          {"Vol1_stepper_pos", QString::number(volumetr1->stepper->position)},
+                          {"Vol1_controller_status", QString::number(volumetr1->controller->status)},
+                          {"Vol2_sensor_pressure", QString::number(volumetr2->pressureSens->value)},
+                          {"Vol2_sensor_hol", QString::number(volumetr2->stepper->status)},
+                          {"Vol2_stepper_pos", QString::number(volumetr2->stepper->position)},
+                          {"Vol2_controller_status", QString::number(volumetr2->controller->status)},
                          });
         jobj["sensors"] = jObj;
         jobj["status_experiment"] = getStateExperiment();
@@ -126,8 +130,9 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
     } else if (jobj["CMD"].toString() == "set_experiment") {
         jExperiment = jobj["experiment"].toObject();
     } else if (jobj["CMD"].toString() == "start_experiment") {
+        jExperiment["curAction"] = jobj["curAction"].toString();
         if (stateExperiment == STATE_EXPERIMENT_IDLE)
-            stateExperiment = STATE_EXPERIMENT_PROCESS;
+            stateExperiment = STATE_EXPERIMENT_TRANSIT_TO_PROCESS;
     } else if (jobj["CMD"].toString() == "stop_experiment") {
         if (stateExperiment == STATE_EXPERIMENT_PROCESS || stateExperiment == STATE_EXPERIMENT_PAUSE)
             stateExperiment = STATE_EXPERIMENT_TRANSIT_TO_STOP;
@@ -159,9 +164,9 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
         return loadFrame->moveFrame(jobj);
     } else if (jobj["CMD"].toString() == "load_frame_stop") {
         return loadFrame->stopFrame(jobj);
-    } else if (jobj["CMD"].toString() == "unlock_PID") {
+    } else if (jobj["CMD"].toString() == "load_frame_unlock_PID") {
         return loadFrame->unlockPID(jobj);
-    } else if (jobj["CMD"].toString() == "set_target") {
+    } else if (jobj["CMD"].toString() == "load_frame_set_target") {
         return loadFrame->setTarget(jobj);
     } else if (jobj["CMD"].toString() == "set_hz") {
         return loadFrame->setHz(jobj);
@@ -185,34 +190,34 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
         return loadFrame->resetSensorOffset(jobj);
     }
     else if (jobj["CMD"].toString() == "volumetr1_stepper_set_zero") {
-        return volumetr1.stepperSetNull(jobj);
+        return volumetr1->stepperSetNull(jobj);
     } else if (jobj["CMD"].toString() == "volumetr1_move") {
-        return volumetr1.movePiston(jobj);
+        return volumetr1->movePiston(jobj);
     } else if (jobj["CMD"].toString() == "volumetr1_stop") {
-        return volumetr1.stopPiston(jobj);
+        return volumetr1->stopPiston(jobj);
     } else if (jobj["CMD"].toString() == "volumetr1_sensor_set_zero") {
-        return volumetr1.sensorSetZero(jobj);
+        return volumetr1->sensorSetZero(jobj);
     } else if (jobj["CMD"].toString() == "volumetr1_sensor_reset_offset") {
-        return volumetr1.resetSensorOffset(jobj);
+        return volumetr1->resetSensorOffset(jobj);
     } else if (jobj["CMD"].toString() == "volumetr1_unlock_PID") {
-        return volumetr1.unlockPID(jobj);
+        return volumetr1->unlockPID(jobj);
     } else if (jobj["CMD"].toString() == "volumetr1_set_target") {
-        return volumetr1.setTarget(jobj);
+        return volumetr1->setTarget(jobj);
     }
     else if (jobj["CMD"].toString() == "volumetr2_move") {
-        return volumetr2.movePiston(jobj);
+        return volumetr2->movePiston(jobj);
     } else if (jobj["CMD"].toString() == "volumetr2_stop") {
-        return volumetr2.stopPiston(jobj);
+        return volumetr2->stopPiston(jobj);
     } else if (jobj["CMD"].toString() == "volumetr2_stepper_set_zero") {
-        return volumetr2.stepperSetNull(jobj);
+        return volumetr2->stepperSetNull(jobj);
     } else if (jobj["CMD"].toString() == "volumetr2_sensor_set_zero") {
-        return volumetr2.sensorSetZero(jobj);
+        return volumetr2->sensorSetZero(jobj);
     } else if (jobj["CMD"].toString() == "volumetr2_sensor_reset_offset") {
-        return volumetr2.resetSensorOffset(jobj);
+        return volumetr2->resetSensorOffset(jobj);
     } else if (jobj["CMD"].toString() == "volumetr2_unlock_PID") {
-        return volumetr2.unlockPID(jobj);
+        return volumetr2->unlockPID(jobj);
     } else if (jobj["CMD"].toString() == "volumetr2_set_target") {
-        return volumetr2.setTarget(jobj);
+        return volumetr2->setTarget(jobj);
     }
 
     return COMPLATE;
@@ -222,42 +227,42 @@ RETCODE Operations::readSensors(QJsonObject &jobj)
 {
     switch (vol_stat) {
     case Operations::VOLUMETR2_SENSOR_PRESSURE:
-        if (volumetr2.readSensorPressure(jobj) == COMPLATE)
+        if (volumetr2->readSensorPressure(jobj) == COMPLATE)
             vol_stat = VOLUMETR2_HOL_STATUS;
         break;
 
     case Operations::VOLUMETR2_HOL_STATUS:
-        if (volumetr2.readStatusHol(jobj) == COMPLATE)
+        if (volumetr2->readStatusHol(jobj) == COMPLATE)
             vol_stat = VOLUMETR2_POSITION;
         break;
 
     case Operations::VOLUMETR2_POSITION:
-        if (volumetr2.readPosition(jobj) == COMPLATE)
+        if (volumetr2->readPosition(jobj) == COMPLATE)
             vol_stat = VOLUMETR2_CONTROLLER_STATUS;
         break;
 
     case Operations::VOLUMETR2_CONTROLLER_STATUS:
-        if (volumetr2.readControllerStatus(jobj) == COMPLATE)
+        if (volumetr2->readControllerStatus(jobj) == COMPLATE)
             vol_stat = VOLUMETR1_SENSOR_PRESSURE;
         break;
 
     case Operations::VOLUMETR1_SENSOR_PRESSURE:
-        if (volumetr1.readSensorPressure(jobj) == COMPLATE)
+        if (volumetr1->readSensorPressure(jobj) == COMPLATE)
             vol_stat = VOLUMETR1_HOL_STATUS;
         break;
 
     case Operations::VOLUMETR1_HOL_STATUS:
-        if (volumetr1.readStatusHol(jobj) == COMPLATE)
+        if (volumetr1->readStatusHol(jobj) == COMPLATE)
             vol_stat = VOLUMETR1_POSITION;
         break;
 
     case Operations::VOLUMETR1_POSITION:
-        if (volumetr1.readPosition(jobj) == COMPLATE)
+        if (volumetr1->readPosition(jobj) == COMPLATE)
             vol_stat = VOLUMETR1_CONTROLLER_STATUS;
         break;
 
     case Operations::VOLUMETR1_CONTROLLER_STATUS:
-        if (volumetr1.readControllerStatus(jobj) == COMPLATE)
+        if (volumetr1->readControllerStatus(jobj) == COMPLATE)
             vol_stat = LOADFRAME_SENSOR_FORCE;
         break;
 

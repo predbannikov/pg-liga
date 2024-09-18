@@ -12,6 +12,8 @@
 #include <QElapsedTimer>
 #include <QMutex>
 
+
+
 struct CountErrors {
     quint64 NoError = 0;
     quint64 DeviceNotFoundError = 0;
@@ -90,8 +92,9 @@ class SerialPort : public QObject
     bool checkCRC(const QByteArray &data);
     int expectedResponseLength(const QByteArray &data);
     bool isValidResponse(const QByteArray &data);
+    QString portName;
 public:
-    explicit SerialPort(QObject *parent = nullptr);
+    explicit SerialPort(QString serial_port_name, QObject *parent = nullptr);
     ~SerialPort();
 
     void init();

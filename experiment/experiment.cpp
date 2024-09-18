@@ -2,8 +2,9 @@
 #include "experiment.h"
 
 #include "movebytimeloadframe.h"
+#include "steppedpressure.h"
 
-Experiment::Experiment(quint8 addr) : Operations(addr)
+Experiment::Experiment(QString serial_port_name, quint8 addr): Operations(addr), portName(serial_port_name)
 {
 }
 
@@ -14,7 +15,7 @@ Experiment::~Experiment()
 
 void Experiment::doWork()
 {
-    modbus = new SerialPort();
+    modbus = new SerialPort(portName);
     modbus->init();
     while(execut());
 }
@@ -40,18 +41,19 @@ bool Experiment::conveyor()
         if (jExperiment.isEmpty())
             stateExperiment = STATE_EXPERIMENT_IDLE;
         else {
-            curAction = jExperiment["curAction"].toString().toInt();
             transition = TRANSITION_2;
         }
         break;
 
     case Experiment::TRANSITION_2:
         for (QJsonObject::iterator iter = jExperiment.begin(); iter != jExperiment.end(); ++iter) {
-            if (iter.key().toInt() == curAction) {
-                qDebug() << "key=" << iter.key() << "    curAction=" << curAction;
-                action = new MoveByTimeLoadFrame(this);
-                action->initialization(iter.value().toObject(), loadFrame, &plata);
-                transition = TRANSITION_3;
+            if (iter.key().contains("Operation") && iter.key().split('_')[1] == curAction()) {
+
+                qDebug() << "key=" << iter.key().split('_')[1] << "    curAction=" << curAction();
+                if (!createAction(iter.value().toObject()))
+                    transition = TRANSITION_4;
+                else
+                    transition = TRANSITION_3;
                 return false;
             }
         }
@@ -59,16 +61,17 @@ bool Experiment::conveyor()
         break;
 
     case Experiment::TRANSITION_3:
-        if (action->update()) {
+        if (action->updating()) {
             action->finish();
-            jExperiment[QString::number(curAction)] = action->jAction;
-            curAction++;
-            jExperiment["curAction"] = QString::number(curAction);      // Считать как указатель, с которого начнётся выполнение следующей ступени
+            jUpdateExperimentAction(action->jAction);
+            jIncCurAction();      // Считать как указатель, с которого начнётся выполнение следующей ступени
             delete action;
             action = nullptr;
             transition = TRANSITION_2;
             return false;
         }
+        if (action->jActionChanged())
+            jUpdateExperimentAction(action->jAction);
         break;
 
     case Experiment::TRANSITION_4:
@@ -113,7 +116,6 @@ bool Experiment::stopping()
 {
     switch (transitionToStop) {
     case Experiment::TRANSITION_TO_STOP_1:
-        curAction = 0;
         jExperiment = QJsonObject();
         transitionToStop = TRANSITION_TO_STOP_2;
         transition = TRANSITION_1;
@@ -134,27 +136,81 @@ bool Experiment::stopping()
 
 bool Experiment::stopDevice()
 {
+    QJsonObject jobj;
+
     switch (transitionToStopDevice) {
-    case Experiment::TRANSITION_TO_STOP_DEVICE_1:
-    {
-        QJsonObject jobj;
-        jobj["CMD"] = "unlock_PID";
+
+    case Experiment::TRANSITION_TO_STOP_LOADFRAME_1:
+         jobj["CMD"] = "load_frame_unlock_PID";
         put(jobj);
-        jobj["CMD"] = "stop_frame";
+        jobj["CMD"] = "load_frame_stop";
         put(jobj);
-        transitionToStopDevice = TRANSITION_TO_STOP_DEVICE_2;
+        transitionToStopDevice = TRANSITION_TO_STOP_LOADFRAME_2;
         loadFramePosition = loadFrame->stepper->position;
-    }
         break;
-    case Experiment::TRANSITION_TO_STOP_DEVICE_2:
+    case Experiment::TRANSITION_TO_STOP_LOADFRAME_2:
         if (loadFrame->controller->status == 0 && loadFramePosition == loadFrame->stepper->position) {
-            transitionToStopDevice = TRANSITION_TO_STOP_DEVICE_1;
-            return true;
+            transitionToStopDevice = TRANSITION_TO_STOP_VOLUMETER1_1;
         }
         loadFramePosition = loadFrame->stepper->position;
         break;
+    case Experiment::TRANSITION_TO_STOP_VOLUMETER1_1:
+        jobj["CMD"] = "volumetr1_unlock_PID";
+        put(jobj);
+        jobj["CMD"] = "volumetr1_stop";
+        put(jobj);
+        transitionToStopDevice = TRANSITION_TO_STOP_VOLUMETER1_2;
+        volumeter1Position = volumetr1->stepper->position;
+        break;
+    case Experiment::TRANSITION_TO_STOP_VOLUMETER1_2:
+        if (volumetr1->controller->status == 0 && volumeter1Position == volumetr1->stepper->position) {
+            transitionToStopDevice = TRANSITION_TO_STOP_VOLUMETER2_1;
+        }
+        volumeter1Position = volumetr1->stepper->position;
+        break;
+    case Experiment::TRANSITION_TO_STOP_VOLUMETER2_1:
+        jobj["CMD"] = "volumetr2_unlock_PID";
+        put(jobj);
+        jobj["CMD"] = "volumetr2_stop";
+        put(jobj);
+        transitionToStopDevice = TRANSITION_TO_STOP_VOLUMETER2_2;
+        volumeter2Position = volumetr2->stepper->position;
+        break;
+    case Experiment::TRANSITION_TO_STOP_VOLUMETER2_2:
+        if (volumetr2->controller->status == 0 && volumeter2Position == volumetr2->stepper->position) {
+            transitionToStopDevice = TRANSITION_TO_STOP_LOADFRAME_1;
+            return true;
+        }
+        volumeter2Position = volumetr2->stepper->position;
+        break;
     }
     return false;
+}
+
+bool Experiment::createAction(QJsonObject jAction)
+{
+    if (jAction["name"].toString() == "move_of_time") {
+        action = new MoveByTimeLoadFrame(this);
+    } else if (jAction["name"].toString() == "steppedPressure") {
+        action = new SteppedPressure(this);
+    } else {
+        return false;
+    }
+    connect(action, &BaseAction::error, this, &Interface::sendRequestToClient);
+    action->initialization(jAction, loadFrame, volumetr1, volumetr2, &plata);
+    return true;
+}
+
+void Experiment::deleteAction()
+{
+    disconnect(action, &BaseAction::error, this, &Interface::sendRequestToClient);
+    delete action;
+    action = nullptr;
+}
+
+void Experiment::updateJExperiment()
+{
+
 }
 
 void Experiment::stateSwitch()
@@ -173,14 +229,49 @@ void Experiment::stateSwitch()
 
         // qDebug() << "STATE_EXPERIMENT_PAUSE";
         break;
+    case Operations::STATE_EXPERIMENT_TRANSIT_TO_PROCESS:
+        jSaveState("process");
+        stateExperiment = STATE_EXPERIMENT_PROCESS;
+        break;
     case Operations::STATE_EXPERIMENT_TRANSIT_TO_PAUSE:
         qDebug() << "STATE_EXPERIMENT_TRANSIT_TO_PAUSE";
-        if (pausing())
+        if (pausing()) {
+            jSaveState("pause");
             stateExperiment = STATE_EXPERIMENT_PAUSE;
+        }
         break;
     case Operations::STATE_EXPERIMENT_TRANSIT_TO_STOP:
-        if (stopping())
+        if (stopping()) {
+            jSaveState("idle");
             stateExperiment = STATE_EXPERIMENT_IDLE;
+        }
         break;
     }
+}
+
+
+void Experiment::jIncCurAction()
+{
+    jExperimentStatus = jExperiment["status"].toObject();
+    int curAction = jExperimentStatus["curAction"].toString().toInt();
+    curAction++;
+    jExperimentStatus["curAction"] = QString::number(curAction);
+    jExperiment["status"] = jExperimentStatus;
+}
+
+void Experiment::jUpdateExperimentAction(QJsonObject jObj)
+{
+    QString operation = QString("Operation_%1").arg(curAction());
+    jExperiment[operation] = jObj;
+}
+
+void Experiment::jSaveState(QString state)
+{
+    jExperimentStatus = jExperiment["status"].toObject();
+    jExperimentStatus["state"] = state;
+}
+
+QString Experiment::curAction()
+{
+    return jExperiment["status"].toObject()["curAction"].toString();
 }
