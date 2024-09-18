@@ -1,13 +1,13 @@
 #include "server.h"
 
-Server::Server(quint8 addr_, QObject *parent) : QTcpServer(parent), address(addr_)
+Server::Server(QString serial_port_name, quint8 addr_, QObject *parent) : QTcpServer(parent), address(addr_)
 {
 
 //    connect(modbusClient, &ModbusClient::readyReadPDU, this, &Experiment::readyReadPDU);
 //    connect(modbusClient, &ModbusClient::connectedClient, this, &Experiment::resume);
 
 //    modbus = new SerialPort(this);
-    experiment = new Experiment(address);
+    experiment = new Experiment(serial_port_name, address);
     threadExperiment = new QThread;
     experiment->moveToThread(threadExperiment);
     QObject::connect(threadExperiment, &QThread::started, experiment, &Experiment::doWork, Qt::QueuedConnection);

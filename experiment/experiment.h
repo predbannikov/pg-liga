@@ -5,6 +5,27 @@
 
 #include "baseaction.h"
 
+/**
+ * @brief The Experiment class      После старта состояния процесса, запускается conveyor
+ *      который имеет несколько состояний, первое состояние проверяет jExperiment
+ *      сразу же переходит во второе состояние в случае успеха иначе запускает процесс
+ *      перехода эксперимента в состояние IDLE. Второе состояние перебирает все доступные
+ *      Operations (Actions) и ищет совпадение с прочитанным ранее значением curAction.
+ *      После успешного совпадения, создаётся Action и запускается третье состояние иначе
+ *      запускается процесс перехода в состояние конца эксперимента (которое завершается паузой)
+ *      Третье состояние запускает процесс обновления экшиона до тех пор пока он не вернёт
+ *      true, что значит экшион выполнен.
+ *
+ *
+ *
+ *
+ *      объект jStatus из jExperiment["status"], в котором находятся:
+ *      "curAction":"%1" - число указывающее на номер операции которую необходимо выбрать из
+ *          списка операций и запустить
+ *      "state":"%1" - наименование текущего состояния указываются только idle, process, pause
+ *
+ */
+
 
 class Experiment : public Operations
 {
@@ -15,10 +36,14 @@ class Experiment : public Operations
     enum TRANSITION_TO_STOP {TRANSITION_TO_STOP_1, TRANSITION_TO_STOP_2} transitionToStop = TRANSITION_TO_STOP_1;
 
     // Перечисление создано для управления устройством, физичиского остановления рамы , возможно стоит перенести реализацию в Operations, а оператионс познее переименовать
-    enum TRANSITION_TO_STOP_DEVICE {TRANSITION_TO_STOP_DEVICE_1, TRANSITION_TO_STOP_DEVICE_2} transitionToStopDevice = TRANSITION_TO_STOP_DEVICE_1;
+    enum TRANSITION_TO_STOP_DEVICE {
+        TRANSITION_TO_STOP_LOADFRAME_1, TRANSITION_TO_STOP_LOADFRAME_2,
+        TRANSITION_TO_STOP_VOLUMETER1_1, TRANSITION_TO_STOP_VOLUMETER1_2,
+        TRANSITION_TO_STOP_VOLUMETER2_1, TRANSITION_TO_STOP_VOLUMETER2_2,
+    } transitionToStopDevice = TRANSITION_TO_STOP_LOADFRAME_1;
 
 public:
-    Experiment(quint8 addr);
+    Experiment(QString serial_port_name, quint8 addr);
     ~Experiment();
     void stateSwitch() override;
 
@@ -31,11 +56,22 @@ private:
     bool pausing();
     bool stopping();
     bool stopDevice();
+    bool createAction(QJsonObject jAction);
+    void deleteAction();
+    void updateJExperiment();
 
-    int curAction = 0;
+
+    // Работа с jExperiment
+    void jIncCurAction();
+    void jUpdateExperimentAction(QJsonObject jObj);
+    void jSaveState(QString state);
+    QString curAction();
+
     int loadFramePosition = 0;
+    int volumeter1Position = 0;
+    int volumeter2Position = 0;
     BaseAction *action = nullptr;
-
+    QString portName;
 };
 
 #endif // EXPERIMENT_H

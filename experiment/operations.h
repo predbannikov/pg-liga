@@ -49,7 +49,12 @@ class Operations : public Interface
     enum STATE_MODE { STATE_MODE_IDLE, STATE_MODE_EXECCMD } state_mode = STATE_MODE_IDLE;
 
 protected:
-    enum STATE_EXPERIMENT { STATE_EXPERIMENT_IDLE, STATE_EXPERIMENT_PROCESS, STATE_EXPERIMENT_PAUSE, STATE_EXPERIMENT_TRANSIT_TO_PAUSE, STATE_EXPERIMENT_TRANSIT_TO_STOP } stateExperiment = STATE_EXPERIMENT_IDLE;
+    enum STATE_EXPERIMENT { STATE_EXPERIMENT_IDLE,
+                            STATE_EXPERIMENT_PROCESS,
+                            STATE_EXPERIMENT_PAUSE,
+                            STATE_EXPERIMENT_TRANSIT_TO_PROCESS,
+                            STATE_EXPERIMENT_TRANSIT_TO_PAUSE,
+                            STATE_EXPERIMENT_TRANSIT_TO_STOP } stateExperiment = STATE_EXPERIMENT_IDLE;
 
 
 public:
@@ -62,11 +67,12 @@ public:
 
     QJsonObject jStatusOperation;
     QJsonObject jExperiment;
+    QJsonObject jExperimentStatus;      // Как временная переменная, не хранить в процессе
     QJsonObject jConfig;
     int counter = 0;
     LoadFrame *loadFrame = nullptr;
-    Volumeter1 volumetr1;
-    Volumeter2 volumetr2;
+    Volumeter1 *volumetr1 = nullptr;
+    Volumeter2 *volumetr2 = nullptr;
     Plata plata;
     StoreData *store = nullptr;
     RETCODE execCMD(QJsonObject &jobj);

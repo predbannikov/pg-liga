@@ -15,6 +15,7 @@ SOURCES += \
         abstractunit.cpp \
         actions/adjustloadframe.cpp \
         actions/movebytimeloadframe.cpp \
+        actions/steppedpressure.cpp \
         baseaction.cpp \
         clientmanager.cpp \
         controller.cpp \
@@ -35,6 +36,7 @@ HEADERS += \
         abstractunit.h \
         actions/adjustloadframe.h \
         actions/movebytimeloadframe.h \
+        actions/steppedpressure.h \
         baseaction.h \
         clientmanager.h \
         controller.h \

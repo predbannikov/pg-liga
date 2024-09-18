@@ -384,6 +384,12 @@ void ExperimentView::onReadyResponse(const QJsonObject &jobj)
                 m_experimentData.value("Позиция")->append(allList);
             }
         }
+    } else {
+        qDebug().noquote() << QJsonDocument(jobj).toJson(QJsonDocument::Indented);
+        ui->textEdit->append(QJsonDocument(jobj).toJson(QJsonDocument::Indented));
+        ui->textEdit->append("##################################################");
+        ui->textEdit->append("                                                  ");
+        ui->textEdit->append("##################################################");
     }
 }
 
@@ -548,7 +554,7 @@ void ExperimentView::on_btnTest_clicked()
         jAction["speed"] = QString::number(100);
         jAction["time_ms"] = "1500";
         jAction["status"] = "";
-        jExp[QString::number(i)] = jAction;
+        jExp[QString("Operation_%1").arg(i)] = jAction;
 
         QJsonObject jAction2;
         jAction2["name"] = "move_of_time";
@@ -556,9 +562,12 @@ void ExperimentView::on_btnTest_clicked()
         jAction2["speed"] = QString::number(-100);
         jAction2["time_ms"] = "1500";
         jAction2["status"] = "";
-        jExp[QString::number(i+1)] = jAction2;
+        jExp[QString("Operation_%1").arg(i+1)] = jAction2;
     }
-    jExp["curAction"] = "0";
+    QJsonObject jStatus;
+    jStatus["state"] = "idle";
+    jStatus["curAction"] = "0";
+    jExp["status"] = jStatus;
     jobj["experiment"] = jExp;
     qDebug().noquote() << QJsonDocument(jExp).toJson(QJsonDocument::Indented);
 
@@ -613,11 +622,20 @@ void ExperimentView::on_btnVolumetr1SensorPressureReset_clicked()
     emit sendRequest(jobj);
 }
 
+
+void ExperimentView::on_btnVolumetr1SensorPositionSetZero_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "volumetr1_stepper_set_zero";
+    emit sendRequest(jobj);
+}
+
+
 void ExperimentView::on_btnVolumetr1SetTarget_clicked()
 {
     QJsonObject jobj;
     jobj["CMD"] = "volumetr1_set_target";
-    jobj["target"] = ui->spinVolumetr1Target->value();
+    jobj["target"] = QString::number(ui->spinVolumetr1Target->value());
     emit sendRequest(jobj);
 }
 
@@ -712,14 +730,6 @@ void ExperimentView::on_btnVolumetr2SensorPositionSetZero_clicked()
 }
 
 
-void ExperimentView::on_btnVolumetr1SensorPositionSetZero_clicked()
-{
-    QJsonObject jobj;
-    jobj["CMD"] = "volumetr1_stepper_set_zero";
-    emit sendRequest(jobj);
-}
-
-
 void ExperimentView::on_btnVolumetr2SensorPressureSetZero_clicked()
 {
     QJsonObject jobj;
@@ -742,7 +752,7 @@ void ExperimentView::on_btnVolumetr2SetTarget_clicked()
 {
     QJsonObject jobj;
     jobj["CMD"] = "volumetr2_set_target";
-    jobj["target"] = ui->spinVolumetr2Target->value();
+    jobj["target"] = QString::number(ui->spinVolumetr2Target->value());
     emit sendRequest(jobj);
 }
 
@@ -752,5 +762,12 @@ void ExperimentView::on_btnVolumetr2Unlock_clicked()
     QJsonObject jobj;
     jobj["CMD"] = "volumetr2_unlock_PID";
     emit sendRequest(jobj);
+}
+
+
+
+void ExperimentView::on_btnClearTextEdit_clicked()
+{
+    ui->textEdit->clear();
 }
 

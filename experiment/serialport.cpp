@@ -4,7 +4,7 @@
 
 #include "serialport.h"
 
-SerialPort::SerialPort(QObject *parent) : QObject(parent)
+SerialPort::SerialPort(QString serial_port_name, QObject *parent) : QObject(parent), portName(serial_port_name)
 {
     timeElapse.start();
     timeSpentRequest.start();
@@ -223,7 +223,12 @@ bool SerialPort::connectDevice ()
 void SerialPort::init()
 {
     port = new QSerialPort(this);
-    port->setPortName("ttyS3");
+
+    if (portName.isEmpty())
+        port->setPortName("ttyS3");
+    else {
+        port->setPortName(portName);
+    }
     port->setFlowControl(QSerialPort::NoFlowControl);
     port->setBaudRate   (QSerialPort::Baud115200);
     port->setParity     (QSerialPort::EvenParity);

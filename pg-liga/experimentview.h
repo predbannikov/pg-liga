@@ -198,6 +198,8 @@ private slots:
 
     void on_btnVolumetr2Unlock_clicked();
 
+    void on_btnClearTextEdit_clicked();
+
 signals:
     void sendRequest(QJsonObject &jobj);
 

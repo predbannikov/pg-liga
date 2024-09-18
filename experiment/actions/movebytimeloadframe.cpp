@@ -21,22 +21,19 @@ void MoveByTimeLoadFrame::init() {
 bool MoveByTimeLoadFrame::update()
 {
     switch(trans) {
-    case TRANS_1: {
-        QJsonObject jobj;
-        jobj["CMD"] = "load_frame_move";
-        jobj["speed"] = jAction["speed"].toString();
-        putQueue(jobj);
+    case TRANS_1:
+        jCmdToQueue["CMD"] = "load_frame_move";
+        jCmdToQueue["speed"] = jAction["speed"].toString();
+        putQueue(jCmdToQueue);
         elapseTime.start();
         trans = TRANS_2;
-    }
         break;
 
-    case TRANS_2: {
+    case TRANS_2:
         if (!elapseTime.isActive()) {
 
             return true;
         }
-    }
         break;
     }
     return false;

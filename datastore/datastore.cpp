@@ -58,24 +58,14 @@ QList<QPair<qint64, float> > DataStore::deSerializeData(QJsonObject jData) {
     return all_lists;
 }
 
-float DataStore::valueFromBack(qint64 step_time, qint64 time) {
-    auto &arr = data[step_time];
-    //        QPair <qint64, float> last_value = arr.last();
-    for (int i = arr.size() - 1; i > 0; i--) {
-        //            if (last_value.first - arr[i].first >= time) {
-        if (last.first - arr[i].first >= time) {
-            return arr[i].second;
-        }
-    }
-    qDebug() << Q_FUNC_INFO << "#WARNING: get first value stop";
-    return arr.first().second;
-}
-
 void DataStore::append(qint64 start_time, qint64 cur_time, float value, float eps) {
     if (!data.contains(start_time)) {
         data.insert(start_time, {{cur_time, value}});
     } else {
-        double diffValue = fabs (data[start_time].last().second - (value));
+        auto lastValue = data[start_time].last().second;
+        double diffValue = fabs (lastValue - value);
+
+        // double diffValue = fabs (data[start_time].last().second - (value));
         if (diffValue > eps) {
             data[start_time].append({cur_time, value});
 //            if (last.first != data[start_time].last().first)
@@ -102,6 +92,26 @@ qint64 DataStore::size() {
         sz += lst.size();
     }
     return sz;
+}
+
+QList<QPair<qint64, float>> &DataStore::getDataOfStartTime() {
+    QList<qint64> keys = data.keys();
+    std::sort(keys.begin(), keys.end());
+    return data[keys.last()];
+}
+
+float DataStore::valueFromBack(qint64 step_time, qint64 time) {
+    auto &arr = data[step_time];
+    //        QPair <qint64, float> last_value = arr.last();
+    for (int i = arr.size() - 1; i > 0; i--) {
+        //            if (last_value.first - arr[i].first >= time) {
+        // if (last.first - arr[i].first >= time) {
+        if (arr[i].first >= time) {
+            return arr[i].second;
+        }
+    }
+    qDebug() << Q_FUNC_INFO << "#WARNING: get first value stop";
+    return arr.first().second;
 }
 
 void DataStore::getLastStartAndCurTime(qint64 &start_time, qint64 &cur_time) {

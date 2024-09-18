@@ -50,7 +50,7 @@ bool Volumeter1::deleteData()
 RETCODE Volumeter1::setTarget(QJsonObject &jOperation)
 {
     RETCODE ret = ERROR;
-    targetPressure = Measurements::Pressure::fromPascals(jOperation["target"].toDouble());
+    targetPressure = Measurements::Pressure::fromPascals(jOperation["target"].toString().toDouble());
     ret = controller->setTarget(jOperation, targetPressure.pascals());      // 200.19642105368277
     return ret;
 }
@@ -181,6 +181,11 @@ void Volumeter1::sendStoreData(QJsonObject &jobj)
     }
 }
 
+void Volumeter1::setStore(StoreData *pStore)
+{
+    store = pStore;
+}
+
 RETCODE Volumeter1::readSensorPressure(QJsonObject &jOperation)
 {
     return pressureSens->read(jOperation);
@@ -206,11 +211,11 @@ RETCODE Volumeter1::readControllerStatus(QJsonObject &jOperation)
     return controller->readStatus(jOperation);
 }
 
-RETCODE Volumeter1::updateStoreData(QJsonObject &jOperation)
-{
-    if (store != nullptr)
-        store->updateData();
-}
+// RETCODE Volumeter1::updateStoreData(QJsonObject &jOperation)
+// {
+//     if (store != nullptr)
+//         store->updateData();
+// }
 
 RETCODE Volumeter1::stepperSetNull(QJsonObject &jobj)
 {
