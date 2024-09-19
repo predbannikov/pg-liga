@@ -13,10 +13,11 @@ unix: DESTDIR=$$DESTDIR_RELEASE
 
 SOURCES += \
         abstractunit.cpp \
+        actions/actioncycle.cpp \
         actions/adjustloadframe.cpp \
         actions/movebytimeloadframe.cpp \
         actions/steppedpressure.cpp \
-        baseaction.cpp \
+        actions/baseaction.cpp \
         clientmanager.cpp \
         controller.cpp \
         data.cpp \
@@ -34,10 +35,11 @@ SOURCES += \
 
 HEADERS += \
         abstractunit.h \
+        actions/actioncycle.h \
         actions/adjustloadframe.h \
         actions/movebytimeloadframe.h \
         actions/steppedpressure.h \
-        baseaction.h \
+        actions/baseaction.h \
         clientmanager.h \
         controller.h \
         data.h \

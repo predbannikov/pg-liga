@@ -29,6 +29,7 @@ public:
      *                      далее её задать через putQueueв очередь выполнения комманд
      * @return
      */
+
     virtual bool update() = 0;
     virtual void init() = 0;
     virtual void finishing() = 0;

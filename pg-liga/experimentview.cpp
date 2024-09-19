@@ -226,10 +226,17 @@ void ExperimentView::serializExperiment()
     QJsonObject jOps, jObj;
     for (int i = 0; i < lay->count(); i++) {
         OperationActions *operAct = qobject_cast<OperationActions *> (lay->itemAt(i)->widget());
-        QString cnt = QString("Operation_%1").arg(i);
-        jOps[cnt] = operAct->serializOperation();
+        QString cnt = QString("operation_%1").arg(i);
+        QJsonObject jOperation = operAct->serializOperation();
+        QJsonObject jStatus;
+        jStatus["cur_step"] = "step_0";
+        jOperation["status"] = jStatus;
+        jOps[cnt] = jOperation;
     }
     jObj["CMD"] = "set_experiment";
+    QJsonObject jExpStatus;
+    jExpStatus["cur_operation"] = "operation_0";
+    jOps["status"] = jExpStatus;
     jObj["experiment"] = jOps;
     qDebug().noquote() << QJsonDocument(jObj).toJson(QJsonDocument::Indented);
     emit sendRequest(jObj);
@@ -418,6 +425,12 @@ void ExperimentView::on_dateTimeEdit_timeChanged(const QTime &time)
     onCreateJsonObject();
 }
 
+void ExperimentView::on_btnGetStoreData_clicked()
+{
+    onReadDataStore();
+}
+
+
 void ExperimentView::onReadyResponse(const QJsonObject &jobj)
 {
     //    qDebug() << Q_FUNC_INFO << jobj;
@@ -478,11 +491,6 @@ void ExperimentView::on_btnSaveImage_clicked()
     deformVsTime->m_plot->replot();
     QPixmap pxmap = deformVsTime->grab();
     pxmap.save("test.png", "PNG");
-}
-
-void ExperimentView::on_btnGetStoreData_clicked()
-{
-    onReadDataStore();
 }
 
 

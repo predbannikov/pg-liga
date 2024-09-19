@@ -7,7 +7,7 @@
 #include "volumeter1.h"
 
 SteppedPressure::SteppedPressure(QObject *parent)
-    : BaseAction{parent}
+    : ActionCycle{parent}
 {
 
 }
@@ -17,17 +17,24 @@ SteppedPressure::~SteppedPressure()
     qDebug() << Q_FUNC_INFO;
 }
 
-void SteppedPressure::init() {
-    elapseTime.setSingleShot(true);
-    elapseTime.setInterval(1000);
-    curStep = jAction["curStep"].toString().toInt();
+bool SteppedPressure::stepChanged()
+{
+    return false;
 }
 
-bool SteppedPressure::update()
+//void SteppedPressure::init() {
+//    elapseTime.setSingleShot(true);
+//    elapseTime.setInterval(1000);
+//    curStep = jAction["curStep"].toString().toInt();
+//}
+
+bool SteppedPressure::updateSteping()
 {
+    // Тут начать задавать логику ступени
     switch(trans) {
 
     case TRANS_1: {
+
         QJsonObject::iterator iter;
         for (iter = jAction.begin(); iter != jAction.end(); ++iter) {
             if (iter.key().contains("step") && iter.key().split('_')[1].toInt() == curStep) {
@@ -36,10 +43,7 @@ bool SteppedPressure::update()
                 return false;
             }
         }
-        if (iter == jAction.end()) {
-            sendError("Не найдено ни одного step", jAction);
-            return true;
-        }
+
     }
         break;
 
@@ -55,8 +59,9 @@ bool SteppedPressure::update()
             sendError("Задержка больше 1000мс, по комманде volumetr1_stepper_set_zero", jAction);
             trans = TRANS_2;
         }
-        else if (elapseTime.isActive() && volumeter1->stepper->position == 0)
+        else if (elapseTime.isActive() && volumeter1->stepper->position == 0) {
             trans = TRANS_4;
+        }
         break;
 
     case SteppedPressure::TRANS_4:
@@ -106,13 +111,13 @@ bool SteppedPressure::update()
     return false;
 }
 
-void SteppedPressure::finishing()
-{
-}
+//void SteppedPressure::finishing()
+//{
+//}
 
-void SteppedPressure::pausing()
-{
-}
+//void SteppedPressure::pausing()
+//{
+//}
 
 bool SteppedPressure::betaLeastSquares(int n)
 {

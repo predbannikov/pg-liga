@@ -24,18 +24,24 @@ void BaseAction::initialization(QJsonObject jAct, LoadFrame *lf, Volumeter1 *vol
     volumeter2 = vol2;
     plata = plt;
     jAction = jAct;
-    jAction["status"] = "process";
+    QJsonObject jStatusAction = jAction["status"].toObject();
+    jStatusAction["state"] = "process";
+    jAction["status"] = jStatusAction;
     init();
 }
 
 void BaseAction::finish() {
-    jAction["status"] = "complate";
+    QJsonObject jStatusAction = jAction["status"].toObject();
+    jStatusAction["state"] = "complate";
+    jAction["status"] = jStatusAction;
     finishing();
 }
 
 bool BaseAction::pause()
 {
-    jAction["status"] = "paused";
+    QJsonObject jStatusAction = jAction["status"].toObject();
+    jStatusAction["state"] = "paused";
+    jAction["status"] = jStatusAction;
     finishing();
     return true;
 }

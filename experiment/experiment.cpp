@@ -47,9 +47,9 @@ bool Experiment::conveyor()
 
     case Experiment::TRANSITION_2:
         for (QJsonObject::iterator iter = jExperiment.begin(); iter != jExperiment.end(); ++iter) {
-            if (iter.key().contains("Operation") && iter.key().split('_')[1] == curAction()) {
+            if (iter.key() == curAction()) {
 
-                qDebug() << "key=" << iter.key().split('_')[1] << "    curAction=" << curAction();
+                qDebug() << "key=" << iter.key().split('_')[1] << "    cur_operation=" << curAction();
                 if (!createAction(iter.value().toObject()))
                     transition = TRANSITION_4;
                 else
@@ -64,7 +64,7 @@ bool Experiment::conveyor()
         if (action->updating()) {
             action->finish();
             jUpdateExperimentAction(action->jAction);
-            jIncCurAction();      // Считать как указатель, с которого начнётся выполнение следующей ступени
+            jIncCurAction();
             delete action;
             action = nullptr;
             transition = TRANSITION_2;
@@ -229,10 +229,14 @@ void Experiment::stateSwitch()
 
         // qDebug() << "STATE_EXPERIMENT_PAUSE";
         break;
-    case Operations::STATE_EXPERIMENT_TRANSIT_TO_PROCESS:
+    case Operations::STATE_EXPERIMENT_TRANSIT_TO_PROCESS: {
         jSaveState("process");
+        QJsonObject jobj;
+        jobj["CMD"] = "enable_store_data";
+        put(jobj);
         stateExperiment = STATE_EXPERIMENT_PROCESS;
         break;
+    }
     case Operations::STATE_EXPERIMENT_TRANSIT_TO_PAUSE:
         qDebug() << "STATE_EXPERIMENT_TRANSIT_TO_PAUSE";
         if (pausing()) {
@@ -243,6 +247,9 @@ void Experiment::stateSwitch()
     case Operations::STATE_EXPERIMENT_TRANSIT_TO_STOP:
         if (stopping()) {
             jSaveState("idle");
+            QJsonObject jobj;
+            jobj["CMD"] = "disable_store_data";
+            put(jobj);
             stateExperiment = STATE_EXPERIMENT_IDLE;
         }
         break;
@@ -253,15 +260,15 @@ void Experiment::stateSwitch()
 void Experiment::jIncCurAction()
 {
     jExperimentStatus = jExperiment["status"].toObject();
-    int curAction = jExperimentStatus["curAction"].toString().toInt();
+    int curAction = jExperimentStatus["cur_operation"].toString().split('_')[1].toInt();
     curAction++;
-    jExperimentStatus["curAction"] = QString::number(curAction);
+    jExperimentStatus["cur_operation"] = QString("operation_%1").arg(curAction);
     jExperiment["status"] = jExperimentStatus;
 }
 
 void Experiment::jUpdateExperimentAction(QJsonObject jObj)
 {
-    QString operation = QString("Operation_%1").arg(curAction());
+    QString operation = QString("operation_%1").arg(curAction());
     jExperiment[operation] = jObj;
 }
 
@@ -269,9 +276,10 @@ void Experiment::jSaveState(QString state)
 {
     jExperimentStatus = jExperiment["status"].toObject();
     jExperimentStatus["state"] = state;
+    jExperiment["status"] = jExperimentStatus;
 }
 
 QString Experiment::curAction()
 {
-    return jExperiment["status"].toObject()["curAction"].toString();
+    return jExperiment["status"].toObject()["cur_operation"].toString();
 }
