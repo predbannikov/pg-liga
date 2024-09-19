@@ -15,7 +15,7 @@ MoveByTimeLoadFrame::~MoveByTimeLoadFrame()
 
 void MoveByTimeLoadFrame::init() {
     elapseTime.setSingleShot(true);
-    elapseTime.setInterval(jAction["time_ms"].toString().toInt());
+    elapseTime.setInterval(jOperation["time_ms"].toString().toInt());
 }
 
 bool MoveByTimeLoadFrame::update()
@@ -23,7 +23,7 @@ bool MoveByTimeLoadFrame::update()
     switch(trans) {
     case TRANS_1:
         jCmdToQueue["CMD"] = "load_frame_move";
-        jCmdToQueue["speed"] = jAction["speed"].toString();
+        jCmdToQueue["speed"] = jOperation["speed"].toString();
         putQueue(jCmdToQueue);
         elapseTime.start();
         trans = TRANS_2;

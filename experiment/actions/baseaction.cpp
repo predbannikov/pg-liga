@@ -23,25 +23,33 @@ void BaseAction::initialization(QJsonObject jAct, LoadFrame *lf, Volumeter1 *vol
     volumeter1 = vol1;
     volumeter2 = vol2;
     plata = plt;
-    jAction = jAct;
-    QJsonObject jStatusAction = jAction["status"].toObject();
-    jStatusAction["state"] = "process";
-    jAction["status"] = jStatusAction;
+    jOperation = jAct;
+
+    if (jOperation.contains("status_operation")) {
+        if (jOperation["status_operation"].toObject()["state"].toString() == "process") {
+            // Восстанавливаем операцию
+        }
+        // доделать другие состояния
+    } else {
+        QJsonObject jStatus = jStatusOperation();
+        jStatus["state"] = "process";
+        jSetStatusOperation(jStatus);
+    }
     init();
 }
 
 void BaseAction::finish() {
-    QJsonObject jStatusAction = jAction["status"].toObject();
-    jStatusAction["state"] = "complate";
-    jAction["status"] = jStatusAction;
+    QJsonObject jStatus = jStatusOperation();
+    jStatus["state"] = "complate";
+    jSetStatusOperation(jStatus);
     finishing();
 }
 
 bool BaseAction::pause()
 {
-    QJsonObject jStatusAction = jAction["status"].toObject();
-    jStatusAction["state"] = "paused";
-    jAction["status"] = jStatusAction;
+    QJsonObject jStatus = jStatusOperation();
+    jStatus["state"] = "paused";
+    jSetStatusOperation(jStatus);
     finishing();
     return true;
 }

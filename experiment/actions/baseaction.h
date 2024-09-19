@@ -43,13 +43,16 @@ public:
 
 
     bool jActionChanged() { return jChanged; }
+    QJsonObject jStatusOperation() { return jOperation["status_operation"].toObject(); }
+    void jSetStatusOperation(QJsonObject jObj) { jOperation["status_operation"] = jObj; }
+
     void putQueue(QJsonObject &jObj);
 
     LoadFrame *loadFrame = nullptr;
     Volumeter1 *volumeter1 = nullptr;
     Volumeter2 *volumeter2 = nullptr;
     Plata *plata = nullptr;
-    QJsonObject jAction;
+    QJsonObject jOperation;
 
     /**
      * @brief jObj  временная переменная для отправки комманд в очередь

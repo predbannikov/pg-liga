@@ -16,7 +16,7 @@ AdjustByForceLoadFrame::~AdjustByForceLoadFrame()
 
 void AdjustByForceLoadFrame::init() {
     elapseTime.setSingleShot(true);
-    elapseTime.setInterval(jAction["time_ms"].toString().toInt());
+    elapseTime.setInterval(jOperation["time_ms"].toString().toInt());
 }
 
 bool AdjustByForceLoadFrame::update()
@@ -25,7 +25,7 @@ bool AdjustByForceLoadFrame::update()
     case TRANS_1: {
         QJsonObject jobj;
         jobj["CMD"] = "move_frame";
-        jobj["speed"] = jAction["speed"].toString();
+        jobj["speed"] = jOperation["speed"].toString();
         putQueue(jobj);
         elapseTime.start();
         trans = TRANS_2;

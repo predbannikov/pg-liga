@@ -36,7 +36,7 @@ bool SteppedPressure::updateSteping()
     case TRANS_1: {
 
         QJsonObject::iterator iter;
-        for (iter = jAction.begin(); iter != jAction.end(); ++iter) {
+        for (iter = jOperation.begin(); iter != jOperation.end(); ++iter) {
             if (iter.key().contains("step") && iter.key().split('_')[1].toInt() == curStep) {
                 qDebug() << "key=" << iter.key().split('_')[1] << "    curStep=" << curStep;
                 trans = TRANS_2;
@@ -56,7 +56,7 @@ bool SteppedPressure::updateSteping()
 
     case SteppedPressure::TRANS_3:
         if (!elapseTime.isActive() && volumeter1->stepper->position != 0) {
-            sendError("Задержка больше 1000мс, по комманде volumetr1_stepper_set_zero", jAction);
+            sendError("Задержка больше 1000мс, по комманде volumetr1_stepper_set_zero", jOperation);
             trans = TRANS_2;
         }
         else if (elapseTime.isActive() && volumeter1->stepper->position == 0) {
@@ -66,7 +66,7 @@ bool SteppedPressure::updateSteping()
 
     case SteppedPressure::TRANS_4:
         jCmdToQueue["CMD"] = "volumetr1_set_target";
-        jCmdToQueue["target"] = jAction[QString("step_%1").arg(curStep)].toObject()["target"].toString();
+        jCmdToQueue["target"] = jOperation[QString("step_%1").arg(curStep)].toObject()["target"].toString();
         putQueue(jCmdToQueue);
         elapseTime.start(1000);
         trans = TRANS_6;
@@ -82,12 +82,12 @@ bool SteppedPressure::updateSteping()
         // break;
 
     case SteppedPressure::TRANS_6: {
-        if (volumeter1->pressureSens->value > (jAction[QString("step_%1").arg(curStep)].toObject()["target"].toString().toDouble() - 3000)) {
-            if (jAction[QString("step_%1").arg(curStep)].toObject()["criterionType"].toString() == "Stabilisation") {
+        if (volumeter1->pressureSens->value > (jOperation[QString("step_%1").arg(curStep)].toObject()["target"].toString().toDouble() - 3000)) {
+            if (jOperation[QString("step_%1").arg(curStep)].toObject()["criterionType"].toString() == "Stabilisation") {
 
                 trans = TRANS_7;
             }
-            else if (jAction[QString("step_%1").arg(curStep)].toObject()["criterionType"].toString() == "Duration")
+            else if (jOperation[QString("step_%1").arg(curStep)].toObject()["criterionType"].toString() == "Duration")
                 trans = TRANS_8;
         }
         // betaLeastSquares(3);

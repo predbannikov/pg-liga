@@ -228,15 +228,15 @@ void ExperimentView::serializExperiment()
         OperationActions *operAct = qobject_cast<OperationActions *> (lay->itemAt(i)->widget());
         QString cnt = QString("operation_%1").arg(i);
         QJsonObject jOperation = operAct->serializOperation();
-        QJsonObject jStatus;
-        jStatus["cur_step"] = "step_0";
-        jOperation["status"] = jStatus;
+//        QJsonObject jStatus;
+//        jStatus["cur_step"] = "step_0";
+//        jOperation["status"] = jStatus;
         jOps[cnt] = jOperation;
     }
     jObj["CMD"] = "set_experiment";
-    QJsonObject jExpStatus;
-    jExpStatus["cur_operation"] = "operation_0";
-    jOps["status"] = jExpStatus;
+//    QJsonObject jExpStatus;
+//    jExpStatus["cur_operation"] = "operation_0";
+//    jOps["status"] = jExpStatus;
     jObj["experiment"] = jOps;
     qDebug().noquote() << QJsonDocument(jObj).toJson(QJsonDocument::Indented);
     emit sendRequest(jObj);
