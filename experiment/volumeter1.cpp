@@ -25,7 +25,7 @@ bool Volumeter1::init()
         store = nullptr;
     }
 
-    store = new StoreData(address, jconfig);
+    store = new Data(address, jconfig);
 
     if (store == nullptr)
         return false;
@@ -181,7 +181,7 @@ void Volumeter1::sendStoreData(QJsonObject &jobj)
     }
 }
 
-void Volumeter1::setStore(StoreData *pStore)
+void Volumeter1::setStore(Data *pStore)
 {
     store = pStore;
 }

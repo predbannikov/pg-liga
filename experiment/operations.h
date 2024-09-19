@@ -74,7 +74,7 @@ public:
     Volumeter1 *volumetr1 = nullptr;
     Volumeter2 *volumetr2 = nullptr;
     Plata plata;
-    StoreData *store = nullptr;
+    Data *store = nullptr;
     RETCODE execCMD(QJsonObject &jobj);
 
     RETCODE readSensors(QJsonObject &jobj);

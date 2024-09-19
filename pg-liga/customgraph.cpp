@@ -9,14 +9,22 @@ CustomGraph::CustomGraph(QMap<QString, ExperimentData *> *data, QWidget *parent)
     ui->setupUi(this);
 //    ui->widget = new DecoratedPlot(this);
     ui->cmbData1->addItems(data->keys());
-    Qt::GlobalColor color = Qt::darkGreen;
-    for (int i = 0; i < ui->cmbData1->count(); ++i) {
-        ui->widget->addTrace(m_data->value(ui->cmbData1->itemText(i)), tr("Время (t, мин)"), tr("%1, %2").arg(ui->cmbData1->itemText(i)).arg("mm"), color, ui->cmbData1->itemText(i));
-        color = static_cast<Qt::GlobalColor>(color + 2);
+    ui->cmbData1->setVisible(false);
+    Qt::GlobalColor color = Qt::darkRed;
+//    for (int i = 0; i < ui->cmbData1->count(); ++i) {
+    auto list = data->keys();
+    for (int i = 0; i < list.size(); ++i) {
+        ui->widget->addTrace(m_data->value(list[i]), tr("Время (t, мин)"), tr("%1, %2").arg(list[i]).arg("mm"), color, list[i]);
+        color = static_cast<Qt::GlobalColor>(color + 1);
     }
     QwtLegend *legend = new QwtLegend();
     ui->widget->m_plot->insertLegend(legend, QwtPlot::RightLegend);
 
+}
+
+void CustomGraph::clear()
+{
+    ui->widget->m_plot->replot();
 }
 
 CustomGraph::~CustomGraph()

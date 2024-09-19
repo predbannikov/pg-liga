@@ -6,7 +6,7 @@ DataStore::DataStore() {
 }
 
 DataStore::~DataStore() {
-
+    qDebug() << "test delete";
 }
 
 void DataStore::serializeData(QJsonObject &jobj) {
@@ -36,7 +36,7 @@ void DataStore::serializeData(QJsonObject &jobj) {
 
 QList<QPair<qint64, float> > DataStore::deSerializeData(QJsonObject jData) {
     QMap<qint64, QList<QPair<qint64, float>>> new_map;
-    for (auto jkeyTime: jData.keys()) {
+    for (const auto &jkeyTime: jData.keys()) {
         QByteArray buff = QByteArray::fromBase64(jData[jkeyTime].toString().toUtf8());
         QDataStream ds(&buff, QIODevice::ReadOnly);
         ds.setVersion(QDataStream::Qt_5_11);
@@ -53,7 +53,7 @@ QList<QPair<qint64, float> > DataStore::deSerializeData(QJsonObject jData) {
     QList <QPair <qint64, float>> all_lists;
     QList <qint64> list_sort = new_map.keys();
     std::sort(list_sort.begin(), list_sort.end());
-    for (qint64 idx: list_sort)
+    for (qint64 idx: qAsConst(list_sort))
         all_lists.append(new_map[idx]);
     return all_lists;
 }
@@ -64,25 +64,9 @@ void DataStore::append(qint64 start_time, qint64 cur_time, float value, float ep
     } else {
         auto lastValue = data[start_time].last().second;
         double diffValue = fabs (lastValue - value);
-
-        // double diffValue = fabs (data[start_time].last().second - (value));
         if (diffValue > eps) {
             data[start_time].append({cur_time, value});
-//            if (last.first != data[start_time].last().first)
-//                data[start_time].append(last);
-        } else {
-//            qDebug() << Q_FUNC_INFO << "Значение изменения ещё меньше";
         }
-//        last = {cur_time, value};
-    }
-}
-
-void DataStore::fixAppend(qint64 start_time, qint64 cur_time, float value)
-{
-    if (!data.contains(start_time)) {
-        data.insert(start_time, {{cur_time, value}});
-    } else {
-        data[start_time].append({cur_time, value});
     }
 }
 

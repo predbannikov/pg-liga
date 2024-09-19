@@ -11,7 +11,7 @@ Operations::Operations(quint8 addr) : Interface(addr),
     plata(0, ActBase)
 {
     jConfig["area"] = "0.01";
-    store = new StoreData(addr, jConfig);
+    store = new Data(addr, jConfig);
 
 
     QVector<Sensor *> sens;
@@ -130,7 +130,6 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
     } else if (jobj["CMD"].toString() == "set_experiment") {
         jExperiment = jobj["experiment"].toObject();
     } else if (jobj["CMD"].toString() == "start_experiment") {
-        jExperiment["curAction"] = jobj["curAction"].toString();
         if (stateExperiment == STATE_EXPERIMENT_IDLE)
             stateExperiment = STATE_EXPERIMENT_TRANSIT_TO_PROCESS;
     } else if (jobj["CMD"].toString() == "stop_experiment") {
@@ -148,18 +147,30 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
      } else if (jobj["CMD"].toString() == "read_sensors") {
         loadFrame->readSensors(jobj);
         emit sendRequestToClient(jobj);
+
     } else if (jobj["CMD"].toString() == "get_protocol") {
-        loadFrame->sendProtocol(jobj);
+//        loadFrame->sendProtocol(jobj);
+        emit sendRequestToClient(jobj);
+    } else if (jobj["CMD"].toString() == "enable_store_data") {
+        jobj["msg"] = store->enableStoreData(true);
+        emit sendRequestToClient(jobj);
+    } else if (jobj["CMD"].toString() == "disable_store_data") {
+        jobj["msg"] = store->enableStoreData(false);
         emit sendRequestToClient(jobj);
     } else if (jobj["CMD"].toString() == "init_store_data") {
-        jobj["status"] = loadFrame->init();
+        jobj["msg"] = store->initStoreData();
+        emit sendRequestToClient(jobj);
+    } else if (jobj["CMD"].toString() == "delete_store_data") {
+        jobj["msg"] = store->deleteStoreData();
         emit sendRequestToClient(jobj);
     } else if (jobj["CMD"].toString() == "get_store_data") {
-        loadFrame->sendStoreData(jobj);
+        if (store != nullptr) {
+            store->sendStoreData(jobj);
+        } else {
+            jobj["store_data"] = QString(QByteArray("no experiment has been launched yet").toBase64());
+        }
         emit sendRequestToClient(jobj);
-    } else if (jobj["CMD"].toString() == "stop_store_data") {
-        loadFrame->deleteData();
-        emit sendRequestToClient(jobj);
+
     } else if (jobj["CMD"].toString() == "load_frame_move") {
         return loadFrame->moveFrame(jobj);
     } else if (jobj["CMD"].toString() == "load_frame_stop") {

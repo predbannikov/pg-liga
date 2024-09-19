@@ -9,7 +9,7 @@
 #include "sensors.h"
 #include "stepper.h"
 #include "controller.h"
-#include "storedata.h"
+#include "data.h"
 
 class LoadFrame
 {
@@ -30,7 +30,7 @@ public:
     LoadFrame();
     ~LoadFrame();
 
-    void setStoreData(StoreData *storeData);
+    void setStoreData(Data *storeData);
     bool init();
     bool deleteData();
     void resetStateModeBusCommunication();
@@ -70,9 +70,9 @@ public:
     Stepper *stepper = nullptr;
     Controller *controller = nullptr;
 
-    StoreData *store = nullptr;
+    Data *store = nullptr;
 
-    void setStore(StoreData *pStore);
+    void setStore(Data *pStore);
 
     QString unitName;
 

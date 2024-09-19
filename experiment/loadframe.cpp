@@ -20,7 +20,7 @@ LoadFrame::~LoadFrame()
     qDebug() << Q_FUNC_INFO;
 }
 
-void LoadFrame::setStoreData(StoreData *storeData)
+void LoadFrame::setStoreData(Data *storeData)
 {
     store = storeData;
 }
@@ -32,7 +32,7 @@ bool LoadFrame::init()
         store = nullptr;
     }
 
-    store = new StoreData(address, jconfig);
+    store = new Data(address, jconfig);
 
     if (store == nullptr)
         return false;
@@ -247,7 +247,7 @@ void LoadFrame::sendStoreData(QJsonObject &jobj)
     }
 }
 
-void LoadFrame::setStore(StoreData *pStore)
+void LoadFrame::setStore(Data *pStore)
 {
     store = pStore;
 }

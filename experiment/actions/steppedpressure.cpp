@@ -7,7 +7,7 @@
 #include "volumeter1.h"
 
 SteppedPressure::SteppedPressure(QObject *parent)
-    : BaseAction{parent}
+    : ActionCycle{parent}
 {
 
 }
@@ -17,29 +17,33 @@ SteppedPressure::~SteppedPressure()
     qDebug() << Q_FUNC_INFO;
 }
 
-void SteppedPressure::init() {
-    elapseTime.setSingleShot(true);
-    elapseTime.setInterval(1000);
-    curStep = jAction["curStep"].toString().toInt();
+bool SteppedPressure::stepChanged()
+{
+    return false;
 }
 
-bool SteppedPressure::update()
+//void SteppedPressure::init() {
+//    elapseTime.setSingleShot(true);
+//    elapseTime.setInterval(1000);
+//    curStep = jAction["curStep"].toString().toInt();
+//}
+
+bool SteppedPressure::updateSteping()
 {
+    // Тут начать задавать логику ступени
     switch(trans) {
 
     case TRANS_1: {
+
         QJsonObject::iterator iter;
-        for (iter = jAction.begin(); iter != jAction.end(); ++iter) {
+        for (iter = jOperation.begin(); iter != jOperation.end(); ++iter) {
             if (iter.key().contains("step") && iter.key().split('_')[1].toInt() == curStep) {
                 qDebug() << "key=" << iter.key().split('_')[1] << "    curStep=" << curStep;
                 trans = TRANS_2;
                 return false;
             }
         }
-        if (iter == jAction.end()) {
-            sendError("Не найдено ни одного step", jAction);
-            return true;
-        }
+
     }
         break;
 
@@ -52,16 +56,17 @@ bool SteppedPressure::update()
 
     case SteppedPressure::TRANS_3:
         if (!elapseTime.isActive() && volumeter1->stepper->position != 0) {
-            sendError("Задержка больше 1000мс, по комманде volumetr1_stepper_set_zero", jAction);
+            sendError("Задержка больше 1000мс, по комманде volumetr1_stepper_set_zero", jOperation);
             trans = TRANS_2;
         }
-        else if (elapseTime.isActive() && volumeter1->stepper->position == 0)
+        else if (elapseTime.isActive() && volumeter1->stepper->position == 0) {
             trans = TRANS_4;
+        }
         break;
 
     case SteppedPressure::TRANS_4:
         jCmdToQueue["CMD"] = "volumetr1_set_target";
-        jCmdToQueue["target"] = jAction[QString("step_%1").arg(curStep)].toObject()["target"].toString();
+        jCmdToQueue["target"] = jOperation[QString("step_%1").arg(curStep)].toObject()["target"].toString();
         putQueue(jCmdToQueue);
         elapseTime.start(1000);
         trans = TRANS_6;
@@ -77,12 +82,12 @@ bool SteppedPressure::update()
         // break;
 
     case SteppedPressure::TRANS_6: {
-        if (volumeter1->pressureSens->value > (jAction[QString("step_%1").arg(curStep)].toObject()["target"].toString().toDouble() - 3000)) {
-            if (jAction[QString("step_%1").arg(curStep)].toObject()["criterionType"].toString() == "Stabilisation") {
+        if (volumeter1->pressureSens->value > (jOperation[QString("step_%1").arg(curStep)].toObject()["target"].toString().toDouble() - 3000)) {
+            if (jOperation[QString("step_%1").arg(curStep)].toObject()["criterionType"].toString() == "Stabilisation") {
 
                 trans = TRANS_7;
             }
-            else if (jAction[QString("step_%1").arg(curStep)].toObject()["criterionType"].toString() == "Duration")
+            else if (jOperation[QString("step_%1").arg(curStep)].toObject()["criterionType"].toString() == "Duration")
                 trans = TRANS_8;
         }
         // betaLeastSquares(3);
@@ -106,18 +111,18 @@ bool SteppedPressure::update()
     return false;
 }
 
-void SteppedPressure::finishing()
-{
-}
+//void SteppedPressure::finishing()
+//{
+//}
 
-void SteppedPressure::pausing()
-{
-}
+//void SteppedPressure::pausing()
+//{
+//}
 
 bool SteppedPressure::betaLeastSquares(int n)
 {
-    auto stepDataCellPressure = volumeter1->store->data["CellPressure_kPa"].getDataOfStartTime();
-    auto stepDataPorePressure = volumeter1->store->data["PorePressure_kPa"].getDataOfStartTime();
+    auto stepDataCellPressure = volumeter1->store->data["CellPressure_kPa"]->getDataOfStartTime();
+    auto stepDataPorePressure = volumeter1->store->data["PorePressure_kPa"]->getDataOfStartTime();
 
     if (stepDataCellPressure.size() < n || stepDataPorePressure.size() < n)
         return false;

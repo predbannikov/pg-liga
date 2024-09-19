@@ -95,9 +95,18 @@ void ExperimentView::setupPlots()
     positionVsTime->addTrace(m_experimentData.value("Позиция"), tr("Время (t, мин)"), tr("Позиция, %1").arg(Strings::mm));
     ui->tabGraphics->addTab(positionVsTime, tr("Позиция"));
 
+    m_experimentData.insert("Всестороннее давление", new ExperimentData(this));
+    cellPressureVsTime = new DecoratedPlot(this);
+    cellPressureVsTime->addTrace(m_experimentData.value("Всестороннее давление"), tr("Время (t, мин)"), tr("Всестороннее давление, %1").arg(Strings::mm));
+    ui->tabGraphics->addTab(cellPressureVsTime, tr("Всестороннее давление"));
+
+    m_experimentData.insert("Поровое давление", new ExperimentData(this));
+    porePressureVsTime = new DecoratedPlot(this);
+    porePressureVsTime->addTrace(m_experimentData.value("Поровое давление"), tr("Время (t, мин)"), tr("Поровое давление, %1").arg(Strings::mm));
+    ui->tabGraphics->addTab(porePressureVsTime, tr("Поровое давление"));
+
     customPlot = new CustomGraph(&m_experimentData, this);
     ui->tabGraphics->addTab(customPlot, "Кастомный");
-
 }
 
 void ExperimentView::clearData()
@@ -217,11 +226,17 @@ void ExperimentView::serializExperiment()
     QJsonObject jOps, jObj;
     for (int i = 0; i < lay->count(); i++) {
         OperationActions *operAct = qobject_cast<OperationActions *> (lay->itemAt(i)->widget());
-
-        QString cnt = QString("Operation_%1").arg(i);
-        jOps[cnt] = operAct->serializOperation();
+        QString cnt = QString("operation_%1").arg(i);
+        QJsonObject jOperation = operAct->serializOperation();
+//        QJsonObject jStatus;
+//        jStatus["cur_step"] = "step_0";
+//        jOperation["status"] = jStatus;
+        jOps[cnt] = jOperation;
     }
     jObj["CMD"] = "set_experiment";
+//    QJsonObject jExpStatus;
+//    jExpStatus["cur_operation"] = "operation_0";
+//    jOps["status"] = jExpStatus;
     jObj["experiment"] = jOps;
     qDebug().noquote() << QJsonDocument(jObj).toJson(QJsonDocument::Indented);
     emit sendRequest(jObj);
@@ -343,6 +358,63 @@ void ExperimentView::onReadDataStore()
     emit sendRequest(jobj);
 }
 
+void ExperimentView::on_btnInitStoreData_clicked()
+{
+    on_btnClearDataStore_clicked();
+    QJsonObject jobj;
+    jobj["CMD"] = "init_store_data";
+    timerUpdateDataStore->start(3000);
+    emit sendRequest(jobj);
+}
+
+void ExperimentView::on_btnStopStoreData_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "stop_store_data";
+    timerUpdateDataStore->stop();
+    emit sendRequest(jobj);
+}
+
+void ExperimentView::on_btnEnableStoreData_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "enable_store_data";
+    timerUpdateDataStore->start(3000);
+    emit sendRequest(jobj);
+}
+
+
+void ExperimentView::on_btnClearDataStore_clicked()
+{
+    dataStore.clear();
+
+    m_experimentData.value("Деформация")->clearData();
+    m_experimentData.value("Деформация")->clear();
+    deformVsTime->m_plot->replot();
+
+    m_experimentData.value("Сила")->clearData();
+    m_experimentData.value("Сила")->clear();
+    pressureVsTime->m_plot->replot();
+
+    m_experimentData.value("Позиция")->clearData();
+    m_experimentData.value("Позиция")->clear();
+    positionVsTime->m_plot->replot();
+
+    m_experimentData.value("Всестороннее давление")->clearData();
+    m_experimentData.value("Всестороннее давление")->clear();
+    cellPressureVsTime->m_plot->replot();
+
+    m_experimentData.value("Поровое давление")->clearData();
+    m_experimentData.value("Поровое давление")->clear();
+    porePressureVsTime->m_plot->replot();
+
+    customPlot->clear();
+
+    QJsonObject jobj;
+    jobj["CMD"] = "delete_store_data";
+    emit sendRequest(jobj);
+}
+
 void ExperimentView::on_comboBox_activated(const QString &arg1)
 {
     onCreateJsonObject();
@@ -352,6 +424,12 @@ void ExperimentView::on_dateTimeEdit_timeChanged(const QTime &time)
 {
     onCreateJsonObject();
 }
+
+void ExperimentView::on_btnGetStoreData_clicked()
+{
+    onReadDataStore();
+}
+
 
 void ExperimentView::onReadyResponse(const QJsonObject &jobj)
 {
@@ -383,6 +461,12 @@ void ExperimentView::onReadyResponse(const QJsonObject &jobj)
             if (jkey == "LF_position_mm") {
                 m_experimentData.value("Позиция")->append(allList);
             }
+            if (jkey == "PorePressure_kPa") {
+                m_experimentData.value("Поровое давление")->append(allList);
+            }
+            if (jkey == "CellPressure_kPa") {
+                m_experimentData.value("Всестороннее давление")->append(allList);
+            }
         }
     } else {
         qDebug().noquote() << QJsonDocument(jobj).toJson(QJsonDocument::Indented);
@@ -391,6 +475,8 @@ void ExperimentView::onReadyResponse(const QJsonObject &jobj)
         ui->textEdit->append("                                                  ");
         ui->textEdit->append("##################################################");
     }
+    if (jobj.contains("msg"))
+        ui->textEdit->append(jobj["msg"].toString());
 }
 
 void ExperimentView::on_btnUnlockPid_clicked()
@@ -405,20 +491,6 @@ void ExperimentView::on_btnSaveImage_clicked()
     deformVsTime->m_plot->replot();
     QPixmap pxmap = deformVsTime->grab();
     pxmap.save("test.png", "PNG");
-}
-
-void ExperimentView::on_btnGetStoreData_clicked()
-{
-    onReadDataStore();
-}
-
-void ExperimentView::on_btnInitStoreData_clicked()
-{
-    on_btnClearDataStore_clicked();
-    QJsonObject jobj;
-    jobj["CMD"] = "init_store_data";
-    timerUpdateDataStore->start(3000);
-    emit sendRequest(jobj);
 }
 
 
@@ -437,36 +509,11 @@ void ExperimentView::on_btnSetSettings_clicked()
 //    emit sendRequest(jobj);
 }
 
-void ExperimentView::on_btnClearDataStore_clicked()
-{
-    dataStore.clear();
-
-    m_experimentData.value("Деформация")->clearData();
-    m_experimentData.value("Деформация")->clear();
-    deformVsTime->m_plot->replot();
-
-    m_experimentData.value("Сила")->clearData();
-    m_experimentData.value("Сила")->clear();
-    pressureVsTime->m_plot->replot();
-
-    m_experimentData.value("Позиция")->clearData();
-    m_experimentData.value("Позиция")->clear();
-    positionVsTime->m_plot->replot();
-}
-
 void ExperimentView::on_btnSetHz_clicked()
 {
     QJsonObject jobj;
     jobj["CMD"] = "set_hz";
     jobj["hz"] = ui->spinHz->value();
-    emit sendRequest(jobj);
-}
-
-void ExperimentView::on_btnStopStoreData_clicked()
-{
-    QJsonObject jobj;
-    jobj["CMD"] = "stop_store_data";
-    timerUpdateDataStore->stop();
     emit sendRequest(jobj);
 }
 
@@ -770,4 +817,3 @@ void ExperimentView::on_btnClearTextEdit_clicked()
 {
     ui->textEdit->clear();
 }
-

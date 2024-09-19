@@ -9,7 +9,7 @@
 #include "sensors.h"
 #include "stepper.h"
 #include "controller.h"
-#include "storedata.h"
+#include "data.h"
 
 class Volumeter1
 {
@@ -60,8 +60,8 @@ public:
     Stepper *stepper = nullptr;
     Controller *controller = nullptr;
 
-    StoreData *store = nullptr;
-    void setStore(StoreData *pStore);
+    Data *store = nullptr;
+    void setStore(Data *pStore);
 
     QString unitName;
 };

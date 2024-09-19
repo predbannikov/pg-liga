@@ -42,14 +42,21 @@ bool Experiment::conveyor()
             stateExperiment = STATE_EXPERIMENT_IDLE;
         else {
             transition = TRANSITION_2;
+            if (jExperiment["status_experiment"].toObject().contains("current_operation")) {
+                // Нужно восстанавливать
+            } else {
+                jExperimentStatus = jExperiment["status_experiment"].toObject();
+                jExperimentStatus["current_operation"] = "operation_0";
+                jExperiment["status_experiment"] = jExperimentStatus;
+            }
         }
         break;
 
     case Experiment::TRANSITION_2:
         for (QJsonObject::iterator iter = jExperiment.begin(); iter != jExperiment.end(); ++iter) {
-            if (iter.key().contains("Operation") && iter.key().split('_')[1] == curAction()) {
+            if (iter.key() == curAction()) {
 
-                qDebug() << "key=" << iter.key().split('_')[1] << "    curAction=" << curAction();
+                qDebug() << "key=" << iter.key().split('_')[1] << "    current_operation=" << curAction();
                 if (!createAction(iter.value().toObject()))
                     transition = TRANSITION_4;
                 else
@@ -63,15 +70,15 @@ bool Experiment::conveyor()
     case Experiment::TRANSITION_3:
         if (action->updating()) {
             action->finish();
-            jUpdateExperimentAction(action->jAction);
-            jIncCurAction();      // Считать как указатель, с которого начнётся выполнение следующей ступени
+            jUpdateExperimentAction(action->jOperation);
+            jIncCurAction();
             delete action;
             action = nullptr;
             transition = TRANSITION_2;
             return false;
         }
         if (action->jActionChanged())
-            jUpdateExperimentAction(action->jAction);
+            jUpdateExperimentAction(action->jOperation);
         break;
 
     case Experiment::TRANSITION_4:
@@ -229,10 +236,14 @@ void Experiment::stateSwitch()
 
         // qDebug() << "STATE_EXPERIMENT_PAUSE";
         break;
-    case Operations::STATE_EXPERIMENT_TRANSIT_TO_PROCESS:
+    case Operations::STATE_EXPERIMENT_TRANSIT_TO_PROCESS: {
         jSaveState("process");
+        QJsonObject jobj;
+        jobj["CMD"] = "enable_store_data";
+        put(jobj);
         stateExperiment = STATE_EXPERIMENT_PROCESS;
         break;
+    }
     case Operations::STATE_EXPERIMENT_TRANSIT_TO_PAUSE:
         qDebug() << "STATE_EXPERIMENT_TRANSIT_TO_PAUSE";
         if (pausing()) {
@@ -243,6 +254,9 @@ void Experiment::stateSwitch()
     case Operations::STATE_EXPERIMENT_TRANSIT_TO_STOP:
         if (stopping()) {
             jSaveState("idle");
+            QJsonObject jobj;
+            jobj["CMD"] = "disable_store_data";
+            put(jobj);
             stateExperiment = STATE_EXPERIMENT_IDLE;
         }
         break;
@@ -252,26 +266,27 @@ void Experiment::stateSwitch()
 
 void Experiment::jIncCurAction()
 {
-    jExperimentStatus = jExperiment["status"].toObject();
-    int curAction = jExperimentStatus["curAction"].toString().toInt();
+    jExperimentStatus = jExperiment["status_experiment"].toObject();
+    int curAction = jExperimentStatus["current_operation"].toString().split('_')[1].toInt();
     curAction++;
-    jExperimentStatus["curAction"] = QString::number(curAction);
-    jExperiment["status"] = jExperimentStatus;
+    jExperimentStatus["current_operation"] = QString("operation_%1").arg(curAction);
+    jExperiment["status_experiment"] = jExperimentStatus;
 }
 
 void Experiment::jUpdateExperimentAction(QJsonObject jObj)
 {
-    QString operation = QString("Operation_%1").arg(curAction());
+    QString operation = QString("operation_%1").arg(curAction());
     jExperiment[operation] = jObj;
 }
 
 void Experiment::jSaveState(QString state)
 {
-    jExperimentStatus = jExperiment["status"].toObject();
+    jExperimentStatus = jExperiment["status_experiment"].toObject();
     jExperimentStatus["state"] = state;
+    jExperiment["status_experiment"] = jExperimentStatus;
 }
 
 QString Experiment::curAction()
 {
-    return jExperiment["status"].toObject()["curAction"].toString();
+    return jExperiment["status_experiment"].toObject()["current_operation"].toString();
 }

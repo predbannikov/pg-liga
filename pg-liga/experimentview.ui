@@ -163,7 +163,7 @@
                 <x>0</x>
                 <y>0</y>
                 <width>674</width>
-                <height>1334</height>
+                <height>1086</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_15">
@@ -174,32 +174,43 @@
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_23">
                   <item>
-                   <widget class="QPushButton" name="btnGetStoreData">
-                    <property name="text">
-                     <string>getStoreData</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="btnInitStoreData">
-                    <property name="text">
-                     <string>initStoreData</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="btnStopStoreData">
-                    <property name="text">
-                     <string>stopStoreData</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="btnClearDataStore">
-                    <property name="text">
-                     <string>clearData</string>
-                    </property>
-                   </widget>
+                   <layout class="QHBoxLayout" name="horizontalLayout_14">
+                    <item>
+                     <widget class="QPushButton" name="btnEnableStoreData">
+                      <property name="text">
+                       <string>enableStoreData</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="btnStopStoreData">
+                      <property name="text">
+                       <string>disableStoreData</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="btnInitStoreData">
+                      <property name="text">
+                       <string>initStoreData</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="btnGetStoreData">
+                      <property name="text">
+                       <string>getStoreData</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="btnClearDataStore">
+                      <property name="text">
+                       <string>clearData</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
                   </item>
                   <item>
                    <widget class="QPushButton" name="btnTest">
@@ -212,13 +223,6 @@
                    <widget class="QPushButton" name="btnSaveImage">
                     <property name="text">
                      <string>save image</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="btnCreateGraph">
-                    <property name="text">
-                     <string>graph</string>
                     </property>
                    </widget>
                   </item>
@@ -1348,27 +1352,31 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QPushButton" name="btnSetHz">
-                    <property name="text">
-                     <string>setHz</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QDoubleSpinBox" name="spinHz">
-                    <property name="minimum">
-                     <double>0.010000000000000</double>
-                    </property>
-                    <property name="maximum">
-                     <double>5.000000000000000</double>
-                    </property>
-                    <property name="singleStep">
-                     <double>0.500000000000000</double>
-                    </property>
-                    <property name="value">
-                     <double>0.500000000000000</double>
-                    </property>
-                   </widget>
+                   <layout class="QHBoxLayout" name="horizontalLayout_15">
+                    <item>
+                     <widget class="QPushButton" name="btnSetHz">
+                      <property name="text">
+                       <string>setHz</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QDoubleSpinBox" name="spinHz">
+                      <property name="minimum">
+                       <double>0.010000000000000</double>
+                      </property>
+                      <property name="maximum">
+                       <double>5.000000000000000</double>
+                      </property>
+                      <property name="singleStep">
+                       <double>0.500000000000000</double>
+                      </property>
+                      <property name="value">
+                       <double>0.500000000000000</double>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
                   </item>
                   <item>
                    <widget class="QPushButton" name="btnHardReset">
@@ -1378,72 +1386,88 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QPushButton" name="btnSetPidP">
-                    <property name="text">
-                     <string>set down PID_P</string>
-                    </property>
-                   </widget>
+                   <layout class="QHBoxLayout" name="horizontalLayout_18">
+                    <item>
+                     <widget class="QPushButton" name="btnSetPidP">
+                      <property name="text">
+                       <string>set down PID_P</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QDoubleSpinBox" name="spinSetPID_P">
+                      <property name="maximum">
+                       <double>1000.000000000000000</double>
+                      </property>
+                      <property name="value">
+                       <double>10.000000000000000</double>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
                   </item>
                   <item>
-                   <widget class="QPushButton" name="btnSetPID_D">
-                    <property name="text">
-                     <string>set down PID_D</string>
-                    </property>
-                   </widget>
+                   <layout class="QHBoxLayout" name="horizontalLayout_19">
+                    <item>
+                     <widget class="QPushButton" name="btnSetPID_D">
+                      <property name="text">
+                       <string>set down PID_D</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QDoubleSpinBox" name="spinSetPID_D">
+                      <property name="maximum">
+                       <double>1000.000000000000000</double>
+                      </property>
+                      <property name="value">
+                       <double>30.000000000000000</double>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
                   </item>
                   <item>
-                   <widget class="QDoubleSpinBox" name="spinSetPID_D">
-                    <property name="maximum">
-                     <double>1000.000000000000000</double>
-                    </property>
-                    <property name="value">
-                     <double>30.000000000000000</double>
-                    </property>
-                   </widget>
+                   <layout class="QHBoxLayout" name="horizontalLayout_16">
+                    <item>
+                     <widget class="QPushButton" name="btnSetUpPidP">
+                      <property name="text">
+                       <string>set up PID_P</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QDoubleSpinBox" name="spinSetUpPID_P">
+                      <property name="maximum">
+                       <double>1000.000000000000000</double>
+                      </property>
+                      <property name="value">
+                       <double>10.000000000000000</double>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
                   </item>
                   <item>
-                   <widget class="QDoubleSpinBox" name="spinSetPID_P">
-                    <property name="maximum">
-                     <double>1000.000000000000000</double>
-                    </property>
-                    <property name="value">
-                     <double>10.000000000000000</double>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="btnSetUpPidP">
-                    <property name="text">
-                     <string>set up PID_P</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="btnSetUpPID_D">
-                    <property name="text">
-                     <string>set up PID_D</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QDoubleSpinBox" name="spinSetUpPID_D">
-                    <property name="maximum">
-                     <double>1000.000000000000000</double>
-                    </property>
-                    <property name="value">
-                     <double>30.000000000000000</double>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QDoubleSpinBox" name="spinSetUpPID_P">
-                    <property name="maximum">
-                     <double>1000.000000000000000</double>
-                    </property>
-                    <property name="value">
-                     <double>10.000000000000000</double>
-                    </property>
-                   </widget>
+                   <layout class="QHBoxLayout" name="horizontalLayout_17">
+                    <item>
+                     <widget class="QPushButton" name="btnSetUpPID_D">
+                      <property name="text">
+                       <string>set up PID_D</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QDoubleSpinBox" name="spinSetUpPID_D">
+                      <property name="maximum">
+                       <double>1000.000000000000000</double>
+                      </property>
+                      <property name="value">
+                       <double>30.000000000000000</double>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
                   </item>
                   <item>
                    <widget class="QPushButton" name="btnSetState">

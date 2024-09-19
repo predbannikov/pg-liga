@@ -4,8 +4,9 @@
 #include <QObject>
 
 #include "baseaction.h"
+#include "actioncycle.h"
 
-class SteppedPressure : public BaseAction
+class SteppedPressure : public ActionCycle
 {
     Q_OBJECT
 
@@ -13,10 +14,9 @@ public:
     explicit SteppedPressure(QObject *parent = nullptr);
     ~SteppedPressure();
 
-    void init() override;
-    bool update() override;
-    void finishing() override;
-    void pausing() override;
+    bool updateSteping() override;
+    bool stepChanged() override;
+
 
 private:
     bool betaLeastSquares(int n);
