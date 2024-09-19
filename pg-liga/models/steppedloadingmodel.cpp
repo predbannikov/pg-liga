@@ -50,9 +50,9 @@ QVariant SteppedLoadingModel::data(const QModelIndex &index, int role) const
     const auto currentStep = step(row);
 
     if((role == Qt::EditRole) || (role == Qt::DisplayRole)) {
+
         switch(col) {
         case CellPressure:
-
             return currentStep.cellPressure.kiloPascals();
         case EndCriterion:
             
@@ -102,9 +102,9 @@ bool SteppedLoadingModel::setData(const QModelIndex &index, const QVariant &valu
 {
     
 
-    const auto underpressure = Measurements::Pressure::fromPascals(0.0);
-    const auto overpressure = Measurements::Pressure::fromForce(Measurements::Force::fromKiloNewtons(220.0),
-                                                                Measurements::Area::circle(Measurements::Length::fromMillimetres(20)));
+//    const auto underpressure = Measurements::Pressure::fromKiloPascals(0.0);
+//    const auto overpressure = Measurements::Pressure::fromForce(Measurements::Force::fromKiloNewtons(220.0),
+//                                                                Measurements::Area::circle(Measurements::Length::fromMillimetres(20)));
 
     if(role == Qt::EditRole || role == Qt::DisplayRole) {
         const auto row = index.row();
@@ -116,13 +116,13 @@ bool SteppedLoadingModel::setData(const QModelIndex &index, const QVariant &valu
         switch(col) {
         case CellPressure:
             param = value.value<QPair<int, double>>();
-            if (Measurements::Pressure::fromKiloPascals(param.second) > overpressure || Measurements::Pressure::fromKiloPascals(param.second) < underpressure)
+//            if (Measurements::Pressure::fromKiloPascals(param.second) > overpressure || Measurements::Pressure::fromKiloPascals(param.second) < underpressure)
             {
                  currentStep.cellPressure = Measurements::Pressure::fromKiloPascals(25);
             }
-            else {
+//            else {
                 currentStep.cellPressure = Measurements::Pressure::fromKiloPascals(param.second);
-            }
+//            }
             break;
 
         case EndCriterion:
@@ -188,8 +188,8 @@ Qt::ItemFlags SteppedLoadingModel::flags(const QModelIndex &index) const
 int SteppedLoadingModel::addStep(const Step &step)
 {
     const auto row = m_steps.size();
+
     beginInsertRows(QModelIndex(), row, row);
-    Step newStep;
     m_steps.append(step);
     endInsertRows();
     return m_steps.size();
@@ -200,7 +200,7 @@ int SteppedLoadingModel::insertStep(const QModelIndex &index)
     const auto row = index.row() + 1;
     Step step;
     step.cellPressure = Measurements::Pressure::fromKiloPascals(25);
-    step.criterion = Step::Manual;
+    step.criterion = Step::CriterionType::Manual;
     step.stabilisationType = Step::StabilisationType::Absolute;
     step.stabilisationParamRelative = 0.15;
     step.timeOfCriterionTime = Measurements::TimeInterval::fromHMS(0, 15, 0);
@@ -283,7 +283,6 @@ int SteppedLoadingModel::duplicateStep(const QModelIndex &index)
     emit dataChanged(QModelIndex(), QModelIndex());
     return row;
 }
-
 
 void SteppedLoadingModel::setStep(const QModelIndex &index, const SteppedLoadingModel::Step &step)
 {

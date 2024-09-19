@@ -20,7 +20,7 @@ public:
     virtual int moveStep(const QModelIndex &index, int moveAmount) = 0;
     virtual int duplicateStep(const QModelIndex &index = QModelIndex()) = 0;
 //    virtual double getTarget() = 0;
-    QString getType() {return m_type;};
+    QString getType() {return m_type;}
 
     QJsonObject serializModel()
     {

@@ -275,4 +275,3 @@ int SteppedPressuriseModel::duplicateStep(const QModelIndex &index)
     emit dataChanged(QModelIndex(), QModelIndex());
     return row;
 }
-

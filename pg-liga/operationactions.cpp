@@ -109,16 +109,14 @@ QJsonObject OperationActions::serializOperation()
         QWidget *wgt = ui->widget->layout()->itemAt(0)->widget();
         if (qobject_cast<SteppedModelEditor *>(wgt) != nullptr) {
             SteppedModelEditor *steppedModelEditor = qobject_cast<SteppedModelEditor *>(wgt);
-
             jObj = steppedModelEditor->serializModel();
-            jObj["Type"] = steppedModelEditor->getTypeStep();
-            qDebug().noquote() << "TISH*****"<<endl <<QJsonDocument(jObj).toJson(QJsonDocument::Indented)<< "TISH*****"<<endl;
-    //        qDebug().noquote() << QJsonDocument(jTest).toJson(QJsonDocument::Indented);
-    //        qDebug().noquote() << QJsonDocument(jTest).toJson(QJsonDocument::Indented);
-
-        } else if (qobject_cast<KinematicLoadingModelEditor *>(wgt) != nullptr){
+            jObj["name"] = steppedModelEditor->getTypeStep();
+        }
+        else if (qobject_cast<KinematicLoadingModelEditor *>(wgt) != nullptr)
+        {
             qDebug() << "KinematicLoadingModelEditor";
-        } else {
+        }
+        else {
             qDebug() << "##################";
         }
         return jObj;
