@@ -108,7 +108,7 @@ public:
             {
                 jobj["criterionType"] = criterionToStr();
                 jobj["stabilisationType"] = stabilisationTypeToStr();
-                jobj["target"] = cellPressure.pascals();//QString::number(getTarget());
+                jobj["target"] = QString::number(cellPressure.pascals());//QString::number(getTarget());
                 jobj["stabilisationParam"] = stabilisationParamToStr();
                 jobj["timeOfCriterionTime"] = timeOfCriterionTimeToStr();
             }
