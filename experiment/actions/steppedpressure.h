@@ -34,9 +34,6 @@ private:
                } trans = TRANS_1;
 
     int curStep = 0;
-    int loadFrameLastPosition = 0;
-    int volumeter1LastPosition = 0;
-    int volumeter2LastPosition = 0;
 };
 
 #endif // STEPPEDPRESSURE_H

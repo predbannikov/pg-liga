@@ -6,6 +6,8 @@
 #include <QTimer>
 #include <QJsonObject>
 
+#include "data.h"
+
 class LoadFrame;
 class Volumeter1;
 class Volumeter2;
@@ -16,8 +18,10 @@ class BaseAction : public QObject
     Q_OBJECT
 
     QElapsedTimer timElaps;
+    QTimer elapseTime;
 
     enum STATE_PAUSE {STATE_PAUSE_TRANSIT_1, STATE_PAUSE_TRANSIT_2} state_pause = STATE_PAUSE_TRANSIT_1;
+
 
 public:
     explicit BaseAction(QObject *parent = nullptr);
@@ -35,8 +39,9 @@ public:
     virtual void finishing() = 0;
     virtual void pausing() = 0;
 
+
     bool updating();
-    void initialization(QJsonObject jAct, LoadFrame *lf, Volumeter1 *vol1, Volumeter2 *vol2, Plata *plt);
+    void initialization(QJsonObject jAct, LoadFrame *lf, Volumeter1 *vol1, Volumeter2 *vol2, Plata *plt, Data *data);
     void finish();
     bool pause();
     void sendError(QString str, QJsonObject jobj = QJsonObject());
@@ -52,6 +57,7 @@ public:
     Volumeter1 *volumeter1 = nullptr;
     Volumeter2 *volumeter2 = nullptr;
     Plata *plata = nullptr;
+    Data *store = nullptr;
     QJsonObject jOperation;
 
     /**

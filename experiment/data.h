@@ -83,7 +83,7 @@ class Data : public QObject
      *                          используется для записи в файл протокола
      */
     QMap <QString, double> currentData;
-    void createFileProtocol();
+    void createFileProtocol(QString nameOperation);
 
 public:
     Data(quint8 addr, const QJsonObject &conf, QObject *parent = nullptr);
@@ -97,8 +97,15 @@ public:
     void updateData();
     void sendProtocol(QJsonObject &jobj);
     void sendStoreData(QJsonObject &jobj);
-    void setCurStep(const QJsonObject &jcurStep_);
-    double getValueStepOfTime(qint64 time, QString sens);
+    void startOperation(QJsonObject &jObj);
+    void stopOperation(QJsonObject &jObj);
+    void startStep(QJsonObject &jStatusStep);
+    void stopStep(QJsonObject &jStatusStep);
+
+    // Вернуть значение по сенсору time времени назад
+    QPair<bool, double> getValueStepOfTime(qint64 time, QString sens);
+    void startExperiment(QJsonObject &jObj);
+    void stopExperiment(QJsonObject &jObj);
 
 
     QMap <QString, DataStore*> data;
@@ -119,10 +126,19 @@ private:
      */
     bool writeToDataFile();
 
+    /**
+     *      Время текущее на протяжении всего эксперимента, испльзовать для задачи ключей
+     *      в мапе как step в которых хранятся данные датчиков
+     */
     QElapsedTimer elapseExperimentTimer;
-    qint64 stepTimeStart = 0;
+
+    qint64 stepTime = 0;
     TimePeriod period;      // Период обновления значений в протокол
-    bool enableStore = true;
+    bool enableStore = false;
+    QString timeStartExperiment;
+    QString timeStopExperiment;
+    QString timeStartOperation;
+    QString timeStopOperation;
 };
 
 #endif // DATA_H

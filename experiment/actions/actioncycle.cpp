@@ -1,6 +1,10 @@
 #include <QDebug>
 #include "actioncycle.h"
 
+#include "loadframe.h"
+#include "volumeter1.h"
+#include "volumeter2.h"
+
 
 ActionCycle::ActionCycle(QObject *parent)
     : BaseAction{parent}
@@ -27,43 +31,123 @@ void ActionCycle::init()
 bool ActionCycle::update()
 {
     switch (trans) {
-    case ActionCycle::TRANSITION_1:
+
+    case ActionCycle::TRANSITION_5:
+        break;
+    case ActionCycle::TRANSITION_BEGIN:
         if (jOperation.isEmpty())
-            trans = TRANSITION_4;
+            trans = TRANSITION_FINISH;
         else {
-            trans = TRANSITION_2;
+            trans = TRANSITION_READ_STEP;
         }
         break;
 
-    case ActionCycle::TRANSITION_2:
+    case ActionCycle::TRANSITION_READ_STEP:
         for (QJsonObject::iterator iter = jOperation.begin(); iter != jOperation.end(); ++iter) {
             if (iter.key() == curStep()) {
                 qDebug() << "key=" << iter.key().split('_')[1] << "    curStep=" << curStep();
-                trans = TRANSITION_3;
+                trans = TRANSITION_PREP_DEVICE;
                 return false;
             }
         }
         sendError("Не найдено ни одного step, завершение операции", jOperation);
-        trans = TRANSITION_4;
+        trans = TRANSITION_FINISH;
         break;
 
-    case ActionCycle::TRANSITION_3:
+    case ActionCycle::TRANSITION_PREP_DEVICE:
+        if (prepDevice())
+            trans = TRANSITION_SET_STEP;
+        break;
+
+    case ActionCycle::TRANSITION_SET_STEP:
+        jStep = jOperation[curStep()].toObject();
+        trans = TRANSITION_UPDATE_STEPING;
+    case ActionCycle::TRANSITION_UPDATE_STEPING:
         if (updateSteping()) {
-            jUpdateJAction(jStep);
+//            jUpdateStatusOperation(jStep);
             jIncCurStep();
-            trans = TRANSITION_2;
+            trans = TRANSITION_READ_STEP;
             return false;
         }
-        if (stepChanged())
-            jUpdateJAction(jStep);
+//        if (stepChanged())
+//            jUpdateStatusOperation(jStep);
         break;
 
-    case ActionCycle::TRANSITION_4:
-        trans = TRANSITION_1;
+    case ActionCycle::TRANSITION_FINISH:
+        trans = TRANSITION_BEGIN;
         return true;    // Завершение цикла
     }
     return false;
 }
+
+#define TIME_ELAPSE_FOR_ZERO_OPERATION  2000
+bool ActionCycle::prepDevice()
+{
+    switch (state_prep_device) {
+    case STATE_PREP_LOAD_FRAME_1:
+        jCmdToQueue["CMD"] = "load_frame_stepper_set_zero";
+        putQueue(jCmdToQueue);
+        elapseTime.start(TIME_ELAPSE_FOR_ZERO_OPERATION);
+        state_prep_device = STATE_PREP_LOAD_FRAME_2;
+        break;
+    case STATE_PREP_LOAD_FRAME_2:
+        if (!elapseTime.isActive() && loadFrame->stepper->position != 0) {
+            sendError("Задержка больше 1000мс, по комманде load_frame_stepper_set_zero", jOperation);
+            state_prep_device = STATE_PREP_LOAD_FRAME_1;
+        }
+        else if (elapseTime.isActive() && loadFrame->stepper->position == 0) {
+            auto jObj = jStatusOperation();
+            jObj["LF_position"] = QString::number(0);
+            jObj["LF_force"] = QString::number(loadFrame->forceSens->value);
+            jObj["LF_deform"] = QString::number(loadFrame->deformSens->value);
+            jSetStatusOperation(jObj);
+            state_prep_device = STATE_PREP_VOLUMETER1_1;
+        }
+        break;
+    case STATE_PREP_VOLUMETER1_1:
+        jCmdToQueue["CMD"] = "volumetr1_stepper_set_zero";
+        putQueue(jCmdToQueue);
+        elapseTime.start(TIME_ELAPSE_FOR_ZERO_OPERATION);
+        state_prep_device = STATE_PREP_VOLUMETER1_2;
+        break;
+    case STATE_PREP_VOLUMETER1_2:
+        if (!elapseTime.isActive() && volumeter1->stepper->position != 0) {
+            sendError("Задержка больше 1000мс, по комманде volumetr1_stepper_set_zero", jOperation);
+            state_prep_device = STATE_PREP_VOLUMETER1_1;
+        }
+        else if (elapseTime.isActive() && volumeter1->stepper->position == 0) {
+            auto jObj = jStatusOperation();
+            jObj["Vol1_position"] = QString::number(0);
+            jObj["Vol1_pressure"] = QString::number(volumeter1->pressureSens->value);
+            jSetStatusOperation(jObj);
+            state_prep_device = STATE_PREP_VOLUMETER2_1;
+        }
+        break;
+    case STATE_PREP_VOLUMETER2_1:
+        jCmdToQueue["CMD"] = "volumetr2_stepper_set_zero";
+        putQueue(jCmdToQueue);
+        elapseTime.start(TIME_ELAPSE_FOR_ZERO_OPERATION);
+        state_prep_device = STATE_PREP_VOLUMETER2_2;
+        break;
+    case STATE_PREP_VOLUMETER2_2:
+        if (!elapseTime.isActive() && volumeter2->stepper->position != 0) {
+            sendError("Задержка больше 1000мс, по комманде volumetr2_stepper_set_zero", jOperation);
+            state_prep_device = STATE_PREP_VOLUMETER1_1;
+        }
+        else if (elapseTime.isActive() && volumeter2->stepper->position == 0) {
+            auto jObj = jStatusOperation();
+            jObj["Vol2_position"] = QString::number(0);
+            jObj["Vol2_pressure"] = QString::number(volumeter2->pressureSens->value);
+            jSetStatusOperation(jObj);
+            state_prep_device = STATE_PREP_LOAD_FRAME_1;
+            return true;
+        }
+        break;
+
+    }
+    return false;
+}
+
 
 void ActionCycle::finishing()
 {
@@ -85,15 +169,15 @@ void ActionCycle::jIncCurStep()
     jSetStatusOperation(jStatus);
 }
 
-void ActionCycle::jUpdateJAction(QJsonObject jObj)
-{
+//void ActionCycle::jUpdateStatusOperation(QJsonObject jObj)
+//{
+//    auto jObj = jOperation["status_operation"];
+//}
 
-}
+//void ActionCycle::jSaveStatusOperation(QString state)
+//{
 
-void ActionCycle::jSaveState(QString state)
-{
-
-}
+//}
 
 QString ActionCycle::curStep()
 {

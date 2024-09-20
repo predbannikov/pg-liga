@@ -13,7 +13,7 @@ Data::Data(quint8 addr, const QJsonObject &conf, QObject *parent) : QObject(pare
 
 
     // Выполнение не обязательное
-    createFileProtocol();
+//    createFileProtocol();
     elapseExperimentTimer.start();
 
 }
@@ -24,14 +24,14 @@ Data::~Data()
     fflush(stderr);
 }
 
-void Data::createFileProtocol()
+void Data::createFileProtocol(QString nameOperation)
 {
     QDir current_path = QDir::currentPath();
-    QDir protocol_folder = current_path.filePath("%1").arg(address);
+    QDir protocol_folder = current_path.filePath("%1/%2").arg(address).arg(QDateTime::currentDateTime().toString("yyyy-MM-dd-HH-mm-ss"));
     QString file_name = protocol_folder.filePath(QString("INSTR%1-%2-%3.csv")
                                                  .arg(QString::number(address),
                                                       jconfig["name_speciment"].toString(),
-                                                      QDateTime::currentDateTime().toString("yyyy-MM-dd-HH-mm")
+                                                      nameOperation
                                                  ));
     qDebug() << "checked" << protocol_folder.absolutePath();
     if (!current_path.mkpath(protocol_folder.absolutePath())) {
@@ -90,30 +90,30 @@ void Data::updateData()
             switch (sensors[i]->funCode) {
             case SensLoad0:
                 currentData.insert(VerticalPressure_kPa, sensors[i]->value);
-                data[VerticalPressure_kPa]->append(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value);
+                data[VerticalPressure_kPa]->append(stepTime, elapseExperimentTimer.elapsed(), sensors[i]->value);
 
                 break;
 
             case SensDef0:
                 currentData.insert(VerticalDeform_mm, sensors[i]->value);
-                data[VerticalDeform_mm]->append(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
+                data[VerticalDeform_mm]->append(stepTime, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
                 break;
 
                 // Все перепутано это волюмоментр 1
             case SensPrs1:
                 currentData.insert(CellPressure_kPa, sensors[i]->value / 1000.);
-                data[CellPressure_kPa]->append(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
+                data[CellPressure_kPa]->append(stepTime, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
                 break;
 
                 // Все перепутано это волюмоментр 2
             case SensPrs0:
                 currentData.insert(PorePressure_kPa, sensors[i]->value / 1000.);
-                data[PorePressure_kPa]->append(stepTimeStart, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
+                data[PorePressure_kPa]->append(stepTime, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
                 break;        }
         }
 
         currentData.insert(LF_position_mm, stepper->position);
-        data[LF_position_mm]->append(stepTimeStart, elapseExperimentTimer.elapsed(), stepper->position / 1000.);
+        data[LF_position_mm]->append(stepTime, elapseExperimentTimer.elapsed(), stepper->position / 1000.);
 
         if (period.complate())
             writeToDataFile();
@@ -150,16 +150,48 @@ void Data::sendStoreData(QJsonObject &jobj)
     jobj["store_data"] = QString(QByteArray(QJsonDocument(jstoreData).toJson()).toBase64());
 }
 
-void Data::setCurStep(const QJsonObject &jcurStep_)
+void Data::startOperation(QJsonObject &jObj)
 {
-    stepTimeStart = elapseExperimentTimer.elapsed();
-    jcurStep = jcurStep_;
-    period.reset();
+    timeStartOperation = QDateTime::currentDateTime().toString("yyyy-MM-dd-HH-mm-ss");
+    jObj["time_start_operation"] = timeStartOperation;
+    createFileProtocol(jObj["name"].toString());
 }
 
-double Data::getValueStepOfTime(qint64 time, QString sens)
+void Data::stopOperation(QJsonObject &jObj)
 {
-    return data[sens]->valueFromBack(stepTimeStart, time);
+    timeStopOperation = QDateTime::currentDateTime().toString("yyyy-MM-dd-HH-mm-ss");
+    jObj["time_stop_operation"] = timeStopOperation;
+}
+
+void Data::startStep(QJsonObject &jStatusStep)
+{
+    period.reset();
+    stepTime = elapseExperimentTimer.elapsed();
+    jStatusStep["time_start_step"] = QString::number(stepTime);
+}
+
+void Data::stopStep(QJsonObject &jStatusStep)
+{
+    stepTime = elapseExperimentTimer.elapsed();
+    jStatusStep["time_stop_step"] = QString::number(stepTime);
+}
+
+void Data::startExperiment(QJsonObject &jObj)
+{
+    timeStartExperiment = QDateTime::currentDateTime().toString("yyyy-MM-dd-HH-mm-ss");
+    jObj["time_start_experiment"] = timeStartExperiment;
+    elapseExperimentTimer.start();
+}
+
+void Data::stopExperiment(QJsonObject &jObj)
+{
+    timeStopExperiment = QDateTime::currentDateTime().toString("yyyy-MM-dd-HH-mm-ss");
+    jObj["time_stop_experiment"] = timeStopExperiment;
+}
+
+QPair<bool, double> Data::getValueStepOfTime(qint64 time, QString sens)
+{
+    return data[sens]->valueFromBack(stepTime, time);
 }
 
 QString Data::enableStoreData(bool enable)
@@ -197,9 +229,9 @@ QString Data::initStoreData()
 
 bool Data::writeToDataFile()
 {
-    while (!dataFileName.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append)) {
+    if (!dataFileName.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append)) {
         qDebug() << "protocol file not created" << dataFileName.fileName();
-        QThread::msleep(300);
+        return false;
     }
     QTextStream str(&dataFileName);
 

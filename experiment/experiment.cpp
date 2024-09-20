@@ -198,13 +198,13 @@ bool Experiment::createAction(QJsonObject jAction)
 {
     if (jAction["name"].toString() == "move_of_time") {
         action = new MoveByTimeLoadFrame(this);
-    } else if (jAction["name"].toString() == "steppedPressure") {
+    } else if (jAction["name"].toString() == "steppedPressurise") {
         action = new SteppedPressure(this);
     } else {
         return false;
     }
     connect(action, &BaseAction::error, this, &Interface::sendRequestToClient);
-    action->initialization(jAction, loadFrame, volumetr1, volumetr2, &plata);
+    action->initialization(jAction, loadFrame, volumetr1, volumetr2, &plata, store);
     return true;
 }
 
@@ -281,6 +281,11 @@ void Experiment::jUpdateExperimentAction(QJsonObject jObj)
 
 void Experiment::jSaveState(QString state)
 {
+    if (state == "process") {       // Старт эксперимента
+        store->startExperiment(jExperiment);
+    } else if (state == "idle") {   // Завершение эксперимента
+        store->stopExperiment(jExperiment);
+    }
     jExperimentStatus = jExperiment["status_experiment"].toObject();
     jExperimentStatus["state"] = state;
     jExperiment["status_experiment"] = jExperimentStatus;

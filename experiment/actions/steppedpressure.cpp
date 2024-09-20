@@ -33,74 +33,42 @@ bool SteppedPressure::updateSteping()
     // Тут начать задавать логику ступени
     switch(trans) {
 
-    case TRANS_1: {
-
-        QJsonObject::iterator iter;
-        for (iter = jOperation.begin(); iter != jOperation.end(); ++iter) {
-            if (iter.key().contains("step") && iter.key().split('_')[1].toInt() == curStep) {
-                qDebug() << "key=" << iter.key().split('_')[1] << "    curStep=" << curStep;
-                trans = TRANS_2;
-                return false;
-            }
-        }
-
-    }
+    case TRANS_1:
+        jCmdToQueue["CMD"] = "volumetr1_set_target";
+        jCmdToQueue["target"] = jStep["target"].toString();
+        putQueue(jCmdToQueue);
+        elapseTime.start(1000);
+        store->startStep(jStep);
+        trans = TRANS_2;
         break;
 
     case TRANS_2:
-        jCmdToQueue["CMD"] = "volumetr1_stepper_set_zero";
-        putQueue(jCmdToQueue);
-        elapseTime.start(2000);
-        trans = TRANS_3;
+        if (volumeter1->pressureSens->value > (jStep["target"].toString().toDouble() - 3000)) {
+            if (jStep["criterionType"].toString() == "Stabilisation") {
+                trans = TRANS_3;
+            }
+            else if (jStep["criterionType"].toString() == "Duration")
+                trans = TRANS_4;
+        }
         break;
 
-    case SteppedPressure::TRANS_3:
-        if (!elapseTime.isActive() && volumeter1->stepper->position != 0) {
-            sendError("Задержка больше 1000мс, по комманде volumetr1_stepper_set_zero", jOperation);
-            trans = TRANS_2;
+    case SteppedPressure::TRANS_3: {
+        Measurements::TimeLongInterval time = Measurements::TimeLongInterval::fromStringLong(jStep["timeOfCriterionTime"].toString());
+        if (store->data["CellPressure_kPa"]->valueFromBack(jStep["time_start_step"].toString().toInt(), time.milliseconds()).first) {
+            qDebug() << "time out, stabilisation needed";
         }
-        else if (elapseTime.isActive() && volumeter1->stepper->position == 0) {
-            trans = TRANS_4;
-        }
+        qDebug() << "------";
         break;
+    }
 
     case SteppedPressure::TRANS_4:
-        jCmdToQueue["CMD"] = "volumetr1_set_target";
-        jCmdToQueue["target"] = jOperation[QString("step_%1").arg(curStep)].toObject()["target"].toString();
-        putQueue(jCmdToQueue);
-        elapseTime.start(1000);
-        trans = TRANS_6;
         break;
-
     case SteppedPressure::TRANS_5:
-        // if (!elapseTime.isActive() && volumeter1->controller->status == 0) {
-        //     sendError("Задержка больше 1000мс, по комманде volumetr1_set_target", jAction);
-        //     trans = TRANS_4;
-        // } else if (elapseTime.isActive() && volumeter1->controller->status != 0) {
-        //     trans = TRANS_6;
-        // }
-        // break;
-
-    case SteppedPressure::TRANS_6: {
-        if (volumeter1->pressureSens->value > (jOperation[QString("step_%1").arg(curStep)].toObject()["target"].toString().toDouble() - 3000)) {
-            if (jOperation[QString("step_%1").arg(curStep)].toObject()["criterionType"].toString() == "Stabilisation") {
-
-                trans = TRANS_7;
-            }
-            else if (jOperation[QString("step_%1").arg(curStep)].toObject()["criterionType"].toString() == "Duration")
-                trans = TRANS_8;
-        }
-        // betaLeastSquares(3);
-        // auto data = volumeter1->store->data["CellPressure_kPa"];
-        // qint64 start_time, time;
-        // data.getLastStartAndCurTime(start_time, time);
-        // qDebug() << data.size() << start_time << time << data.valueFromBack(start_time, time) <<" ";
-
-    }
+        break;
+    case SteppedPressure::TRANS_6:
         break;
 
     case SteppedPressure::TRANS_7:
-        qDebug() << "stabilization needed";
 
 
         break;

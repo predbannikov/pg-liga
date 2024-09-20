@@ -9,9 +9,20 @@ class ActionCycle : public BaseAction
 {
     Q_OBJECT
 
+    enum STATE_PREP_DEVICE {
+        STATE_PREP_LOAD_FRAME_1, STATE_PREP_LOAD_FRAME_2,
+        STATE_PREP_VOLUMETER1_1, STATE_PREP_VOLUMETER1_2,
+        STATE_PREP_VOLUMETER2_1, STATE_PREP_VOLUMETER2_2
+    } state_prep_device = STATE_PREP_LOAD_FRAME_1;
+
+
+    bool prepDevice();
+
+
 public:
     explicit ActionCycle(QObject *parent = nullptr);
     ~ActionCycle();
+
 
     virtual bool updateSteping() = 0;
     virtual bool stepChanged() = 0;
@@ -29,17 +40,6 @@ public:
      */
     void jIncCurStep();
 
-    /**
-     * @brief jUpdateJAction        Записываем в jAction параметры если были изменения в данных
-     * @param jObj
-     */
-    void jUpdateJAction(QJsonObject jObj);
-
-    /**
-     * @brief jSaveState            Записывает состояние эксперимента в jAction
-     * @param state
-     */
-    void jSaveState(QString state);
 
     /**
      * @brief curStep               // Возвращает текущий Step
@@ -51,11 +51,15 @@ public:
 private:
 
     QTimer elapseTime;
-    enum TRANS {TRANSITION_1,
-                TRANSITION_2,
-                TRANSITION_3,
-                TRANSITION_4,
-               } trans = TRANSITION_1;
+    enum TRANS {
+        TRANSITION_BEGIN,
+        TRANSITION_READ_STEP,
+        TRANSITION_PREP_DEVICE,
+        TRANSITION_SET_STEP,
+        TRANSITION_UPDATE_STEPING,
+        TRANSITION_5,
+        TRANSITION_FINISH,
+    } trans = TRANSITION_BEGIN;
 
 };
 

@@ -23,7 +23,7 @@ public:
 
     QList<QPair<qint64, float>> deSerializeData(QJsonObject jData);
 
-    float valueFromBack(qint64 step_time, qint64 time);
+    QPair<bool, float> valueFromBack(qint64 step_time, qint64 time);
 
     /**
      * @brief append            Добавить точку в хранилище
