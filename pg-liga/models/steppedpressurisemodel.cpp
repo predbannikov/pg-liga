@@ -6,7 +6,10 @@
 SteppedPressuriseModel::SteppedPressuriseModel(QObject *parent):
     AbstractSteppedModel(parent)
 {
-    m_type = "steppedPressurise";
+    m_type = "steppedPressurise"; //type
+    m_overPressureCellVolumeter = Measurements::Pressure::fromKiloPascals(500);
+    m_overPressurePoreVolumeter = Measurements::Pressure::fromKiloPascals(500);
+
 }
 
 int SteppedPressuriseModel::rowCount(const QModelIndex &parent) const
@@ -49,7 +52,7 @@ QVariant SteppedPressuriseModel::data(const QModelIndex &index, int role) const
             if(currentStep.criterion == Step::Stabilisation) {
                 if(currentStep.stabilisationType == Step::Absolute) {
                     return QVariant::fromValue(QPair<int, double>(currentStep.stabilisationType, currentStep.stabilisationParamAbsolute.kiloPascals()));
-                } else if(currentStep.stabilisationType == Step::Relative) {   
+                } else if(currentStep.stabilisationType == Step::Relative) {
                     return QVariant::fromValue(QPair<int, double>(currentStep.stabilisationType, currentStep.stabilisationParamRelative * 100.0));
                 } else {
                     return QVariant();
@@ -78,8 +81,8 @@ QVariant SteppedPressuriseModel::data(const QModelIndex &index, int role) const
 
 bool SteppedPressuriseModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-//    const auto underpressure = Measurements::Pressure::fromPascals(0);
-//    const auto overpressure = Measurements::Pressure::fromKiloPascals(2800);    //TODO refer to volumeter.h
+        const auto underpressure = Measurements::Pressure::fromPascals(0);
+        const auto overpressure = Measurements::Pressure::fromKiloPascals(2800);    //TODO refer to volumeter.h
 
     if(role == Qt::EditRole || role == Qt::DisplayRole) {
         const auto row = index.row();
@@ -137,7 +140,7 @@ bool SteppedPressuriseModel::setData(const QModelIndex &index, const QVariant &v
     } else {
         
         return false;
-    }    
+    }
 }
 
 QVariant SteppedPressuriseModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -169,7 +172,7 @@ int SteppedPressuriseModel::addStep(const Step &step)
 {
     const auto row = m_steps.size();
     beginInsertRows(QModelIndex(), row, row);
-//    Step newStep;
+    //    Step newStep;
     m_steps.append(step);
     endInsertRows();
     emit dataChanged(QModelIndex(), QModelIndex());
@@ -218,7 +221,7 @@ int SteppedPressuriseModel::removeStep(const QModelIndex &index)
         return row - 1;
     }
     else
-    {   
+    {
         return row;
     }
 }

@@ -7,8 +7,7 @@
 SteppedLoadingModel::SteppedLoadingModel(QObject *parent):
     AbstractSteppedModel(parent)
 {
-    m_type = "steppedLoading";
-    
+    m_type = "statickCompression";
 }
 
 int SteppedLoadingModel::rowCount(const QModelIndex &parent) const
@@ -53,7 +52,7 @@ QVariant SteppedLoadingModel::data(const QModelIndex &index, int role) const
 
         switch(col) {
         case CellPressure:
-            return currentStep.cellPressure.kiloPascals();
+            return QVariant::fromValue(QPair<int, double>(0, currentStep.cellPressure.kiloPascals()));
         case EndCriterion:
             
             return currentStep.criterion;
@@ -61,7 +60,7 @@ QVariant SteppedLoadingModel::data(const QModelIndex &index, int role) const
             if(currentStep.criterion == Step::Stabilisation)
             {
                 if(currentStep.stabilisationType == Step::Absolute) {
-                    return QVariant::fromValue(QPair<int, double>(currentStep.stabilisationType, currentStep.stabilisationParamAbsolute.kiloPascals()));
+                    return QVariant::fromValue(QPair<int, double>(currentStep.stabilisationType, currentStep.stabilisationParamAbsolute.kiloPascals()*1e6));
                 } else if(currentStep.stabilisationType == Step::Relative) {
                     return QVariant::fromValue(QPair<int, double>(currentStep.stabilisationType, currentStep.stabilisationParamRelative * 100.0));
                 } else {
@@ -74,11 +73,8 @@ QVariant SteppedLoadingModel::data(const QModelIndex &index, int role) const
         case Time:
             switch(currentStep.criterion) {
             case Step::Duration:
-                
-                return QVariant::fromValue(currentStep.timeOfCriterionTime);
             case Step::Stabilisation:
-                
-                return QVariant::fromValue(currentStep.timeOfCriterionTime);
+                return QVariant::fromValue(QPair<int, Measurements::TimeInterval>(0, currentStep.timeOfCriterionTime));
             case Step::Manual:
             default:
                 
@@ -102,9 +98,9 @@ bool SteppedLoadingModel::setData(const QModelIndex &index, const QVariant &valu
 {
     
 
-//    const auto underpressure = Measurements::Pressure::fromKiloPascals(0.0);
-//    const auto overpressure = Measurements::Pressure::fromForce(Measurements::Force::fromKiloNewtons(220.0),
-//                                                                Measurements::Area::circle(Measurements::Length::fromMillimetres(20)));
+    const auto underpressure = Measurements::Pressure::fromKiloPascals(0.0);
+    const auto overpressure = Measurements::Pressure::fromForce(Measurements::Force::fromKiloNewtons(220.0),
+                                                                Measurements::Area::circle(Measurements::Length::fromMillimetres(20)));
 
     if(role == Qt::EditRole || role == Qt::DisplayRole) {
         const auto row = index.row();
@@ -116,13 +112,13 @@ bool SteppedLoadingModel::setData(const QModelIndex &index, const QVariant &valu
         switch(col) {
         case CellPressure:
             param = value.value<QPair<int, double>>();
-//            if (Measurements::Pressure::fromKiloPascals(param.second) > overpressure || Measurements::Pressure::fromKiloPascals(param.second) < underpressure)
+            if (Measurements::Pressure::fromKiloPascals(param.second) > overpressure || Measurements::Pressure::fromKiloPascals(param.second) < underpressure)
             {
                  currentStep.cellPressure = Measurements::Pressure::fromKiloPascals(25);
             }
-//            else {
+            else {
                 currentStep.cellPressure = Measurements::Pressure::fromKiloPascals(param.second);
-//            }
+            }
             break;
 
         case EndCriterion:

@@ -19,7 +19,11 @@ public:
     virtual int removeStep(const QModelIndex &index = QModelIndex()) = 0;
     virtual int moveStep(const QModelIndex &index, int moveAmount) = 0;
     virtual int duplicateStep(const QModelIndex &index = QModelIndex()) = 0;
-//    virtual double getTarget() = 0;
+    //    virtual double getTarget() = 0;
+
+    Measurements::Pressure getOverPressureCellVolumeter() { return m_overPressureCellVolumeter; }
+    Measurements::Pressure getOverPressurePoreVolumeter() { return m_overPressurePoreVolumeter; }
+
     QString getType() {return m_type;}
 
     QJsonObject serializModel()
@@ -32,8 +36,6 @@ public:
         }
         return jObj;
     }
-
-public:
 
     enum Column {
         CellPressure,
@@ -60,24 +62,12 @@ public:
             Newtones
         };
 
-
-
-       //Steppedloadingmodel
-//        LoadMeasurement load_loadMeasurement;
-//        Measurements::Force load_force;
-//        Measurements::Length load_stabilisationParamAbsolute;
-//        Measurements::TimeLongInterval durationTime;
-//        Measurements::TimeLongInterval stabilisationTime;
-
-
-       //SteppedPressuriseModel
-
-          Measurements::Pressure cellPressure; //target ->
-          Measurements::Pressure stabilisationParamAbsolute; //-какой параметр
-          Measurements::TimeInterval timeOfCriterionTime; //Время
-          CriterionType criterion; //Критерий (*, вермя, стабилизация)
-          StabilisationType stabilisationType;//Тип стабилизации;
-          double stabilisationParamRelative ;
+        Measurements::Pressure cellPressure; //target                 -> первый столбец
+        Measurements::Pressure stabilisationParamAbsolute; // ...     -> третий столбец
+        Measurements::TimeInterval timeOfCriterionTime; //Время       -> четвертый столбец
+        CriterionType criterion; //Критерий (*, вермя, стабилизация)  -> второй столбец
+        StabilisationType stabilisationType;//Тип стабилизации;       -> Чет не понятно
+        double stabilisationParamRelative ;
 
 
 
@@ -121,12 +111,6 @@ public:
                 jobj["target"] = cellPressure.pascals()/1000;//QString::number(getTarget());
                 jobj["stabilisationParam"] = stabilisationParamToStr();
                 jobj["timeOfCriterionTime"] = timeOfCriterionTimeToStr();
-//                jobj["force"] = QString::number(load_force.kiloNewtons());
-//                jobj["mesurement"] = MeasurementToString();
-//                jobj["stabilisationParamAbsoluteMilimetres"] = load_stabilisationParamAbsolute.millimetres();
-//                jobj["durationTime"] = durationTime.toString();
-//                jobj["stabilisationTime"] = stabilisationTime.toString();
-
             }
 
             return jobj;
@@ -134,6 +118,8 @@ public:
     };
     QList<Step> m_steps;
     QString m_type;
+    Measurements::Pressure m_overPressureCellVolumeter;
+    Measurements::Pressure m_overPressurePoreVolumeter;
 };
 
 

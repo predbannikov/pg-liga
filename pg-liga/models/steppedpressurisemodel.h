@@ -35,13 +35,11 @@ public:
     Step step(int idx) const { return m_steps.at(idx); }
     int stepCount() const { return m_steps.size(); }
 
-    Measurements::Pressure getOverPressureCellVolumeter() { return m_overPressureCellVolumeter; }
-    Measurements::Pressure getOverPressurePoreVolumeter() { return m_overPressurePoreVolumeter; }
+
 
 private:
 
-    Measurements::Pressure m_overPressureCellVolumeter;
-    Measurements::Pressure m_overPressurePoreVolumeter;
+
 };
 
 #endif // STEPPEDPRESSURISEMODEL_H
