@@ -5,6 +5,7 @@
 #include <numeric>
 
 #include "volumeter1.h"
+#include "volumeter2.h"
 
 SteppedPressure::SteppedPressure(QObject *parent)
     : ActionCycle{parent}
@@ -15,6 +16,11 @@ SteppedPressure::SteppedPressure(QObject *parent)
 SteppedPressure::~SteppedPressure()
 {
     qDebug() << Q_FUNC_INFO;
+}
+
+bool SteppedPressure::initStepping()
+{
+    trans = TRANS_ENABLE_CTRL;
 }
 
 bool SteppedPressure::stepChanged()
@@ -28,50 +34,69 @@ bool SteppedPressure::stepChanged()
 //    curStep = jAction["curStep"].toString().toInt();
 //}
 
+#define TOLERANCE   3000
+
 bool SteppedPressure::updateSteping()
 {
     // Тут начать задавать логику ступени
     switch(trans) {
 
-    case TRANS_1:
+    case TRANS_ENABLE_CTRL:
         jCmdToQueue["CMD"] = "volumetr1_set_target";
         jCmdToQueue["target"] = jStep["target"].toString();
         putQueue(jCmdToQueue);
-        elapseTime.start(1000);
-        store->startStep(jStep);
-        trans = TRANS_2;
+        trans = TRANS_SET_TARGET;
         break;
 
-    case TRANS_2:
-        if (volumeter1->pressureSens->value > (jStep["target"].toString().toDouble() - 3000)) {
-            if (jStep["criterionType"].toString() == "Stabilisation") {
-                trans = TRANS_3;
-            }
-            else if (jStep["criterionType"].toString() == "Duration")
-                trans = TRANS_4;
+    case TRANS_SET_TARGET:
+        if (volumeter1->pressureSens->value > (jStep["target"].toString().toDouble() - TOLERANCE)
+                && volumeter1->pressureSens->value < (jStep["target"].toString().toDouble() + TOLERANCE)) {
+            trans = TRANS_TIMEWAIT;
+            criterionTime = Measurements::TimeLongInterval::fromStringLong(jStep["timeOfCriterionTime"].toString());
+            store->startStep(jStep);
         }
         break;
 
-    case SteppedPressure::TRANS_3: {
-        Measurements::TimeLongInterval time = Measurements::TimeLongInterval::fromStringLong(jStep["timeOfCriterionTime"].toString());
-        if (store->data["CellPressure_kPa"]->valueFromBack(jStep["time_start_step"].toString().toInt(), time.milliseconds()).first) {
+    case SteppedPressure::TRANS_TIMEWAIT: {
+        if (store->data["PorePressure_kPa"]->valueFromBackOfStepTime(jStep["time_start_step"].toString().toInt(), criterionTime.milliseconds()).first) {
             qDebug() << "time out, stabilisation needed";
+            if (jStep["criterionType"].toString() == "Stabilisation") {
+                trans = TRANS_STABILISATION_CRITERION_MET;
+            }
+            else if (jStep["criterionType"].toString() == "DurationAfterSetup") {
+                trans = TRANS_DURATION;
+            }
         }
         qDebug() << "------";
         break;
     }
 
-    case SteppedPressure::TRANS_4:
+    case SteppedPressure::TRANS_DURATION:
         break;
-    case SteppedPressure::TRANS_5:
-        break;
+    case SteppedPressure::TRANS_STABILISATION_CRITERION_MET:
+    {
+        const auto currentPoint = volumeter2->pressureSens->value;
+        const auto prevPoint = store->data["PorePressure_kPa"]->valueFromBackOfStepTime(jStep["time_start_step"].toString().toInt(), criterionTime.milliseconds()).second;
+        double delta = 0;
+        if(jStep["stabilisationType"].toString() == "Absolute") {
+           delta = fabs(currentPoint - prevPoint);
+
+        } else if(jStep["stabilisationType"].toString() == "Relative") {
+            delta = fabs(currentPoint - prevPoint) / currentPoint;
+        }
+        qDebug() << QString("currentPoint=%1    prevPoint=%2    delta=%3    param=%4").arg(currentPoint).arg(prevPoint).arg(delta)
+                    .arg(jStep["stabilisationParam"].toString().toDouble());
+        if (delta <= jStep["stabilisationParam"].toString().toDouble())
+            trans = TRANS_FINISH_STEP;
+        return false;
+    }
+
     case SteppedPressure::TRANS_6:
         break;
 
-    case SteppedPressure::TRANS_7:
-
-
-        break;
+    case SteppedPressure::TRANS_FINISH_STEP:
+        store->stopStep(jStep);
+        return true;
     case SteppedPressure::TRANS_8:
         qDebug() << "time needed";
         break;

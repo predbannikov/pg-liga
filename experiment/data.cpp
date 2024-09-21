@@ -102,13 +102,13 @@ void Data::updateData()
                 // Все перепутано это волюмоментр 1
             case SensPrs1:
                 currentData.insert(CellPressure_kPa, sensors[i]->value / 1000.);
-                data[CellPressure_kPa]->append(stepTime, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
+                data[CellPressure_kPa]->append(stepTime, elapseExperimentTimer.elapsed(), sensors[i]->value);
                 break;
 
                 // Все перепутано это волюмоментр 2
             case SensPrs0:
                 currentData.insert(PorePressure_kPa, sensors[i]->value / 1000.);
-                data[PorePressure_kPa]->append(stepTime, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
+                data[PorePressure_kPa]->append(stepTime, elapseExperimentTimer.elapsed(), sensors[i]->value);
                 break;        }
         }
 
@@ -178,9 +178,10 @@ void Data::stopStep(QJsonObject &jStatusStep)
 
 void Data::startExperiment(QJsonObject &jObj)
 {
+    initStoreData();
     timeStartExperiment = QDateTime::currentDateTime().toString("yyyy-MM-dd-HH-mm-ss");
     jObj["time_start_experiment"] = timeStartExperiment;
-    elapseExperimentTimer.start();
+    elapseExperimentTimer.restart();
 }
 
 void Data::stopExperiment(QJsonObject &jObj)
@@ -191,7 +192,7 @@ void Data::stopExperiment(QJsonObject &jObj)
 
 QPair<bool, double> Data::getValueStepOfTime(qint64 time, QString sens)
 {
-    return data[sens]->valueFromBack(stepTime, time);
+    return data[sens]->valueFromBackOfStepTime(stepTime, time);
 }
 
 QString Data::enableStoreData(bool enable)
@@ -224,6 +225,7 @@ QString Data::initStoreData()
     data.insert(LF_position_mm, new DataStore());
     data.insert(CellPressure_kPa, new DataStore());
     data.insert(PorePressure_kPa, new DataStore());
+    elapseExperimentTimer.restart();
     return QString("DataStore init");
 }
 

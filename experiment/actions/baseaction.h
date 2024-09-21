@@ -17,8 +17,10 @@ class BaseAction : public QObject
 {
     Q_OBJECT
 
-    QElapsedTimer timElaps;
-    QTimer elapseTime;
+    QElapsedTimer timElapsBase;
+    QElapsedTimer elapseTimeBase;
+    qint64 markerElapseTime;
+    qint64 timerInterval;
 
     enum STATE_PAUSE {STATE_PAUSE_TRANSIT_1, STATE_PAUSE_TRANSIT_2} state_pause = STATE_PAUSE_TRANSIT_1;
 
@@ -26,6 +28,15 @@ class BaseAction : public QObject
 public:
     explicit BaseAction(QObject *parent = nullptr);
     ~BaseAction();
+    void setMarkerTime(qint64 interval) {
+        elapseTimeBase.start();
+        markerElapseTime = elapseTimeBase.elapsed();
+        timerInterval = interval;
+    }
+    bool elapseMarkerTime() {
+        return elapseTimeBase.elapsed() - markerElapseTime > timerInterval;
+    }
+
 
 
     /**

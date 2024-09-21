@@ -43,6 +43,7 @@ ExperimentView::ExperimentView(QWidget *parent) :
 
     connect(timerUpdateDataStore, &QTimer::timeout, this, &ExperimentView::onReadDataStore);
 
+    timerUpdateDataStore->start(3000);
 
     connect(timerUpdateStatus, &QTimer::timeout, this, &ExperimentView::onUpdateStatus);
     timerUpdateStatus->start(1000);

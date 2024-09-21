@@ -14,6 +14,7 @@ public:
     explicit SteppedPressure(QObject *parent = nullptr);
     ~SteppedPressure();
 
+    bool initStepping() override;
     bool updateSteping() override;
     bool stepChanged() override;
 
@@ -22,18 +23,18 @@ private:
     bool betaLeastSquares(int n);
 
 
-    QTimer elapseTime;
-    enum TRANS {TRANS_1,    // Обнуление
-                TRANS_2,    // Проверка обнуления
-                TRANS_3,    // Задача целевого значения
-                TRANS_4,
-                TRANS_5,
-                TRANS_6,
-                TRANS_7,
-                TRANS_8,
-               } trans = TRANS_1;
+    enum TRANS {
+        TRANS_ENABLE_CTRL,
+        TRANS_SET_TARGET,            // Набор целевого значения
+        TRANS_TIMEWAIT,
+        TRANS_DURATION,
+        TRANS_STABILISATION_CRITERION_MET,
+        TRANS_6,
+        TRANS_FINISH_STEP,
+        TRANS_8,
+    } trans = TRANS_ENABLE_CTRL;
 
-    int curStep = 0;
+    Measurements::TimeLongInterval criterionTime;
 };
 
 #endif // STEPPEDPRESSURE_H

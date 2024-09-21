@@ -112,6 +112,8 @@ public:
     QString enableStoreData(bool enable);
     QString deleteStoreData();
     QString initStoreData();
+
+    qint64 elapseExperiment() { return elapseExperimentTimer.elapsed(); }
 private:
     QFile dataFileName;
     quint8 address;

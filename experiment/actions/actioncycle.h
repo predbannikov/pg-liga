@@ -15,8 +15,9 @@ class ActionCycle : public BaseAction
         STATE_PREP_VOLUMETER2_1, STATE_PREP_VOLUMETER2_2
     } state_prep_device = STATE_PREP_LOAD_FRAME_1;
 
-
     bool prepDevice();
+
+    bool saveDevice();
 
 
 public:
@@ -24,6 +25,7 @@ public:
     ~ActionCycle();
 
 
+    virtual bool initStepping() = 0;
     virtual bool updateSteping() = 0;
     virtual bool stepChanged() = 0;
 
@@ -48,9 +50,11 @@ public:
     QString curStep();
 
     QJsonObject jStep;
+
+    void updateJStep(QJsonObject jObj);
+
 private:
 
-    QTimer elapseTime;
     enum TRANS {
         TRANSITION_BEGIN,
         TRANSITION_READ_STEP,
@@ -60,7 +64,6 @@ private:
         TRANSITION_5,
         TRANSITION_FINISH,
     } trans = TRANSITION_BEGIN;
-
 };
 
 #endif // ACTIONCYCLE_H

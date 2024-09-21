@@ -15,8 +15,8 @@ AdjustByForceLoadFrame::~AdjustByForceLoadFrame()
 }
 
 void AdjustByForceLoadFrame::init() {
-    elapseTime.setSingleShot(true);
-    elapseTime.setInterval(jOperation["time_ms"].toString().toInt());
+    elapseTimeBase.setSingleShot(true);
+    elapseTimeBase.setInterval(jOperation["time_ms"].toString().toInt());
 }
 
 bool AdjustByForceLoadFrame::update()
@@ -27,12 +27,12 @@ bool AdjustByForceLoadFrame::update()
         jobj["CMD"] = "move_frame";
         jobj["speed"] = jOperation["speed"].toString();
         putQueue(jobj);
-        elapseTime.start();
+        elapseTimeBase.start();
         trans = TRANS_2;
         break;
     }
     case TRANS_2: {
-        if (!elapseTime.isActive()) {
+        if (!elapseTimeBase.isActive()) {
 
             return true;
         }

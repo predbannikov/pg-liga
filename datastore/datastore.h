@@ -23,7 +23,16 @@ public:
 
     QList<QPair<qint64, float>> deSerializeData(QJsonObject jData);
 
-    QPair<bool, float> valueFromBack(qint64 step_time, qint64 time);
+    /**
+     * @brief valueFromBackOfStepTime
+     * @param step_time                 По какому индексу (индекс записывается по времени) выбирать массив
+     * @param time                      Вернуть значение из массива, time времени назад
+     * @return                          QPair<bool, float>  bool указывает на валидность выполнения
+     *                                                      float содержит значение
+     *                                                      В случае не успеха выполнения, float содержит первое значение с конца массива
+     */
+    QPair<bool, float> valueFromBackOfStepTime(qint64 step_time, qint64 time);
+    QPair<bool, float> valueFromBackOfStepTime(qint64 step_time, double time);
 
     /**
      * @brief append            Добавить точку в хранилище
