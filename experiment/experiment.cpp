@@ -293,6 +293,8 @@ void Experiment::jIncCurAction()
 void Experiment::jUpdateExperimentAction(QJsonObject jObj)
 {
 //    QString operation = QString("operation_%1").arg(curAction());
+    qDebug().noquote() << QJsonDocument(jObj).toJson(QJsonDocument::Indented);
+
     jExperiment[curAction()] = jObj;
 }
 

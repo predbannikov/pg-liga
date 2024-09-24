@@ -48,7 +48,8 @@ bool ActionCycle::update()
         for (QJsonObject::iterator iter = jOperation.begin(); iter != jOperation.end(); ++iter) {
             if (iter.key() == curStep()) {
                 qDebug() << "key=" << iter.key().split('_')[1] << "    curStep=" << curStep();
-                trans = TRANSITION_PREP_DEVICE;
+                jStep = jOperation[curStep()].toObject();
+                trans = TRANSITION_INIT_STEP;
                 return false;
             }
         }
@@ -56,18 +57,19 @@ bool ActionCycle::update()
         trans = TRANSITION_FINISH;
         break;
 
+
+    case ActionCycle::TRANSITION_INIT_STEP:
+//        jStep = jOperation[curStep()].toObject();
+        trans = TRANSITION_PREP_DEVICE;
+        initStepping();
     case ActionCycle::TRANSITION_PREP_DEVICE:
         if (prepDevice())
-            trans = TRANSITION_SET_STEP;
+            trans = TRANSITION_UPDATE_STEPING;
         break;
-
-    case ActionCycle::TRANSITION_SET_STEP:
-        jStep = jOperation[curStep()].toObject();
-        trans = TRANSITION_UPDATE_STEPING;
-        initStepping();
 
     case ActionCycle::TRANSITION_UPDATE_STEPING:
         if (updateSteping()) {
+
             // Завершаем цикл по дополнительному условию
             saveDevice("complate"); // Сохраняем данные и продолжаем цикл
             if (someAdditionalCondition()) {
@@ -158,7 +160,7 @@ bool ActionCycle::prepDevice()
 
 bool ActionCycle::saveDevice(const QString& prefix)
 {
-    auto jStep = jOperation[curStep()].toObject();
+//    auto jStep = jOperation[curStep()].toObject();
     jStep["LF_position_" + prefix] = QString::number(loadFrame->stepper->position);
     jStep["LF_force_" + prefix] = QString::number(loadFrame->forceSens->value);
     jStep["LF_deform_" + prefix] = QString::number(loadFrame->deformSens->value);
@@ -166,7 +168,8 @@ bool ActionCycle::saveDevice(const QString& prefix)
     jStep["Vol1_pressure_" + prefix] = QString::number(volumeter1->pressureSens->value);
     jStep["Vol2_position_" + prefix] = QString::number(volumeter2->stepper->position);
     jStep["Vol2_pressure_" + prefix] = QString::number(volumeter2->pressureSens->value);
-    updateJStep(jStep);
+    jOperation[curStep()] = jStep;
+//    updateJStep(jStep);
     return true;
 }
 
@@ -183,7 +186,9 @@ void ActionCycle::pausing()
 
 void ActionCycle::jIncCurStep()
 {
-//    jOperation[curStep()] = jStep;
+    qDebug().noquote() << QJsonDocument(jStep).toJson(QJsonDocument::Indented);
+
+    jOperation[curStep()] = jStep;
     auto jStatus = jStatusOperation();
     int curStep = jStatus["current_step"].toString().split('_')[1].toInt();
     curStep++;
@@ -204,6 +209,22 @@ void ActionCycle::jIncCurStep()
 QString ActionCycle::curStep()
 {
     return jOperation["status_operation"].toObject()["current_step"].toString();
+}
+
+QList<QJsonObject> ActionCycle::getJSteps()
+{
+    QMap <int, QJsonObject> map;
+    for (QJsonObject::iterator iter = jOperation.begin(); iter != jOperation.end(); ++iter) {
+        if (iter.key().contains("step")) {
+            if (iter.value().toObject()["state"].toString() == "TRANS_FINISH_STEP")
+                map.insert(iter.key().split('_')[1].toInt(), iter.value().toObject());
+        }
+
+    }
+    QList<QJsonObject> list;
+    for(auto it = map.begin(); it != map.end(); ++it)
+        list.append(it.value());
+    return list;
 }
 
 void ActionCycle::updateJStep(QJsonObject jObj)

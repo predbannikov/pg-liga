@@ -35,6 +35,7 @@ public:
     void pausing() override;
 
     bool saveDevice(const QString &prefix);
+    QList<QJsonObject> getJSteps();
 
     // Работа с jActionCycle
     /**
@@ -60,7 +61,7 @@ private:
         TRANSITION_BEGIN,
         TRANSITION_READ_STEP,
         TRANSITION_PREP_DEVICE,
-        TRANSITION_SET_STEP,
+        TRANSITION_INIT_STEP,
         TRANSITION_UPDATE_STEPING,
         TRANSITION_5,
         TRANSITION_FINISH,

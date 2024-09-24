@@ -47,6 +47,7 @@ bool SteppedPressure::updateSteping()
     switch(trans) {
 
     case TRANS_ENABLE_CTRL:
+        jStep["state"] = "TRANS_ENABLE_CTRL";
         jCmdToQueue["CMD"] = "volumetr1_set_target";
         jCmdToQueue["target"] = jStep["target"].toString();
         putQueue(jCmdToQueue);
@@ -56,6 +57,7 @@ bool SteppedPressure::updateSteping()
     case TRANS_SET_TARGET:
         if (volumeter1->pressureSens->value > (jStep["target"].toString().toDouble() - TOLERANCE)
                 && volumeter1->pressureSens->value < (jStep["target"].toString().toDouble() + TOLERANCE)) {
+            jStep["state"] = "TRANS_SET_TARGET";
             saveDevice("target");
             trans = TRANS_TIMEWAIT;
             criterionTime = Measurements::TimeLongInterval::fromStringLong(jStep["timeOfCriterionTime"].toString());
@@ -109,6 +111,7 @@ bool SteppedPressure::updateSteping()
 
     case SteppedPressure::TRANS_FINISH_STEP:
         store->stopStep(jStep);
+        jStep["state"] = "TRANS_FINISH_STEP";
         return true;
     }
     return false;
@@ -124,6 +127,12 @@ bool SteppedPressure::updateSteping()
 
 bool SteppedPressure::betaLeastSquares(int n)
 {
+    auto jSteps = getJSteps();
+    for (int i = 0; i < jSteps.size(); i++)
+        qDebug().noquote() << QJsonDocument(jSteps[i]).toJson(QJsonDocument::Indented);
+
+
+
     auto stepDataCellPressure = volumeter1->store->data["CellPressure_kPa"]->getDataOfStartTime();
     auto stepDataPorePressure = volumeter1->store->data["PorePressure_kPa"]->getDataOfStartTime();
 
