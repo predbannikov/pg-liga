@@ -17,6 +17,7 @@ public:
     bool initStepping() override;
     bool updateSteping() override;
     bool stepChanged() override;
+    bool someAdditionalCondition() override;
 
 
 private:
@@ -31,7 +32,7 @@ private:
         TRANS_STABILISATION_CRITERION_MET,
         TRANS_6,
         TRANS_FINISH_STEP,
-        TRANS_8,
+        TRANS_STOPPING,
     } trans = TRANS_ENABLE_CTRL;
 
     Measurements::TimeLongInterval criterionTime;

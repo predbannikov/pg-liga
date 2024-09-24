@@ -17,7 +17,6 @@ class ActionCycle : public BaseAction
 
     bool prepDevice();
 
-    bool saveDevice();
 
 
 public:
@@ -28,12 +27,14 @@ public:
     virtual bool initStepping() = 0;
     virtual bool updateSteping() = 0;
     virtual bool stepChanged() = 0;
+    virtual bool someAdditionalCondition() = 0;
 
     void init() override;
     bool update() override;
     void finishing() override;
     void pausing() override;
 
+    bool saveDevice(const QString &prefix);
 
     // Работа с jActionCycle
     /**

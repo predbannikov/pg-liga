@@ -25,6 +25,15 @@ class BaseAction : public QObject
     enum STATE_PAUSE {STATE_PAUSE_TRANSIT_1, STATE_PAUSE_TRANSIT_2} state_pause = STATE_PAUSE_TRANSIT_1;
 
 
+    int loadFramePosition = 0;
+    int volumeter1Position = 0;
+    int volumeter2Position = 0;
+    enum TRANSITION_TO_STOP_DEVICE {
+        TRANSITION_TO_STOP_LOADFRAME_1, TRANSITION_TO_STOP_LOADFRAME_2,
+        TRANSITION_TO_STOP_VOLUMETER1_1, TRANSITION_TO_STOP_VOLUMETER1_2,
+        TRANSITION_TO_STOP_VOLUMETER2_1, TRANSITION_TO_STOP_VOLUMETER2_2,
+    } transitionToStopDevice = TRANSITION_TO_STOP_LOADFRAME_1;
+
 public:
     explicit BaseAction(QObject *parent = nullptr);
     ~BaseAction();
@@ -78,6 +87,7 @@ public:
     int stepperPos = 0;
     bool jChanged = false;
 
+    bool stopDevice();
 signals:
     void error(QJsonObject);
 

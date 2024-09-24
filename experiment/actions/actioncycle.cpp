@@ -68,14 +68,16 @@ bool ActionCycle::update()
 
     case ActionCycle::TRANSITION_UPDATE_STEPING:
         if (updateSteping()) {
-            saveDevice();
-//            jUpdateStatusOperation(jStep);
-            jIncCurStep();
-            trans = TRANSITION_READ_STEP;
+            // Завершаем цикл по дополнительному условию
+            saveDevice("complate"); // Сохраняем данные и продолжаем цикл
+            if (someAdditionalCondition()) {
+                trans = TRANSITION_FINISH;
+            } else {
+                jIncCurStep();
+                trans = TRANSITION_READ_STEP;
+            }
             return false;
         }
-//        if (stepChanged())
-//            jUpdateStatusOperation(jStep);
         break;
 
     case ActionCycle::TRANSITION_FINISH:
@@ -101,11 +103,11 @@ bool ActionCycle::prepDevice()
             state_prep_device = STATE_PREP_LOAD_FRAME_1;
         }
         else if (loadFrame->stepper->position == 0) {
-            auto jObj = jOperation[curStep()].toObject();
-            jObj["LF_position"] = QString::number(loadFrame->stepper->position);
-            jObj["LF_force"] = QString::number(loadFrame->forceSens->value);
-            jObj["LF_deform"] = QString::number(loadFrame->deformSens->value);
-            updateJStep(jObj);
+//            auto jObj = jOperation[curStep()].toObject();
+//            jObj["LF_position"] = QString::number(loadFrame->stepper->position);
+//            jObj["LF_force"] = QString::number(loadFrame->forceSens->value);
+//            jObj["LF_deform"] = QString::number(loadFrame->deformSens->value);
+//            updateJStep(jObj);
             state_prep_device = STATE_PREP_VOLUMETER1_1;
         }
         break;
@@ -121,10 +123,10 @@ bool ActionCycle::prepDevice()
             state_prep_device = STATE_PREP_VOLUMETER1_1;
         }
         else if (volumeter1->stepper->position == 0) {
-            auto jObj = jOperation[curStep()].toObject();
-            jObj["Vol1_position"] = QString::number(volumeter1->stepper->position);
-            jObj["Vol1_pressure"] = QString::number(volumeter1->pressureSens->value);
-            updateJStep(jObj);
+//            auto jObj = jOperation[curStep()].toObject();
+//            jObj["Vol1_position"] = QString::number(volumeter1->stepper->position);
+//            jObj["Vol1_pressure"] = QString::number(volumeter1->pressureSens->value);
+//            updateJStep(jObj);
             state_prep_device = STATE_PREP_VOLUMETER2_1;
         }
         break;
@@ -140,10 +142,11 @@ bool ActionCycle::prepDevice()
             state_prep_device = STATE_PREP_VOLUMETER1_1;
         }
         else if (volumeter2->stepper->position == 0) {
-            auto jObj = jOperation[curStep()].toObject();
-            jObj["Vol2_position"] = QString::number(volumeter2->stepper->position);
-            jObj["Vol2_pressure"] = QString::number(volumeter2->pressureSens->value);
-            updateJStep(jObj);
+            saveDevice("begin");
+//            auto jObj = jOperation[curStep()].toObject();
+//            jObj["Vol2_position"] = QString::number(volumeter2->stepper->position);
+//            jObj["Vol2_pressure"] = QString::number(volumeter2->pressureSens->value);
+//            updateJStep(jObj);
             state_prep_device = STATE_PREP_LOAD_FRAME_1;
             return true;
         }
@@ -153,17 +156,17 @@ bool ActionCycle::prepDevice()
     return false;
 }
 
-bool ActionCycle::saveDevice()
+bool ActionCycle::saveDevice(const QString& prefix)
 {
-    auto jObj = jOperation[curStep()].toObject();
-    jObj["LF_position_complate"] = QString::number(loadFrame->stepper->position);
-    jObj["LF_force_complate"] = QString::number(loadFrame->forceSens->value);
-    jObj["LF_deform_complate"] = QString::number(loadFrame->deformSens->value);
-    jObj["Vol1_position_complate"] = QString::number(volumeter1->stepper->position);
-    jObj["Vol1_pressure_complate"] = QString::number(volumeter1->pressureSens->value);
-    jObj["Vol2_position_complate"] = QString::number(volumeter2->stepper->position);
-    jObj["Vol2_pressure_complate"] = QString::number(volumeter2->pressureSens->value);
-    updateJStep(jObj);
+    auto jStep = jOperation[curStep()].toObject();
+    jStep["LF_position_" + prefix] = QString::number(loadFrame->stepper->position);
+    jStep["LF_force_" + prefix] = QString::number(loadFrame->forceSens->value);
+    jStep["LF_deform_" + prefix] = QString::number(loadFrame->deformSens->value);
+    jStep["Vol1_position_" + prefix] = QString::number(volumeter1->stepper->position);
+    jStep["Vol1_pressure_" + prefix] = QString::number(volumeter1->pressureSens->value);
+    jStep["Vol2_position_" + prefix] = QString::number(volumeter2->stepper->position);
+    jStep["Vol2_pressure_" + prefix] = QString::number(volumeter2->pressureSens->value);
+    updateJStep(jStep);
     return true;
 }
 
@@ -180,7 +183,7 @@ void ActionCycle::pausing()
 
 void ActionCycle::jIncCurStep()
 {
-    jOperation[curStep()] = jStep;
+//    jOperation[curStep()] = jStep;
     auto jStatus = jStatusOperation();
     int curStep = jStatus["current_step"].toString().split('_')[1].toInt();
     curStep++;

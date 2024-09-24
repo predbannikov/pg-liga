@@ -70,8 +70,25 @@ bool Experiment::conveyor()
     case Experiment::TRANSITION_3:
         if (action->updating()) {
             action->finish();
+            qDebug() << "***********************************************";
+            qDebug() << "*************** before   **********************";
+            qDebug() << "***********************************************";
+            qDebug().noquote() << QJsonDocument(jExperiment).toJson(QJsonDocument::Indented);
+
+
+
+            qDebug() << "***********************************************";
+            qDebug() << "***** before jUpdateExperimentAction   ********";
+            qDebug() << "***********************************************";
             jUpdateExperimentAction(action->jOperation);
+            qDebug().noquote() << QJsonDocument(jExperiment).toJson(QJsonDocument::Indented);
+
+
+            qDebug() << "***********************************************";
+            qDebug() << "********* after jIncCurAction  ****************";
+            qDebug() << "***********************************************";
             jIncCurAction();
+            qDebug().noquote() << QJsonDocument(jExperiment).toJson(QJsonDocument::Indented);
             delete action;
             action = nullptr;
             transition = TRANSITION_2;
@@ -275,8 +292,8 @@ void Experiment::jIncCurAction()
 
 void Experiment::jUpdateExperimentAction(QJsonObject jObj)
 {
-    QString operation = QString("operation_%1").arg(curAction());
-    jExperiment[operation] = jObj;
+//    QString operation = QString("operation_%1").arg(curAction());
+    jExperiment[curAction()] = jObj;
 }
 
 void Experiment::jSaveState(QString state)

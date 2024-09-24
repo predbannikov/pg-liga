@@ -28,6 +28,11 @@ bool SteppedPressure::stepChanged()
     return false;
 }
 
+bool SteppedPressure::someAdditionalCondition()
+{
+    return betaLeastSquares(3);
+}
+
 //void SteppedPressure::init() {
 //    elapseTime.setSingleShot(true);
 //    elapseTime.setInterval(1000);
@@ -51,9 +56,10 @@ bool SteppedPressure::updateSteping()
     case TRANS_SET_TARGET:
         if (volumeter1->pressureSens->value > (jStep["target"].toString().toDouble() - TOLERANCE)
                 && volumeter1->pressureSens->value < (jStep["target"].toString().toDouble() + TOLERANCE)) {
+            saveDevice("target");
             trans = TRANS_TIMEWAIT;
             criterionTime = Measurements::TimeLongInterval::fromStringLong(jStep["timeOfCriterionTime"].toString());
-            store->startStep(jStep);
+            store->startStep(jStep);        // Записываем время начала ступени
         }
         break;
 
@@ -87,19 +93,23 @@ bool SteppedPressure::updateSteping()
         qDebug() << QString("currentPoint=%1    prevPoint=%2    delta=%3    param=%4").arg(currentPoint).arg(prevPoint).arg(delta)
                     .arg(jStep["stabilisationParam"].toString().toDouble());
         if (delta <= jStep["stabilisationParam"].toString().toDouble())
-            trans = TRANS_FINISH_STEP;
+            trans = TRANS_STOPPING;
         return false;
     }
 
     case SteppedPressure::TRANS_6:
         break;
 
+    case SteppedPressure::TRANS_STOPPING:
+        if (stopDevice()) {
+            trans = TRANS_FINISH_STEP;
+        }
+        qDebug() << "time needed";
+        break;
+
     case SteppedPressure::TRANS_FINISH_STEP:
         store->stopStep(jStep);
         return true;
-    case SteppedPressure::TRANS_8:
-        qDebug() << "time needed";
-        break;
     }
     return false;
 }

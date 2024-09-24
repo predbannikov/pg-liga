@@ -47,7 +47,7 @@ void BaseAction::finish() {
     QJsonObject jStatus = jStatusOperation();
     jStatus["state"] = "complate";
     jSetStatusOperation(jStatus);
-    store->startOperation(jOperation);
+    store->stopOperation(jOperation);
 
     finishing();
 }
@@ -70,4 +70,57 @@ void BaseAction::sendError(QString str, QJsonObject jobj)
 
 void BaseAction::putQueue(QJsonObject &jObj) {
     qobject_cast<Operations *>(parent())->put(jObj);
+}
+
+bool BaseAction::stopDevice()
+{
+    QJsonObject jobj;
+
+    switch (transitionToStopDevice) {
+
+    case TRANSITION_TO_STOP_LOADFRAME_1:
+         jobj["CMD"] = "load_frame_unlock_PID";
+        putQueue(jobj);
+        jobj["CMD"] = "load_frame_stop";
+        putQueue(jobj);
+        transitionToStopDevice = TRANSITION_TO_STOP_LOADFRAME_2;
+        loadFramePosition = loadFrame->stepper->position;
+        break;
+    case TRANSITION_TO_STOP_LOADFRAME_2:
+        if (loadFrame->controller->status == 0 && loadFramePosition == loadFrame->stepper->position) {
+            transitionToStopDevice = TRANSITION_TO_STOP_VOLUMETER1_1;
+        }
+        loadFramePosition = loadFrame->stepper->position;
+        break;
+    case TRANSITION_TO_STOP_VOLUMETER1_1:
+        jobj["CMD"] = "volumetr1_unlock_PID";
+        putQueue(jobj);
+        jobj["CMD"] = "volumetr1_stop";
+        putQueue(jobj);
+        transitionToStopDevice = TRANSITION_TO_STOP_VOLUMETER1_2;
+        volumeter1Position = volumeter1->stepper->position;
+        break;
+    case TRANSITION_TO_STOP_VOLUMETER1_2:
+        if (volumeter1->controller->status == 0 && volumeter1Position == volumeter1->stepper->position) {
+            transitionToStopDevice = TRANSITION_TO_STOP_VOLUMETER2_1;
+        }
+        volumeter1Position = volumeter1->stepper->position;
+        break;
+    case TRANSITION_TO_STOP_VOLUMETER2_1:
+        jobj["CMD"] = "volumetr2_unlock_PID";
+        putQueue(jobj);
+        jobj["CMD"] = "volumetr2_stop";
+        putQueue(jobj);
+        transitionToStopDevice = TRANSITION_TO_STOP_VOLUMETER2_2;
+        volumeter2Position = volumeter2->stepper->position;
+        break;
+    case TRANSITION_TO_STOP_VOLUMETER2_2:
+        if (volumeter2->controller->status == 0 && volumeter2Position == volumeter2->stepper->position) {
+            transitionToStopDevice = TRANSITION_TO_STOP_LOADFRAME_1;
+            return true;
+        }
+        volumeter2Position = volumeter2->stepper->position;
+        break;
+    }
+    return false;
 }
