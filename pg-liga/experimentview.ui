@@ -161,9 +161,9 @@
               <property name="geometry">
                <rect>
                 <x>0</x>
-                <y>0</y>
+                <y>-120</y>
                 <width>674</width>
-                <height>1086</height>
+                <height>1116</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_15">
@@ -954,6 +954,9 @@
                           </item>
                           <item>
                            <widget class="QDoubleSpinBox" name="spinLoadFrameTargetPIDMin">
+                            <property name="toolTip">
+                             <string>Минимальное значение амплитуды</string>
+                            </property>
                             <property name="maximum">
                              <double>1000000.000000000000000</double>
                             </property>
@@ -967,6 +970,9 @@
                           </item>
                           <item>
                            <widget class="QDoubleSpinBox" name="spinLoadFrameTargetPID">
+                            <property name="toolTip">
+                             <string>Максимальная амплитуда или целевое значение обычного ступенчатого набора</string>
+                            </property>
                             <property name="minimum">
                              <double>5.000000000000000</double>
                             </property>
@@ -978,6 +984,13 @@
                             </property>
                             <property name="value">
                              <double>50.000000000000000</double>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="btnLoadFrameSetVibro">
+                            <property name="text">
+                             <string>Задать вибро</string>
                             </property>
                            </widget>
                           </item>

@@ -59,8 +59,16 @@ RETCODE LoadFrame::setTarget(QJsonObject &jOperation)
 {
     RETCODE ret = ERROR;
     targetNewtones = Measurements::Force::fromNewtons(jOperation["target"].toDouble());
-    // targetMinNewtones = Measurements::Force::fromNewtons(jOperation["target_min"].toDouble());
     ret = controller->setTarget(jOperation, targetNewtones.newtons());      // 200.19642105368277
+    return ret;
+}
+
+RETCODE LoadFrame::setTargetVibro(QJsonObject &jOperation)
+{
+    RETCODE ret = ERROR;
+    targetNewtones = Measurements::Force::fromNewtons(jOperation["target"].toString().toDouble());
+    targetMinNewtones = Measurements::Force::fromNewtons(jOperation["target_min"].toString().toDouble());
+    ret = controller->setTargetVibro(jOperation,targetMinNewtones.newtons(), targetNewtones.newtons());      // 200.19642105368277
     return ret;
 }
 

@@ -49,6 +49,7 @@ public:
     RETCODE moveFrame(QJsonObject &jobj);
     RETCODE unlockPID(QJsonObject &jobj);
     RETCODE setTarget(QJsonObject &jOperation);
+    RETCODE setTargetVibro(QJsonObject &jOperation);
     RETCODE setKPID(QJsonObject &jOperation, AbstractUnit::CMD cmd);
     RETCODE stopFrame(QJsonObject &jobj);
     RETCODE sensorSetZero(QJsonObject &jobj);

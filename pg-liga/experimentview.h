@@ -202,6 +202,10 @@ private slots:
 
     void on_btnEnableStoreData_clicked();
 
+    void on_btnLoadFrameSetTarget_clicked();
+
+    void on_btnLoadFrameSetVibro_clicked();
+
 signals:
     void sendRequest(QJsonObject &jobj);
 

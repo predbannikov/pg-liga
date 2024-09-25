@@ -180,6 +180,9 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
     } else if (jobj["CMD"].toString() == "load_frame_set_target") {
         return loadFrame->setTarget(jobj);
     } else if (jobj["CMD"].toString() == "set_hz") {
+    } else if (jobj["CMD"].toString() == "load_frame_set_vibro") {
+        return loadFrame->setTargetVibro(jobj);
+    } else if (jobj["CMD"].toString() == "set_hz") {
         return loadFrame->setHz(jobj);
     } else if (jobj["CMD"].toString() == "hard_reset") {
         return plata.write(jobj, HardReset);
