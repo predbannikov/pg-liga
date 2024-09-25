@@ -31,7 +31,15 @@ bool SteppedPressure::stepChanged()
 
 bool SteppedPressure::someAdditionalCondition()
 {
-    return betaLeastSquares(3);
+    double diffVol1 = jStep["Vol1_pressure_complate"].toString().toDouble() - jStep["Vol1_pressure_begin"].toString().toDouble();
+    double diffVol2 = jStep["Vol2_pressure_complate"].toString().toDouble() - jStep["Vol2_pressure_target"].toString().toDouble();
+    double B = diffVol2 / diffVol1;
+    if (B > 0.95) {
+        jStep["B"] = QString::number(B);
+        return true;
+    }
+    return false;
+//    return betaLeastSquares(3);
 }
 
 //void SteppedPressure::init() {

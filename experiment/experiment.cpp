@@ -265,12 +265,14 @@ void Experiment::stateSwitch()
         qDebug() << "STATE_EXPERIMENT_TRANSIT_TO_PAUSE";
         if (pausing()) {
             jSaveState("pause");
+            sendRequestToClient(jExperiment);
             stateExperiment = STATE_EXPERIMENT_PAUSE;
         }
         break;
     case Operations::STATE_EXPERIMENT_TRANSIT_TO_STOP:
         if (stopping()) {
             jSaveState("idle");
+            sendRequestToClient(jExperiment);
             QJsonObject jobj;
             jobj["CMD"] = "disable_store_data";
             put(jobj);

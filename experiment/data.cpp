@@ -166,8 +166,8 @@ void Data::setTimeStep(const QString &postfix, QJsonObject &jStatusStep)
 
 void Data::setTimeExperiment(const QString &postfix, QJsonObject &jObj)
 {
-    jObj["experiment_time_"] = QDateTime::currentDateTime().toString("yyyy-MM-dd-HH-mm-ss");
-    if (postfix == "begin") {
+    jObj["experiment_time_" + postfix] = QDateTime::currentDateTime().toString("yyyy-MM-dd-HH-mm-ss");
+    if (postfix == "process") {
         elapseExperimentTimer.restart();
         initStoreData();
     }
