@@ -10,27 +10,6 @@ RETCODE Controller::setTarget(QJsonObject &jOperation, float value)
     // 0.0004 метра квадратных
     RETCODE ret = ERROR;
     switch(stateSet) {
-    // case STATE_SET_TARGET_MIN_VALUE:
-    //     ret = write(jOperation, newtonsMin);
-    //     if (ret == COMPLATE)
-    //         stateSet = STATE_SET_TARGET_MIN;
-    //     else if (ret == ERROR) {
-    //         stateSet = STATE_SET_TARGET_MIN_VALUE;
-    //         return ERROR;
-    //     }
-    //     break;
-    // case STATE_SET_TARGET_MIN:
-    //     ret = write(jOperation, ControllerSetMin);
-    //     if (ret == COMPLATE)
-    //         stateSet = STATE_SET_TARGET_VALUE;
-    //     else if (ret == ERROR) {
-    //         stateSet = STATE_SET_TARGET_MIN_VALUE;
-    //         return ERROR;
-    //     }
-    //     break;
-/* Если убрать задачу минимальной цели, то нужно stateSet по умолчанию выставить в STATE_SET_TARGET_VALUE и закоментировать код выше
-   и в STATE_ACTIVATE_PID выставить STATE_SET_TARGET_VALUE
-*/
     case STATE_SET_TARGET_VALUE:
         ret = write(jOperation, value);
         if (ret == COMPLATE)
@@ -80,66 +59,62 @@ RETCODE Controller::setTargetVibro(QJsonObject &jOperation, float valueMin, floa
 {
     // 0.0004 метра квадратных
     RETCODE ret = ERROR;
-    switch(stateSet) {
-    case STATE_SET_TARGET_MIN_VALUE:
+    switch(stateSetVibro) {
+    case STATE_SET_TARGET_VIBRO_MIN_VALUE:
         ret = write(jOperation, valueMin);
         if (ret == COMPLATE)
-            stateSet = STATE_SET_TARGET_MIN;
+            stateSetVibro = STATE_SET_TARGET_VIBRO_MIN;
         else if (ret == ERROR) {
-            stateSet = STATE_SET_TARGET_MIN_VALUE;
+            stateSetVibro = STATE_SET_TARGET_VIBRO_MIN_VALUE;
             return ERROR;
         }
         break;
-    case STATE_SET_TARGET_MIN:
+    case STATE_SET_TARGET_VIBRO_MIN:
         ret = write(jOperation, ControllerSetMin);
         if (ret == COMPLATE)
-            stateSet = STATE_SET_TARGET_VALUE;
+            stateSetVibro = STATE_SET_TARGET_VIBRO_VALUE;
         else if (ret == ERROR) {
-            stateSet = STATE_SET_TARGET_MIN_VALUE;
+            stateSetVibro = STATE_SET_TARGET_VIBRO_MIN_VALUE;
             return ERROR;
         }
         break;
-/* Если убрать задачу минимальной цели, то нужно stateSet по умолчанию выставить в STATE_SET_TARGET_VALUE и закоментировать код выше
-   и в STATE_ACTIVATE_PID выставить STATE_SET_TARGET_VALUE
-*/
-    case STATE_SET_TARGET_VALUE:
+
+    case STATE_SET_TARGET_VIBRO_VALUE:
         ret = write(jOperation, valueMax);
         if (ret == COMPLATE)
-            stateSet = STATE_SET_TARGET;
+            stateSetVibro = STATE_SET_TARGET_VIBRO;
         else if (ret == ERROR) {
-            stateSet = STATE_SET_TARGET_VALUE;
+            stateSetVibro = STATE_SET_TARGET_VIBRO_MIN_VALUE;
             return ERROR;
         }
         break;
-    case STATE_SET_TARGET:
+    case STATE_SET_TARGET_VIBRO:
         ret = write(jOperation, ControllerSet);
         if (ret == COMPLATE)
-            stateSet = STATE_ACTIVATE_PID_VALUE;
+            stateSetVibro = STATE_ACTIVATE_PID_VIBRO_VALUE;
         else if (ret == ERROR) {
-            stateSet = STATE_SET_TARGET_VALUE;
+            stateSetVibro = STATE_SET_TARGET_VIBRO_MIN_VALUE;
             return ERROR;
         }
         break;
-    case STATE_ACTIVATE_PID_VALUE:
+    case STATE_ACTIVATE_PID_VIBRO_VALUE:
         ret = write(jOperation, 1);                      // (0x0 - stop, 0x1 - locked, 0x11 - fast
         if (ret == COMPLATE) {
-            stateSet = STATE_ACTIVATE_PID;
+            stateSetVibro = STATE_ACTIVATE_PID_VIBRO;
         }
         else if (ret == ERROR) {
-            stateSet = STATE_SET_TARGET_VALUE;
+            stateSetVibro = STATE_SET_TARGET_VIBRO_MIN_VALUE;
             return ERROR;
         }
         break;
-    case STATE_ACTIVATE_PID:
+    case STATE_ACTIVATE_PID_VIBRO:
         ret = write(jOperation, ControllerLock);
         if (ret == COMPLATE) {
-            // stateSet = STATE_SET_TARGET_MIN_VALUE;
-            stateSet = STATE_SET_TARGET_VALUE;
+            stateSetVibro = STATE_SET_TARGET_VIBRO_MIN_VALUE;
             return COMPLATE;
         }
         else if (ret == ERROR) {
-            // stateSet = STATE_SET_TARGET_MIN_VALUE;
-            stateSet = STATE_SET_TARGET_VALUE;
+            stateSetVibro = STATE_SET_TARGET_VIBRO_MIN_VALUE;
             return ERROR;
         }
         break;

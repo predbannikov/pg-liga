@@ -163,17 +163,24 @@ void Data::stopOperation(QJsonObject &jObj)
     jObj["time_stop_operation"] = timeStopOperation;
 }
 
-void Data::startStep(QJsonObject &jStatusStep)
+void Data::beginStep(QJsonObject &jStatusStep)
 {
     period.reset();
     stepTime = elapseExperimentTimer.elapsed();
-    jStatusStep["time_start_step"] = QString::number(stepTime);
+    jStatusStep["step_time_begin"] = QString::number(stepTime);
+}
+
+void Data::targetStep(QJsonObject &jStatusStep)
+{
+    period.reset();
+    stepTime = elapseExperimentTimer.elapsed();
+    jStatusStep["step_time_target"] = QString::number(stepTime);
 }
 
 void Data::stopStep(QJsonObject &jStatusStep)
 {
     stepTime = elapseExperimentTimer.elapsed();
-    jStatusStep["time_stop_step"] = QString::number(stepTime);
+    jStatusStep["step_time_complate"] = QString::number(stepTime);
 }
 
 void Data::startExperiment(QJsonObject &jObj)

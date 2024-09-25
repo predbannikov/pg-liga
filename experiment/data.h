@@ -99,7 +99,8 @@ public:
     void sendStoreData(QJsonObject &jobj);
     void startOperation(QJsonObject &jObj);
     void stopOperation(QJsonObject &jObj);
-    void startStep(QJsonObject &jStatusStep);
+    void beginStep(QJsonObject &jStatusStep);
+    void targetStep(QJsonObject &jStatusStep);
     void stopStep(QJsonObject &jStatusStep);
 
     // Вернуть значение по сенсору time времени назад

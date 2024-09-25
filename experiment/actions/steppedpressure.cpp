@@ -21,6 +21,7 @@ SteppedPressure::~SteppedPressure()
 bool SteppedPressure::initStepping()
 {
     trans = TRANS_ENABLE_CTRL;
+    return true;
 }
 
 bool SteppedPressure::stepChanged()
@@ -51,6 +52,7 @@ bool SteppedPressure::updateSteping()
         jCmdToQueue["CMD"] = "volumetr1_set_target";
         jCmdToQueue["target"] = jStep["target"].toString();
         putQueue(jCmdToQueue);
+        store->beginStep(jStep);        // Записываем время начала ступени
         trans = TRANS_SET_TARGET;
         break;
 
@@ -61,7 +63,7 @@ bool SteppedPressure::updateSteping()
             saveDevice("target");
             trans = TRANS_TIMEWAIT;
             criterionTime = Measurements::TimeLongInterval::fromStringLong(jStep["timeOfCriterionTime"].toString());
-            store->startStep(jStep);        // Записываем время начала ступени
+            store->targetStep(jStep);        // Записываем время начала ступени
         }
         break;
 

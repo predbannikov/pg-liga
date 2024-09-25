@@ -179,7 +179,6 @@ RETCODE Operations::execCMD(QJsonObject &jobj)
         return loadFrame->unlockPID(jobj);
     } else if (jobj["CMD"].toString() == "load_frame_set_target") {
         return loadFrame->setTarget(jobj);
-    } else if (jobj["CMD"].toString() == "set_hz") {
     } else if (jobj["CMD"].toString() == "load_frame_set_vibro") {
         return loadFrame->setTargetVibro(jobj);
     } else if (jobj["CMD"].toString() == "set_hz") {
