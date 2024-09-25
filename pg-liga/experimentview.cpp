@@ -680,6 +680,13 @@ void ExperimentView::on_btnLoadFrameSetVibro_clicked()
     emit sendRequest(jobj);
 }
 
+void ExperimentView::on_btnLoadFrameUnlockPid_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "load_frame_unlock_PID";
+    emit sendRequest(jobj);
+}
+
 
 void ExperimentView::on_sliderLoadFrameSpeed_valueChanged(int value)
 {
