@@ -97,17 +97,25 @@ public:
     void updateData();
     void sendProtocol(QJsonObject &jobj);
     void sendStoreData(QJsonObject &jobj);
-    void startOperation(QJsonObject &jObj);
-    void stopOperation(QJsonObject &jObj);
-    void beginStep(QJsonObject &jStatusStep);
-    void targetStep(QJsonObject &jStatusStep);
-    void stopStep(QJsonObject &jStatusStep);
+
+    /**
+     * @brief startOperation        // Создаёт протокол операции
+     * @param postfix
+     * @param jObj
+     */
+    void setTimeOperation(const QString &postfix, QJsonObject &jObj);
+
+    void setTimeStep(const QString &postfix, QJsonObject &jStatusStep);
+
+    /**
+     * @brief setTimeExperiment     запускает таймер времени выполнения эксперримента, инициализирует store
+     * @param postfix
+     * @param jObj
+     */
+    void setTimeExperiment(const QString &postfix, QJsonObject &jObj);
 
     // Вернуть значение по сенсору time времени назад
     QPair<bool, double> getValueStepOfTime(qint64 time, QString sens);
-    void startExperiment(QJsonObject &jObj);
-    void stopExperiment(QJsonObject &jObj);
-
 
     QMap <QString, DataStore*> data;
     QString enableStoreData(bool enable);
@@ -135,13 +143,9 @@ private:
      */
     QElapsedTimer elapseExperimentTimer;
 
-    qint64 stepTime = 0;
+    qint64 stepTime = 0;    // Переменная определяет ключ по которому пишутся данные
     TimePeriod period;      // Период обновления значений в протокол
     bool enableStore = false;
-    QString timeStartExperiment;
-    QString timeStopExperiment;
-    QString timeStartOperation;
-    QString timeStopOperation;
 };
 
 #endif // DATA_H

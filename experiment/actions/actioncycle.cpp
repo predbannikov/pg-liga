@@ -158,16 +158,16 @@ bool ActionCycle::prepDevice()
     return false;
 }
 
-bool ActionCycle::saveDevice(const QString& prefix)
+bool ActionCycle::saveDevice(const QString& postfix)
 {
 //    auto jStep = jOperation[curStep()].toObject();
-    jStep["LF_position_" + prefix] = QString::number(loadFrame->stepper->position);
-    jStep["LF_force_" + prefix] = QString::number(loadFrame->forceSens->value);
-    jStep["LF_deform_" + prefix] = QString::number(loadFrame->deformSens->value);
-    jStep["Vol1_position_" + prefix] = QString::number(volumeter1->stepper->position);
-    jStep["Vol1_pressure_" + prefix] = QString::number(volumeter1->pressureSens->value);
-    jStep["Vol2_position_" + prefix] = QString::number(volumeter2->stepper->position);
-    jStep["Vol2_pressure_" + prefix] = QString::number(volumeter2->pressureSens->value);
+    jStep["LF_position_" + postfix] = QString::number(loadFrame->stepper->position);
+    jStep["LF_force_" + postfix] = QString::number(loadFrame->forceSens->value);
+    jStep["LF_deform_" + postfix] = QString::number(loadFrame->deformSens->value);
+    jStep["Vol1_position_" + postfix] = QString::number(volumeter1->stepper->position);
+    jStep["Vol1_pressure_" + postfix] = QString::number(volumeter1->pressureSens->value);
+    jStep["Vol2_position_" + postfix] = QString::number(volumeter2->stepper->position);
+    jStep["Vol2_pressure_" + postfix] = QString::number(volumeter2->pressureSens->value);
     jOperation[curStep()] = jStep;
 //    updateJStep(jStep);
     return true;

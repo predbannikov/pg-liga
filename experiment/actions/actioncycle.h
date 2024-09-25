@@ -34,7 +34,7 @@ public:
     void finishing() override;
     void pausing() override;
 
-    bool saveDevice(const QString &prefix);
+    bool saveDevice(const QString &postfix);
     QList<QJsonObject> getJSteps();
 
     // Работа с jActionCycle

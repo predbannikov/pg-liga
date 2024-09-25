@@ -52,7 +52,7 @@ bool SteppedPressure::updateSteping()
         jCmdToQueue["CMD"] = "volumetr1_set_target";
         jCmdToQueue["target"] = jStep["target"].toString();
         putQueue(jCmdToQueue);
-        store->beginStep(jStep);        // Записываем время начала ступени
+        store->setTimeStep("begin", jStep);        // Записываем время начала ступени
         trans = TRANS_SET_TARGET;
         break;
 
@@ -63,12 +63,12 @@ bool SteppedPressure::updateSteping()
             saveDevice("target");
             trans = TRANS_TIMEWAIT;
             criterionTime = Measurements::TimeLongInterval::fromStringLong(jStep["timeOfCriterionTime"].toString());
-            store->targetStep(jStep);        // Записываем время начала ступени
+            store->setTimeStep("target", jStep);        // Записываем время начала ступени
         }
         break;
 
     case SteppedPressure::TRANS_TIMEWAIT: {
-        if (store->data["PorePressure_kPa"]->valueFromBackOfStepTime(jStep["time_start_step"].toString().toInt(), criterionTime.milliseconds()).first) {
+        if (store->data["PorePressure_kPa"]->valueFromBackOfStepTime(jStep["step_time_target"].toString().toInt(), criterionTime.milliseconds()).first) {
             qDebug() << "time out, stabilisation needed";
             if (jStep["criterionType"].toString() == "Stabilisation") {
                 trans = TRANS_STABILISATION_CRITERION_MET;
@@ -86,7 +86,7 @@ bool SteppedPressure::updateSteping()
     case SteppedPressure::TRANS_STABILISATION_CRITERION_MET:
     {
         const auto currentPoint = volumeter2->pressureSens->value;
-        const auto prevPoint = store->data["PorePressure_kPa"]->valueFromBackOfStepTime(jStep["time_start_step"].toString().toInt(), criterionTime.milliseconds()).second;
+        const auto prevPoint = store->data["PorePressure_kPa"]->valueFromBackOfStepTime(jStep["step_time_target"].toString().toInt(), criterionTime.milliseconds()).second;
         double delta = 0;
         if(jStep["stabilisationType"].toString() == "Absolute") {
            delta = fabs(currentPoint - prevPoint);
@@ -112,7 +112,7 @@ bool SteppedPressure::updateSteping()
         break;
 
     case SteppedPressure::TRANS_FINISH_STEP:
-        store->stopStep(jStep);
+        store->setTimeStep("complate", jStep);
         jStep["state"] = "TRANS_FINISH_STEP";
         return true;
     }

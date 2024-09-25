@@ -150,51 +150,27 @@ void Data::sendStoreData(QJsonObject &jobj)
     jobj["store_data"] = QString(QByteArray(QJsonDocument(jstoreData).toJson()).toBase64());
 }
 
-void Data::startOperation(QJsonObject &jObj)
+void Data::setTimeOperation(const QString &postfix, QJsonObject &jObj)
 {
-    timeStartOperation = QDateTime::currentDateTime().toString("yyyy-MM-dd-HH-mm-ss");
-    jObj["time_start_operation"] = timeStartOperation;
-    createFileProtocol(jObj["name"].toString());
+    jObj["operation_time_" + postfix] = QDateTime::currentDateTime().toString("yyyy-MM-dd-HH-mm-ss");
+    if (postfix == "begin")
+        createFileProtocol(jObj["name"].toString());
 }
 
-void Data::stopOperation(QJsonObject &jObj)
-{
-    timeStopOperation = QDateTime::currentDateTime().toString("yyyy-MM-dd-HH-mm-ss");
-    jObj["time_stop_operation"] = timeStopOperation;
-}
-
-void Data::beginStep(QJsonObject &jStatusStep)
+void Data::setTimeStep(const QString &postfix, QJsonObject &jStatusStep)
 {
     period.reset();
     stepTime = elapseExperimentTimer.elapsed();
-    jStatusStep["step_time_begin"] = QString::number(stepTime);
+    jStatusStep["step_time_" + postfix] = QString::number(stepTime);
 }
 
-void Data::targetStep(QJsonObject &jStatusStep)
+void Data::setTimeExperiment(const QString &postfix, QJsonObject &jObj)
 {
-    period.reset();
-    stepTime = elapseExperimentTimer.elapsed();
-    jStatusStep["step_time_target"] = QString::number(stepTime);
-}
-
-void Data::stopStep(QJsonObject &jStatusStep)
-{
-    stepTime = elapseExperimentTimer.elapsed();
-    jStatusStep["step_time_complate"] = QString::number(stepTime);
-}
-
-void Data::startExperiment(QJsonObject &jObj)
-{
-    initStoreData();
-    timeStartExperiment = QDateTime::currentDateTime().toString("yyyy-MM-dd-HH-mm-ss");
-    jObj["time_start_experiment"] = timeStartExperiment;
-    elapseExperimentTimer.restart();
-}
-
-void Data::stopExperiment(QJsonObject &jObj)
-{
-    timeStopExperiment = QDateTime::currentDateTime().toString("yyyy-MM-dd-HH-mm-ss");
-    jObj["time_stop_experiment"] = timeStopExperiment;
+    jObj["experiment_time_"] = QDateTime::currentDateTime().toString("yyyy-MM-dd-HH-mm-ss");
+    if (postfix == "begin") {
+        elapseExperimentTimer.restart();
+        initStoreData();
+    }
 }
 
 QPair<bool, double> Data::getValueStepOfTime(qint64 time, QString sens)

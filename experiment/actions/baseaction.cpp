@@ -38,7 +38,7 @@ void BaseAction::initialization(QJsonObject jAct, LoadFrame *lf, Volumeter1 *vol
         QJsonObject jStatus = jStatusOperation();
         jStatus["state"] = "process";
         jSetStatusOperation(jStatus);
-        store->startOperation(jOperation);
+        store->setTimeOperation("begin", jOperation);
     }
     init();
 }
@@ -47,7 +47,7 @@ void BaseAction::finish() {
     QJsonObject jStatus = jStatusOperation();
     jStatus["state"] = "complate";
     jSetStatusOperation(jStatus);
-    store->stopOperation(jOperation);
+    store->setTimeOperation("complate", jOperation);
 
     finishing();
 }

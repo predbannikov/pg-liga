@@ -301,9 +301,11 @@ void Experiment::jUpdateExperimentAction(QJsonObject jObj)
 void Experiment::jSaveState(QString state)
 {
     if (state == "process") {       // Старт эксперимента
-        store->startExperiment(jExperiment);
+        store->setTimeExperiment(jExperiment);
     } else if (state == "idle") {   // Завершение эксперимента
         store->stopExperiment(jExperiment);
+    } else if (state == "pause") {   // Завершение эксперимента
+        store->pauseExperiment(jExperiment);
     }
     jExperimentStatus = jExperiment["status_experiment"].toObject();
     jExperimentStatus["state"] = state;
