@@ -14,8 +14,8 @@ MoveByTimeLoadFrame::~MoveByTimeLoadFrame()
 }
 
 void MoveByTimeLoadFrame::init() {
-    elapseTime.setSingleShot(true);
-    elapseTime.setInterval(jOperation["time_ms"].toString().toInt());
+    elapseTimeBase.setSingleShot(true);
+    elapseTimeBase.setInterval(jOperation["time_ms"].toString().toInt());
 }
 
 bool MoveByTimeLoadFrame::update()
@@ -25,12 +25,12 @@ bool MoveByTimeLoadFrame::update()
         jCmdToQueue["CMD"] = "load_frame_move";
         jCmdToQueue["speed"] = jOperation["speed"].toString();
         putQueue(jCmdToQueue);
-        elapseTime.start();
+        elapseTimeBase.start();
         trans = TRANS_2;
         break;
 
     case TRANS_2:
-        if (!elapseTime.isActive()) {
+        if (!elapseTimeBase.isActive()) {
 
             return true;
         }

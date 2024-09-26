@@ -63,7 +63,7 @@ private:
 
     // Работа с jExperiment
     void jIncCurAction();                               // Устанавливает указатель на следующую операцию. Если такой операции не будет, то эксперимент приостановится
-    void jUpdateExperimentAction(QJsonObject jObj);     // Записываем в jExperiment jAction если были изменения
+    void jUpdateExperimentAction(QJsonObject jObj);     // Записываем в jExperiment jAction
     void jSaveState(QString state);                     // Записывает состояние эксперимента в jExperiment
     QString curAction();                                // Возвращает текущую операцию
 

@@ -5,6 +5,7 @@
 #include <numeric>
 
 #include "volumeter1.h"
+#include "volumeter2.h"
 
 SteppedPressure::SteppedPressure(QObject *parent)
     : ActionCycle{parent}
@@ -17,9 +18,28 @@ SteppedPressure::~SteppedPressure()
     qDebug() << Q_FUNC_INFO;
 }
 
+bool SteppedPressure::initStepping()
+{
+    trans = TRANS_ENABLE_CTRL;
+    return true;
+}
+
 bool SteppedPressure::stepChanged()
 {
     return false;
+}
+
+bool SteppedPressure::someAdditionalCondition()
+{
+    double diffVol1 = jStep["Vol1_pressure_complate"].toString().toDouble() - jStep["Vol1_pressure_begin"].toString().toDouble();
+    double diffVol2 = jStep["Vol2_pressure_complate"].toString().toDouble() - jStep["Vol2_pressure_target"].toString().toDouble();
+    double B = diffVol2 / diffVol1;
+    if (B > 0.95) {
+        jStep["B"] = QString::number(B);
+        return true;
+    }
+    return false;
+//    return betaLeastSquares(3);
 }
 
 //void SteppedPressure::init() {
@@ -28,85 +48,81 @@ bool SteppedPressure::stepChanged()
 //    curStep = jAction["curStep"].toString().toInt();
 //}
 
+#define TOLERANCE   3000
+
 bool SteppedPressure::updateSteping()
 {
     // Тут начать задавать логику ступени
     switch(trans) {
 
-    case TRANS_1: {
-
-        QJsonObject::iterator iter;
-        for (iter = jOperation.begin(); iter != jOperation.end(); ++iter) {
-            if (iter.key().contains("step") && iter.key().split('_')[1].toInt() == curStep) {
-                qDebug() << "key=" << iter.key().split('_')[1] << "    curStep=" << curStep;
-                trans = TRANS_2;
-                return false;
-            }
-        }
-
-    }
-        break;
-
-    case TRANS_2:
-        jCmdToQueue["CMD"] = "volumetr1_stepper_set_zero";
-        putQueue(jCmdToQueue);
-        elapseTime.start(2000);
-        trans = TRANS_3;
-        break;
-
-    case SteppedPressure::TRANS_3:
-        if (!elapseTime.isActive() && volumeter1->stepper->position != 0) {
-            sendError("Задержка больше 1000мс, по комманде volumetr1_stepper_set_zero", jOperation);
-            trans = TRANS_2;
-        }
-        else if (elapseTime.isActive() && volumeter1->stepper->position == 0) {
-            trans = TRANS_4;
-        }
-        break;
-
-    case SteppedPressure::TRANS_4:
+    case TRANS_ENABLE_CTRL:
+        jStep["state"] = "TRANS_ENABLE_CTRL";
         jCmdToQueue["CMD"] = "volumetr1_set_target";
-        jCmdToQueue["target"] = jOperation[QString("step_%1").arg(curStep)].toObject()["target"].toString();
+        jCmdToQueue["target"] = jStep["target"].toString();
         putQueue(jCmdToQueue);
-        elapseTime.start(1000);
-        trans = TRANS_6;
+        store->setTimeStep("begin", jStep);        // Записываем время начала ступени
+        trans = TRANS_SET_TARGET;
         break;
 
-    case SteppedPressure::TRANS_5:
-        // if (!elapseTime.isActive() && volumeter1->controller->status == 0) {
-        //     sendError("Задержка больше 1000мс, по комманде volumetr1_set_target", jAction);
-        //     trans = TRANS_4;
-        // } else if (elapseTime.isActive() && volumeter1->controller->status != 0) {
-        //     trans = TRANS_6;
-        // }
-        // break;
-
-    case SteppedPressure::TRANS_6: {
-        if (volumeter1->pressureSens->value > (jOperation[QString("step_%1").arg(curStep)].toObject()["target"].toString().toDouble() - 3000)) {
-            if (jOperation[QString("step_%1").arg(curStep)].toObject()["criterionType"].toString() == "Stabilisation") {
-
-                trans = TRANS_7;
-            }
-            else if (jOperation[QString("step_%1").arg(curStep)].toObject()["criterionType"].toString() == "Duration")
-                trans = TRANS_8;
+    case TRANS_SET_TARGET:
+        if (volumeter1->pressureSens->value > (jStep["target"].toString().toDouble() - TOLERANCE)
+                && volumeter1->pressureSens->value < (jStep["target"].toString().toDouble() + TOLERANCE)) {
+            jStep["state"] = "TRANS_SET_TARGET";
+            saveDevice("target");
+            trans = TRANS_TIMEWAIT;
+            criterionTime = Measurements::TimeLongInterval::fromStringLong(jStep["timeOfCriterionTime"].toString());
+            store->setTimeStep("target", jStep);        // Записываем время начала ступени
         }
-        // betaLeastSquares(3);
-        // auto data = volumeter1->store->data["CellPressure_kPa"];
-        // qint64 start_time, time;
-        // data.getLastStartAndCurTime(start_time, time);
-        // qDebug() << data.size() << start_time << time << data.valueFromBack(start_time, time) <<" ";
+        break;
 
+    case SteppedPressure::TRANS_TIMEWAIT: {
+        if (store->data["PorePressure_kPa"]->valueFromBackOfStepTime(jStep["step_time_target"].toString().toInt(), criterionTime.milliseconds()).first) {
+            qDebug() << "time out, stabilisation needed";
+            if (jStep["criterionType"].toString() == "Stabilisation") {
+                trans = TRANS_STABILISATION_CRITERION_MET;
+            }
+            else if (jStep["criterionType"].toString() == "DurationAfterSetup") {
+                trans = TRANS_DURATION;
+            }
+        }
+        qDebug() << "------";
+        break;
     }
+
+    case SteppedPressure::TRANS_DURATION:
+        break;
+    case SteppedPressure::TRANS_STABILISATION_CRITERION_MET:
+    {
+        const auto currentPoint = volumeter2->pressureSens->value;
+        const auto prevPoint = store->data["PorePressure_kPa"]->valueFromBackOfStepTime(jStep["step_time_target"].toString().toInt(), criterionTime.milliseconds()).second;
+        double delta = 0;
+        if(jStep["stabilisationType"].toString() == "Absolute") {
+           delta = fabs(currentPoint - prevPoint);
+
+        } else if(jStep["stabilisationType"].toString() == "Relative") {
+            delta = fabs(currentPoint - prevPoint) / currentPoint;
+        }
+        qDebug() << QString("currentPoint=%1    prevPoint=%2    delta=%3    param=%4").arg(currentPoint).arg(prevPoint).arg(delta)
+                    .arg(jStep["stabilisationParam"].toString().toDouble());
+        if (delta <= jStep["stabilisationParam"].toString().toDouble())
+            trans = TRANS_STOPPING;
+        return false;
+    }
+
+    case SteppedPressure::TRANS_6:
         break;
 
-    case SteppedPressure::TRANS_7:
-        qDebug() << "stabilization needed";
-
-
-        break;
-    case SteppedPressure::TRANS_8:
+    case SteppedPressure::TRANS_STOPPING:
+        if (stopDevice()) {
+            trans = TRANS_FINISH_STEP;
+        }
         qDebug() << "time needed";
         break;
+
+    case SteppedPressure::TRANS_FINISH_STEP:
+        store->setTimeStep("complate", jStep);
+        jStep["state"] = "TRANS_FINISH_STEP";
+        return true;
     }
     return false;
 }
@@ -121,6 +137,12 @@ bool SteppedPressure::updateSteping()
 
 bool SteppedPressure::betaLeastSquares(int n)
 {
+    auto jSteps = getJSteps();
+    for (int i = 0; i < jSteps.size(); i++)
+        qDebug().noquote() << QJsonDocument(jSteps[i]).toJson(QJsonDocument::Indented);
+
+
+
     auto stepDataCellPressure = volumeter1->store->data["CellPressure_kPa"]->getDataOfStartTime();
     auto stepDataPorePressure = volumeter1->store->data["PorePressure_kPa"]->getDataOfStartTime();
 

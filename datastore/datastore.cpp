@@ -84,23 +84,36 @@ QList<QPair<qint64, float>> &DataStore::getDataOfStartTime() {
     return data[keys.last()];
 }
 
-float DataStore::valueFromBack(qint64 step_time, qint64 time) {
+QPair<bool, float> DataStore::valueFromBackOfStepTime(qint64 step_time, qint64 timeMs) {
     auto &arr = data[step_time];
-    //        QPair <qint64, float> last_value = arr.last();
+    const QPair<bool, float> pair = {false, 0};
+    if (arr.isEmpty()) {
+        qDebug() << Q_FUNC_INFO << "Не существует ключа шага (индекса в данном массиве)";
+        return pair;
+    }
+    if (arr.last().first < timeMs) {
+        qDebug() << Q_FUNC_INFO << "Данных с таким временем ещё не существует";
+        return pair;
+    }
+    auto valueToFind_approx = arr.last().first - timeMs;   // Нужно найти значение не больше этого
     for (int i = arr.size() - 1; i > 0; i--) {
-        //            if (last_value.first - arr[i].first >= time) {
-        // if (last.first - arr[i].first >= time) {
-        if (arr[i].first >= time) {
-            return arr[i].second;
+        if (arr[i].first <= valueToFind_approx) {
+            return {true, arr[i].second};
         }
     }
-    qDebug() << Q_FUNC_INFO << "#WARNING: get first value stop";
-    return arr.first().second;
+    return pair;
+}
+
+QPair<bool, float> DataStore::valueFromBackOfStepTime(qint64 step_time, double timeMs)
+{
+    return valueFromBackOfStepTime(step_time, static_cast<qint64>(timeMs));
 }
 
 void DataStore::getLastStartAndCurTime(qint64 &start_time, qint64 &cur_time) {
     QList<qint64> keys = data.keys();
     std::sort(keys.begin(), keys.end());
+    if (keys.isEmpty())
+        return;
     start_time = keys.last();
     QList<QPair<qint64, float>> &lastList = data[start_time];
     if (!lastList.empty()) {

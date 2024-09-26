@@ -43,6 +43,7 @@ ExperimentView::ExperimentView(QWidget *parent) :
 
     connect(timerUpdateDataStore, &QTimer::timeout, this, &ExperimentView::onReadDataStore);
 
+    timerUpdateDataStore->start(3000);
 
     connect(timerUpdateStatus, &QTimer::timeout, this, &ExperimentView::onUpdateStatus);
     timerUpdateStatus->start(1000);
@@ -637,6 +638,13 @@ void ExperimentView::on_btnLoadFrameSensorForceReset_clicked()
     emit sendRequest(jobj);
 }
 
+void ExperimentView::on_btnLoadFrameSensorPositionSetZero_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "load_frame_stepper_set_zero";
+    emit sendRequest(jobj);
+}
+
 void ExperimentView::on_btnLoadFrameSensorDeformSetZero_clicked()
 {
     QJsonObject jobj;
@@ -652,6 +660,40 @@ void ExperimentView::on_btnLoadFrameSensorDeformReset_clicked()
     jobj["sensor_name"] = "SensDef0";
     emit sendRequest(jobj);
 }
+
+
+void ExperimentView::on_btnLoadFrameSetTarget_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "load_frame_set_target";
+    jobj["target"] = QString::number(ui->spinLoadFrameTargetPID->value());
+    emit sendRequest(jobj);
+}
+
+
+void ExperimentView::on_btnLoadFrameSetVibro_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "load_frame_set_vibro";
+    jobj["target"] = QString::number(ui->spinLoadFrameTargetPID->value());
+    jobj["target_min"] = QString::number(ui->spinLoadFrameTargetPIDMin->value());
+    emit sendRequest(jobj);
+}
+
+void ExperimentView::on_btnLoadFrameUnlockPid_clicked()
+{
+    QJsonObject jobj;
+    jobj["CMD"] = "load_frame_unlock_PID";
+    emit sendRequest(jobj);
+}
+
+
+void ExperimentView::on_sliderLoadFrameSpeed_valueChanged(int value)
+{
+    ui->lblLoadFrameSpeed->setText(QString::number(value));
+}
+
+
 
 void ExperimentView::on_btnVolumetr1SensorPressureSetZero_clicked()
 {
@@ -717,12 +759,6 @@ void ExperimentView::on_btnVolumetr1Stop_clicked()
 }
 
 
-void ExperimentView::on_sliderLoadFrameSpeed_valueChanged(int value)
-{
-    ui->lblLoadFrameSpeed->setText(QString::number(value));
-}
-
-
 void ExperimentView::on_btnVolumetr2MoveUp_clicked()
 {
     QJsonObject jobj;
@@ -760,13 +796,6 @@ void ExperimentView::on_sliderVolumetr1Speed_valueChanged(int value)
     ui->lblVolumetr1Speed->setText(QString::number(value));
 }
 
-
-void ExperimentView::on_btnLoadFrameSensorPositionSetZero_clicked()
-{
-    QJsonObject jobj;
-    jobj["CMD"] = "load_frame_stepper_set_zero";
-    emit sendRequest(jobj);
-}
 
 
 void ExperimentView::on_btnVolumetr2SensorPositionSetZero_clicked()
@@ -817,3 +846,4 @@ void ExperimentView::on_btnClearTextEdit_clicked()
 {
     ui->textEdit->clear();
 }
+

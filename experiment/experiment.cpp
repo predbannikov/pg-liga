@@ -70,8 +70,25 @@ bool Experiment::conveyor()
     case Experiment::TRANSITION_3:
         if (action->updating()) {
             action->finish();
+            qDebug() << "***********************************************";
+            qDebug() << "*************** before   **********************";
+            qDebug() << "***********************************************";
+            qDebug().noquote() << QJsonDocument(jExperiment).toJson(QJsonDocument::Indented);
+
+
+
+            qDebug() << "***********************************************";
+            qDebug() << "***** before jUpdateExperimentAction   ********";
+            qDebug() << "***********************************************";
             jUpdateExperimentAction(action->jOperation);
+            qDebug().noquote() << QJsonDocument(jExperiment).toJson(QJsonDocument::Indented);
+
+
+            qDebug() << "***********************************************";
+            qDebug() << "********* after jIncCurAction  ****************";
+            qDebug() << "***********************************************";
             jIncCurAction();
+            qDebug().noquote() << QJsonDocument(jExperiment).toJson(QJsonDocument::Indented);
             delete action;
             action = nullptr;
             transition = TRANSITION_2;
@@ -198,13 +215,13 @@ bool Experiment::createAction(QJsonObject jAction)
 {
     if (jAction["name"].toString() == "move_of_time") {
         action = new MoveByTimeLoadFrame(this);
-    } else if (jAction["name"].toString() == "steppedPressure") {
+    } else if (jAction["name"].toString() == "steppedPressurise") {
         action = new SteppedPressure(this);
     } else {
         return false;
     }
     connect(action, &BaseAction::error, this, &Interface::sendRequestToClient);
-    action->initialization(jAction, loadFrame, volumetr1, volumetr2, &plata);
+    action->initialization(jAction, loadFrame, volumetr1, volumetr2, &plata, store);
     return true;
 }
 
@@ -248,12 +265,14 @@ void Experiment::stateSwitch()
         qDebug() << "STATE_EXPERIMENT_TRANSIT_TO_PAUSE";
         if (pausing()) {
             jSaveState("pause");
+            sendRequestToClient(jExperiment);
             stateExperiment = STATE_EXPERIMENT_PAUSE;
         }
         break;
     case Operations::STATE_EXPERIMENT_TRANSIT_TO_STOP:
         if (stopping()) {
             jSaveState("idle");
+            sendRequestToClient(jExperiment);
             QJsonObject jobj;
             jobj["CMD"] = "disable_store_data";
             put(jobj);
@@ -275,12 +294,21 @@ void Experiment::jIncCurAction()
 
 void Experiment::jUpdateExperimentAction(QJsonObject jObj)
 {
-    QString operation = QString("operation_%1").arg(curAction());
-    jExperiment[operation] = jObj;
+//    QString operation = QString("operation_%1").arg(curAction());
+    qDebug().noquote() << QJsonDocument(jObj).toJson(QJsonDocument::Indented);
+
+    jExperiment[curAction()] = jObj;
 }
 
 void Experiment::jSaveState(QString state)
 {
+    if (state == "process") {       // Старт эксперимента
+        store->setTimeExperiment(state, jExperiment);
+    } else if (state == "idle") {   // Завершение эксперимента
+        store->setTimeExperiment(state, jExperiment);
+    } else if (state == "pause") {   // Завершение эксперимента
+        store->setTimeExperiment(state, jExperiment);
+    }
     jExperimentStatus = jExperiment["status_experiment"].toObject();
     jExperimentStatus["state"] = state;
     jExperiment["status_experiment"] = jExperimentStatus;

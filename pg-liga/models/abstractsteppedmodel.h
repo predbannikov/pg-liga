@@ -94,7 +94,7 @@ public:
         QString stabilisationParamToStr() {
             switch (stabilisationType) {
             case AbstractSteppedModel::Step::Absolute:
-                return stabilisationParamAbsolute.kiloPascalsStr();
+                return stabilisationParamAbsolute.pascalsStr();
             case AbstractSteppedModel::Step::Relative:
                 return QString::number(stabilisationParamRelative);
             }

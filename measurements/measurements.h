@@ -315,6 +315,7 @@ public:
 
     double megaPascals() const { return siValue() / 1e6; }
     QString kiloPascalsStr() const { return QString::number(siValue() / 1e3); }
+    QString pascalsStr() const { return QString::number(siValue()); }
     Force force(Area area) const { return Force::fromNewtons(siValue() * area.siValue()); }
 
 private:

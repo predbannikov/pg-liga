@@ -20,7 +20,7 @@ public:
 
 private:
 
-    QTimer elapseTime;
+    QTimer elapseTimeBase;
     enum TRANS {TRANS_1, TRANS_2} trans = TRANS_1;
 
 };

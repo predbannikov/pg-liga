@@ -83,7 +83,7 @@ class Data : public QObject
      *                          используется для записи в файл протокола
      */
     QMap <QString, double> currentData;
-    void createFileProtocol();
+    void createFileProtocol(QString nameOperation);
 
 public:
     Data(quint8 addr, const QJsonObject &conf, QObject *parent = nullptr);
@@ -97,14 +97,32 @@ public:
     void updateData();
     void sendProtocol(QJsonObject &jobj);
     void sendStoreData(QJsonObject &jobj);
-    void setCurStep(const QJsonObject &jcurStep_);
-    double getValueStepOfTime(qint64 time, QString sens);
 
+    /**
+     * @brief startOperation        // Создаёт протокол операции
+     * @param postfix
+     * @param jObj
+     */
+    void setTimeOperation(const QString &postfix, QJsonObject &jObj);
+
+    void setTimeStep(const QString &postfix, QJsonObject &jStatusStep);
+
+    /**
+     * @brief setTimeExperiment     запускает таймер времени выполнения эксперримента, инициализирует store
+     * @param postfix
+     * @param jObj
+     */
+    void setTimeExperiment(const QString &postfix, QJsonObject &jObj);
+
+    // Вернуть значение по сенсору time времени назад
+    QPair<bool, double> getValueStepOfTime(qint64 time, QString sens);
 
     QMap <QString, DataStore*> data;
     QString enableStoreData(bool enable);
     QString deleteStoreData();
     QString initStoreData();
+
+    qint64 elapseExperiment() { return elapseExperimentTimer.elapsed(); }
 private:
     QFile dataFileName;
     quint8 address;
@@ -119,10 +137,15 @@ private:
      */
     bool writeToDataFile();
 
+    /**
+     *      Время текущее на протяжении всего эксперимента, испльзовать для задачи ключей
+     *      в мапе как step в которых хранятся данные датчиков
+     */
     QElapsedTimer elapseExperimentTimer;
-    qint64 stepTimeStart = 0;
+
+    qint64 stepTime = 0;    // Переменная определяет ключ по которому пишутся данные
     TimePeriod period;      // Период обновления значений в протокол
-    bool enableStore = true;
+    bool enableStore = false;
 };
 
 #endif // DATA_H
