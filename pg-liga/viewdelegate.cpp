@@ -13,130 +13,82 @@ SpinBoxDelegate::SpinBoxDelegate(const QString &suffix, double maximum, QObject 
     QStyledItemDelegate(parent),
     m_suffix(suffix),
     m_maximum(maximum)
-{
-    
-
-    
-}
+{}
 
 QWidget *SpinBoxDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    
-
     Q_UNUSED(option)
     Q_UNUSED(index)
-
-    
-
     return new QDoubleSpinBox(parent);
 }
 
 void SpinBoxDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
     
-
     auto *spinBox = qobject_cast<QDoubleSpinBox*>(editor);
-
     spinBox->setSuffix(" " + m_suffix);
     spinBox->setMaximum(m_maximum);
     spinBox->setDecimals(m_decimals);
     spinBox->setSingleStep(m_singleStep);
-
     spinBox->setValue(index.data(Qt::EditRole).toDouble());
-
-    
 }
 
 void SpinBoxDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
-    
-
     auto *spinBox = qobject_cast<QDoubleSpinBox*>(editor);
     model->setData(index, spinBox->value());
-
-    
 }
 
 QString SpinBoxDelegate::displayText(const QVariant &value, const QLocale &locale) const
 {
-    
-
     Q_UNUSED(locale)
-
-    if(value.isValid()) 
+    if(value.isValid())
     {
-        
         return QString::number(value.toDouble(), 'f', m_decimals) + " " + m_suffix;
-    } 
-    else 
+    }
+    else
     {
-        
         return "";
     }
-
-    
 }
 
 /* ComboBox delegate */
 ComboBoxDelegate::ComboBoxDelegate(const QStringList &items, QObject *parent):
     QStyledItemDelegate(parent),
     m_items(items)
-{
-    
-
-    
-}
+{}
 
 QWidget *ComboBoxDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    
-
     Q_UNUSED(option)
     Q_UNUSED(index)
-
     auto *comboBox = new QComboBox(parent);
     comboBox->addItems(m_items);
-
-    
-
     return comboBox;
 }
 
 void ComboBoxDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
-{
-    
-
+{   
     auto *comboBox = qobject_cast<QComboBox*>(editor);
     auto idx = index.data().toInt();
-
     comboBox->setCurrentIndex(idx);
-
-    
 }
 
 void ComboBoxDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
-{
-    
-
+{   
     auto *comboBox = qobject_cast<QComboBox*>(editor);
     model->setData(index, comboBox->currentIndex());
-
-    
 }
 
 QString ComboBoxDelegate::displayText(const QVariant &value, const QLocale &locale) const
-{
-    
-
+{  
     Q_UNUSED(locale)
-
     auto idx = value.toInt();
-    if(idx >= 0 && idx < m_items.count()) 
+    if(idx >= 0 && idx < m_items.count())
     {
-        
         return m_items.at(idx);
     }
-    else 
+    else
     {
         
         return "";
@@ -214,8 +166,6 @@ QString TimeIntervalDelegate::displayText(const QVariant &value, const QLocale &
 TimeLongIntervalDelegate::TimeLongIntervalDelegate(QObject *parent):
     QStyledItemDelegate(parent)
 {
-    
-    
 }
 
 QWidget *TimeLongIntervalDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -260,6 +210,11 @@ QString TimeLongIntervalDelegate::displayText(const QVariant &value, const QLoca
     
 
     Q_UNUSED(locale)
+    if (value.canConvert<QPair<int, Measurements::TimeLongInterval>>())
+    {
+        return value.value<QPair<int, Measurements::TimeLongInterval>>().second.toString();
+    }
+
 
     if(value.canConvert<Measurements::TimeLongInterval>()) {
         
@@ -288,12 +243,8 @@ WeightedDelegate::WeightedDelegate(const QStringList &weightNames, const QList<i
 
 QWidget *WeightedDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    
-
     Q_UNUSED(option)
     Q_UNUSED(index)
-
-    
 
     return new WeightedDelegateEditor(m_weightNames, m_decimals, parent);
 }
@@ -308,8 +259,6 @@ void WeightedDelegate::setEditorData(QWidget *editor, const QModelIndex &index) 
     paramEditor->setMaximum(m_maximum);
     paramEditor->setValue(data.second);
     paramEditor->setWeightType(data.first);
-
-    
 }
 
 void WeightedDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
@@ -329,14 +278,10 @@ void WeightedDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, 
 
 QString WeightedDelegate::displayText(const QVariant &value, const QLocale &locale) const
 {
-    
-
     Q_UNUSED(locale)
-
+    qDebug() << "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<THIS IS YOUR SHEET "<< value.value<QPair<int, double>>();
     const auto data = value.value<QPair<int, double>>();
     const auto prec = m_decimals.value(data.first, 0);
-
-    
 
     return QString::number(data.second, 'f', prec) + " " + m_weightNames.value(data.first);
 }
@@ -411,9 +356,6 @@ void WeightedDelegateEditor::setMaximum(double max)
 
 double WeightedDelegateEditor::value() const
 {
-    
-    
-
     return m_spinBox->value();
 }
 

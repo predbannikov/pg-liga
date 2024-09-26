@@ -64,7 +64,7 @@ public:
 
         Measurements::Pressure cellPressure; //target                 -> первый столбец
         Measurements::Pressure stabilisationParamAbsolute; // ...     -> третий столбец
-        Measurements::TimeInterval timeOfCriterionTime; //Время       -> четвертый столбец
+        Measurements::TimeLongInterval timeOfCriterionTime; //Время       -> четвертый столбец
         CriterionType criterion; //Критерий (*, вермя, стабилизация)  -> второй столбец
         StabilisationType stabilisationType;//Тип стабилизации;       -> Чет не понятно
         double stabilisationParamRelative ;

@@ -139,7 +139,7 @@ void SteppedModelEditor::setModel(SteppedPressuriseModel *model)
     auto *endCriterionDelegate = new ComboBoxDelegate({tr("вручную"), tr("время"), tr("стабилизация") }, this);
     //auto *parameterDelegate = new WeightedDelegate({Strings::kPa, Strings::percent}, {0, 2}, this);
     auto *parameterDelegate = new WeightedDelegate({Strings::kPa, Strings::percent}, {0, 2}, 100, this);
-    auto *timeIntervalDelegate = new TimeIntervalDelegate(this);
+    auto *timeIntervalDelegate = new TimeLongIntervalDelegate(this);
 
     setupDelegates({
         pressureDelegate,

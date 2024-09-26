@@ -74,7 +74,7 @@ QVariant SteppedLoadingModel::data(const QModelIndex &index, int role) const
             switch(currentStep.criterion) {
             case Step::Duration:
             case Step::Stabilisation:
-                return QVariant::fromValue(QPair<int, Measurements::TimeInterval>(0, currentStep.timeOfCriterionTime));
+                return QVariant::fromValue(QPair<int, Measurements::TimeLongInterval>(0, currentStep.timeOfCriterionTime));
             case Step::Manual:
             default:
                 
@@ -139,7 +139,7 @@ bool SteppedLoadingModel::setData(const QModelIndex &index, const QVariant &valu
             break;
 
         case Time:
-            currentStep.timeOfCriterionTime = value.value<Measurements::TimeInterval>();
+            currentStep.timeOfCriterionTime = value.value<Measurements::TimeLongInterval>();
             break;
         }
 
@@ -199,7 +199,7 @@ int SteppedLoadingModel::insertStep(const QModelIndex &index)
     step.criterion = Step::CriterionType::Manual;
     step.stabilisationType = Step::StabilisationType::Absolute;
     step.stabilisationParamRelative = 0.15;
-    step.timeOfCriterionTime = Measurements::TimeInterval::fromHMS(0, 15, 0);
+    step.timeOfCriterionTime = Measurements::TimeLongInterval::fromHMS(0, 15, 0);
 
 
     beginInsertRows(QModelIndex(), row, row);

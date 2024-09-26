@@ -1,4 +1,4 @@
-#include "steppedpressurisemodel.h"
+ #include "steppedpressurisemodel.h"
 
 #include <QPair>
 #include <QDebug>
@@ -122,7 +122,7 @@ bool SteppedPressuriseModel::setData(const QModelIndex &index, const QVariant &v
             switch(currentStep.criterion) {
             case Step::Duration:
             case Step::Stabilisation:
-                currentStep.timeOfCriterionTime = value.value<Measurements::TimeInterval>();
+                currentStep.timeOfCriterionTime = value.value<Measurements::TimeLongInterval>();
                 break;
 
             case Step::Manual:
@@ -191,7 +191,7 @@ int SteppedPressuriseModel::insertStep(const QModelIndex &index)
     newStep.stabilisationType = Step::Absolute;
     newStep.stabilisationParamAbsolute = Measurements::Pressure::fromKiloPascals(3);
     newStep.stabilisationParamRelative = 0.1;
-    newStep.timeOfCriterionTime = Measurements::TimeInterval::fromHMS(0, 15, 0);
+    newStep.timeOfCriterionTime = Measurements::TimeLongInterval::fromHMS(0, 15, 0);
 
 
 
