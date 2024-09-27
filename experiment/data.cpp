@@ -86,34 +86,39 @@ bool Data::printFileHeader()
 void Data::updateData()
 {
     if (enableStore) {
+        auto timeElaps = elapseExperimentTimer.elapsed();
+        double vertPress, vertDeform;
         for (int i = 0; i < sensors.size(); i++) {
             switch (sensors[i]->funCode) {
             case SensLoad0:
                 currentData.insert(VerticalPressure_kPa, sensors[i]->value);
-                data[VerticalPressure_kPa]->append(stepTime, elapseExperimentTimer.elapsed(), sensors[i]->value);
-
+                data[VerticalPressure_kPa]->append(stepTime, timeElaps, sensors[i]->value);
+                vertPress = sensors[i]->value;
                 break;
 
             case SensDef0:
                 currentData.insert(VerticalDeform_mm, sensors[i]->value);
-                data[VerticalDeform_mm]->append(stepTime, elapseExperimentTimer.elapsed(), sensors[i]->value / 1000.);
+                data[VerticalDeform_mm]->append(stepTime, timeElaps, sensors[i]->value / 1000.);
+                vertDeform = sensors[i]->value / 1000.;
                 break;
 
                 // Все перепутано это волюмоментр 1
             case SensPrs1:
                 currentData.insert(CellPressure_kPa, sensors[i]->value / 1000.);
-                data[CellPressure_kPa]->append(stepTime, elapseExperimentTimer.elapsed(), sensors[i]->value);
+                data[CellPressure_kPa]->append(stepTime, timeElaps, sensors[i]->value);
                 break;
 
                 // Все перепутано это волюмоментр 2
             case SensPrs0:
                 currentData.insert(PorePressure_kPa, sensors[i]->value / 1000.);
-                data[PorePressure_kPa]->append(stepTime, elapseExperimentTimer.elapsed(), sensors[i]->value);
-                break;        }
+                data[PorePressure_kPa]->append(stepTime, timeElaps, sensors[i]->value);
+                break;
+            }
         }
 
         currentData.insert(LF_position_mm, stepper->position);
-        data[LF_position_mm]->append(stepTime, elapseExperimentTimer.elapsed(), stepper->position / 1000.);
+        data[LF_position_mm]->append(stepTime, timeElaps, stepper->position / 1000.);
+        data["VertPressureVsVertDeform"]->append(stepTime, vertPress, vertDeform);
 
         if (period.complate())
             writeToDataFile();
@@ -148,6 +153,35 @@ void Data::sendStoreData(QJsonObject &jobj)
     }
 
     jobj["store_data"] = QString(QByteArray(QJsonDocument(jstoreData).toJson()).toBase64());
+}
+
+void Data::exportToCSVofName(QString name1, QString name2)
+{
+    // VerticalPressure_kPa
+    // VerticalDeform_mm
+    if (data.isEmpty())
+        return;
+    if (data[name1]->data.isEmpty() || data[name2]->data.isEmpty())
+        return;
+    exportToCSV(data[name1]->getDataOfStartTime(), data[name2]->getDataOfStartTime());
+}
+
+void Data::exportToCSV(const QList<QPair<qint64, float> > &forceData, const QList<QPair<qint64, float> > &deformData) {
+    QFile file("/var/share/exportData.csv");
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&file);
+        out << "Time,Force,Deformation\n";
+        int dataSize = qMin(forceData.size(), deformData.size());
+        for (int i = 0; i < dataSize; ++i) {
+            out << forceData[i].first << ","
+                << forceData[i].second << ","
+                << deformData[i].second << "\n";
+        }
+        file.close();
+        qDebug() << "data success export" << file.fileName();
+    } else {
+        qDebug() << "data not success export";
+    }
 }
 
 void Data::setTimeOperation(const QString &postfix, QJsonObject &jObj)
@@ -208,6 +242,7 @@ QString Data::initStoreData()
     data.insert(LF_position_mm, new DataStore());
     data.insert(CellPressure_kPa, new DataStore());
     data.insert(PorePressure_kPa, new DataStore());
+    data.insert("VertPressureVsVertDeform", new DataStore());
     elapseExperimentTimer.restart();
     return QString("DataStore init");
 }

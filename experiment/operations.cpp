@@ -3,7 +3,6 @@
 
 using namespace Measurements;
 
-
 Operations::Operations(quint8 addr) : Interface(addr),
     loadFrame(new LoadFrame),
     volumetr1(new Volumeter1),
@@ -69,6 +68,9 @@ bool Operations::execut()
                                        arg(counter).
                                        arg(queueRequest.size()));
             }
+            // if (counter % 100 == 0) {
+            //     store->exportToCSVofName("VerticalPressure_kPa", "VerticalDeform_mm");
+            // }
             fflush(stderr);
             // Тут нужно запустить парсер нашего эксперимента
             // if (loadFrame->store != nullptr)
@@ -76,6 +78,7 @@ bool Operations::execut()
             // if (volumetr1->store != nullptr)
             //     volumetr1->store->updateData();
             store->updateData();
+
             stateSwitch();
         }
         break;
