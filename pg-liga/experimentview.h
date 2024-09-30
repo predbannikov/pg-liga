@@ -231,6 +231,8 @@ private:
 //    QMap<QString, ExperimentData*> m_cellPressureData;
     DecoratedPlot *cellPressureVsTime = nullptr;
 
+    DecoratedPlot *forceVsDeform = nullptr;
+
 //    QMap<QString, ExperimentData*> m_porePressureData;
     DecoratedPlot *porePressureVsTime = nullptr;
 

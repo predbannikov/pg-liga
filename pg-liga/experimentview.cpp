@@ -101,6 +101,11 @@ void ExperimentView::setupPlots()
     cellPressureVsTime->addTrace(m_experimentData.value("Всестороннее давление"), tr("Время (t, мин)"), tr("Всестороннее давление, %1").arg(Strings::mm));
     ui->tabGraphics->addTab(cellPressureVsTime, tr("Всестороннее давление"));
 
+    m_experimentData.insert("Сила/деформация", new ExperimentData(this));
+    forceVsDeform = new DecoratedPlot(this);
+    forceVsDeform->addTrace(m_experimentData.value("Сила/деформация"), tr("Сила (Н)"), tr("деформация, %1").arg(Strings::mm));
+    ui->tabGraphics->addTab(forceVsDeform, tr("Сила/деформация"));
+
     m_experimentData.insert("Поровое давление", new ExperimentData(this));
     porePressureVsTime = new DecoratedPlot(this);
     porePressureVsTime->addTrace(m_experimentData.value("Поровое давление"), tr("Время (t, мин)"), tr("Поровое давление, %1").arg(Strings::mm));
@@ -405,6 +410,10 @@ void ExperimentView::on_btnClearDataStore_clicked()
     m_experimentData.value("Всестороннее давление")->clear();
     cellPressureVsTime->m_plot->replot();
 
+    m_experimentData.value("Сила/деформация")->clearData();
+    m_experimentData.value("Сила/деформация")->clear();
+    forceVsDeform->m_plot->replot();
+
     m_experimentData.value("Поровое давление")->clearData();
     m_experimentData.value("Поровое давление")->clear();
     porePressureVsTime->m_plot->replot();
@@ -454,19 +463,22 @@ void ExperimentView::onReadyResponse(const QJsonObject &jobj)
             QList<QPair<qint64, float>> allList = dataStore[jkey].deSerializeData(jstoreData[jkey].toObject());
             //            qDebug() << Q_FUNC_INFO << "allList" << jkey << allList;
             if (jkey == "VerticalDeform_mm") {
-                m_experimentData.value("Деформация")->append(allList);
+                m_experimentData.value("Деформация")->appendListOfTime(allList);
             }
             if (jkey == "VerticalPressure_kPa") {
-                m_experimentData.value("Сила")->append(allList);
+                m_experimentData.value("Сила")->appendListOfTime(allList);
             }
             if (jkey == "LF_position_mm") {
-                m_experimentData.value("Позиция")->append(allList);
+                m_experimentData.value("Позиция")->appendListOfTime(allList);
             }
             if (jkey == "PorePressure_kPa") {
-                m_experimentData.value("Поровое давление")->append(allList);
+                m_experimentData.value("Поровое давление")->appendListOfTime(allList);
             }
             if (jkey == "CellPressure_kPa") {
-                m_experimentData.value("Всестороннее давление")->append(allList);
+                m_experimentData.value("Всестороннее давление")->appendListOfTime(allList);
+            }
+            if (jkey == "VertPressureVsVertDeform") {
+                m_experimentData.value("Сила/деформация")->appendListOfValue(allList);
             }
         }
     } else {
