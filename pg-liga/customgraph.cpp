@@ -3,8 +3,8 @@
 
 CustomGraph::CustomGraph(QMap<QString, ExperimentData *> *data, QWidget *parent) :
     QWidget(parent),
-    m_data(data),
-    ui(new Ui::CustomGraph)
+    ui(new Ui::CustomGraph),
+    m_data(data)
 {
     ui->setupUi(this);
 //    ui->widget = new DecoratedPlot(this);

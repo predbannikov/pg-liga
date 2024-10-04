@@ -98,6 +98,9 @@ public:
     void sendProtocol(QJsonObject &jobj);
     void sendStoreData(QJsonObject &jobj);
 
+    void exportToCSVofName(QString name1, QString name2);
+    void exportToCSV(const QList<QPair<qint64, float>>& forceData, const QList<QPair<qint64, float>>& deformData);
+
     /**
      * @brief startOperation        // Создаёт протокол операции
      * @param postfix
@@ -118,6 +121,8 @@ public:
     QPair<bool, double> getValueStepOfTime(qint64 time, QString sens);
 
     QMap <QString, DataStore*> data;
+
+
     QString enableStoreData(bool enable);
     QString deleteStoreData();
     QString initStoreData();

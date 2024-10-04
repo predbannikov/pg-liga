@@ -7,9 +7,9 @@ SteppedPressuriseModel::SteppedPressuriseModel(QObject *parent):
     AbstractSteppedModel(parent)
 {
     m_type = "steppedPressurise"; //type
-    m_overPressureCellVolumeter = Measurements::Pressure::fromKiloPascals(5000);
-    m_overPressurePoreVolumeter = Measurements::Pressure::fromKiloPascals(5000);
 
+    m_overPressureCellVolumeter = Measurements::Pressure::fromKiloPascals(99000);
+    m_overPressurePoreVolumeter = Measurements::Pressure::fromKiloPascals(99000);
 }
 
 int SteppedPressuriseModel::rowCount(const QModelIndex &parent) const
