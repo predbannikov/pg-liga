@@ -61,8 +61,17 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
+      <item row="0" column="1" colspan="3">
        <widget class="QLabel" name="lblText">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>16777215</height>
+         </size>
+        </property>
         <property name="lineWidth">
          <number>0</number>
         </property>
@@ -74,8 +83,10 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0" colspan="2">
-       <widget class="QWidget" name="widget" native="true"/>
+      <item row="1" column="0" colspan="4">
+       <widget class="QWidget" name="widget" native="true">
+        <layout class="QVBoxLayout" name="verticalLayout"/>
+       </widget>
       </item>
      </layout>
     </widget>

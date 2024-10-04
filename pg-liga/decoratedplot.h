@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include <QDebug>
-
+#include <QMouseEvent>
 #include <qwt_legend.h>
 
 class QwtPlot;
@@ -32,18 +32,20 @@ public:
 
     void addTrace    (ExperimentData *data , const QString &ylabel);
     void addTrace    (ExperimentData *data , const QString &xlabel, const QString &ylabel, Qt::GlobalColor color = Qt::GlobalColor::darkGreen, QString label = "");
-    void addTrace    (ExperimentData *xdata, ExperimentData *ydata, const QString &xlabel, const QString &ylabel);
+    void addTrace    (ExperimentData *xdata, ExperimentData *ydata, const QString  &xlabel, const QString &ylabel);
     void addAuxTrace (ExperimentData *xdata, ExperimentData *ydata, const QColor &color);
 
     void removeTrace(ExperimentData* data);
     void removeTrace(ExperimentData* xdata, ExperimentData *ydata);
 
     void showText(const QString &text);
-
-
+    void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
     QwtPlot *m_plot;
 private slots:
     void onNewDataAvailable();
+
 
     void autoScale() {
         // Автоматически масштабируем график для отображения всех данных
@@ -55,8 +57,10 @@ private slots:
         zoomer->setZoomBase();
         panner->setEnabled(false);
         panner->setEnabled(true);
+
     }
 private:
+
     void setupLabels(const QString &xlabel, const QString &ylabel);
 
     double m_AxisRangeXmin;
@@ -64,6 +68,7 @@ private:
     double m_AxisRangeYmin;
     double m_AxisRangeYmax;
 
+    QPoint lastMousePosition;
 
     QVector<ExperimentData*> m_xdata;
     QVector<ExperimentData*> m_ydata;

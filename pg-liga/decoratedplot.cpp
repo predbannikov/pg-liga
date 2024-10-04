@@ -25,9 +25,7 @@ DecoratedPlot::DecoratedPlot(QWidget *parent):
     zoomer->setTrackerPen(QColor(Qt::black));
 
     panner = new QwtPlotPanner(m_plot->canvas());
-    panner->setMouseButton(Qt::MiddleButton);
-
-
+    panner->setMouseButton(Qt::RightButton);
     auto *grid = new QwtPlotGrid();
 
     grid->setMajorPen(Qt::lightGray, 1.0);
@@ -158,4 +156,58 @@ void DecoratedPlot::setupLabels (const QString &xlabel, const QString &ylabel)
 
     m_plot->setAxisTitle (QwtPlot::xBottom, titleX);
     m_plot->setAxisTitle (QwtPlot::yLeft  , titleY);
+}
+
+
+void DecoratedPlot::mousePressEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::RightButton) {
+        setCursor(Qt::ClosedHandCursor);  // Изменяем курсор на "руку" при захвате
+        lastMousePosition = event->pos(); // Сохраняем начальную позицию мыши
+    }
+}
+
+void DecoratedPlot::mouseMoveEvent(QMouseEvent *event)
+{
+    if (event->buttons() & Qt::RightButton) {
+        // Вычисляем смещение по осям относительно предыдущей позиции
+        double dx = event->pos().x() - lastMousePosition.x();
+        double dy = event->pos().y() - lastMousePosition.y();
+
+        // Получаем текущие диапазоны осей
+        double xLower = m_plot->axisScaleDiv(QwtPlot::xBottom).lowerBound();
+        double xUpper = m_plot->axisScaleDiv(QwtPlot::xBottom).upperBound();
+        double yLower = m_plot->axisScaleDiv(QwtPlot::yLeft).lowerBound();
+        double yUpper = m_plot->axisScaleDiv(QwtPlot::yLeft).upperBound();
+
+        // Рассчитываем коэффициенты для более плавного перемещения
+        double xFactor = (xUpper - xLower) / m_plot->canvas()->width();
+        double yFactor = (yUpper - yLower) / m_plot->canvas()->height();
+
+        // Применяем смещение к диапазонам осей
+//        m_plot->setAxisScale(QwtPlot::xBottom, xLower - dx * xFactor, xUpper - dx * xFactor);
+//        m_plot->setAxisScale(QwtPlot::yLeft, yLower + dy * yFactor, yUpper + dy * yFactor);
+//        m_plot->replot(); // Перерисовываем график
+//        lastMousePosition = event->pos();  // Обновляем позицию мыши
+        // Применяем смещение к диапазонам осей
+        double newXLower = xLower + dx * xFactor;
+        double newXUpper = xUpper + dx * xFactor;
+        double newYLower = yLower - dy * yFactor;
+        double newYUpper = yUpper - dy * yFactor;
+        // Обновляем оси
+        m_plot->setAxisScale(QwtPlot::xBottom, newXLower, newXUpper);
+        m_plot->setAxisScale(QwtPlot::yLeft, newYLower, newYUpper);
+        // Перерисовываем график
+        m_plot->replot();
+
+        // Обновляем последнюю позицию мыши
+        lastMousePosition = event->pos();
+    }
+}
+
+void DecoratedPlot::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::RightButton) {
+        setCursor(Qt::ArrowCursor);  // Возвращаем стандартный курсор
+    }
 }

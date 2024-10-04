@@ -15,7 +15,6 @@ OperationActions::OperationActions(int numberOperation, QWidget *parent) :
     currentTextMenu = defaultText;
     updateTextMenu();
 
-
     QVBoxLayout *lay = new QVBoxLayout;
     lay->setSpacing(0);
     lay->setMargin(0);
@@ -111,6 +110,8 @@ QJsonObject OperationActions::serializOperation()
             SteppedModelEditor *steppedModelEditor = qobject_cast<SteppedModelEditor *>(wgt);
             jObj = steppedModelEditor->serializModel();
             jObj["name"] = steppedModelEditor->getTypeStep();
+            if (jObj["name"] == "steppedPressurise")
+                jObj["betta"] = "0.95";
         }
         else if (qobject_cast<KinematicLoadingModelEditor *>(wgt) != nullptr)
         {
