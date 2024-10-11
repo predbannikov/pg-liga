@@ -49,6 +49,12 @@ ExperimentView::ExperimentView(QWidget *parent) :
     timerUpdateStatus->start(1000);
 
     addOperationActions();
+
+    dialog.setDefault();
+    namespaciment = dialog.getname();
+    ui->namespacimen->setText(namespaciment);
+    height = dialog.getheight();
+    diametrs = dialog.getdiametr();
 }
 
 void ExperimentView::initServicePanel()
@@ -128,7 +134,7 @@ void ExperimentView::addOperationActions()
 {
 
     QVBoxLayout *lay = qobject_cast<QVBoxLayout *>(ui->scrollAreaWidgetContents->layout());
-    OperationActions *opActions = new OperationActions(lay->count()+1, &dialog ,this);
+    OperationActions *opActions = new OperationActions(lay->count()+1,  &dialog ,this);
     lay->insertWidget(-1, opActions);
 
     connect(opActions, &OperationActions::addOperationActions, this, &ExperimentView::addOperationActions);
@@ -232,11 +238,11 @@ void ExperimentView::serializExperiment()
         jOps[cnt] = jOperation;
     }
     jObj["CMD"] = "set_experiment";
+    jOps["name"] = namespaciment;
+    jOps["diametrs"] = QString::number(diametrs);
+    jOps["height"] = QString::number(height);
     jObj["experiment"] = jOps;
-    jObj["name"] = namespaciment;
-    jObj["diametrs"] = QString::number(diametrs);
-    jObj["height"] = QString::number(height);
-    //---------------------------------------------------------------------------------------------------------------------------ТУТ ДОБАВИТЬ ДАННЫЕ О МОНОЛИТЕ ЭКСПЕРЕМЕНТА
+
     qDebug().noquote() << QJsonDocument(jObj).toJson(QJsonDocument::Indented);
     emit sendRequest(jObj);
 }

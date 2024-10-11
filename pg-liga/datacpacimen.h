@@ -20,12 +20,13 @@ public:
     bool access();
     bool valid();
     void setpararms(QString name, float height, float diametr);
+    void setDefault();
 
 
-
-    float getheight(){return _height;}
-    float getdiametr(){return _diametr;}
+    double getheight(){return _height;}
+    double getdiametr(){return _diametr;}
     QString getname(){return _name;}
+    void showEvent (QShowEvent * event) override;
 
 private slots:
     void pushData();
@@ -35,30 +36,30 @@ private slots:
 private:
     Ui::Dialog *ui;
     QString _name;
-    float _height;
-    float _diametr;
+    double _height;
+    double _diametr;
 };
 
 
-class Dataspaciment: public QAbstractItemModel
-{
-    Q_OBJECT
-public:
-    explicit Dataspaciment(QObject *parent = nullptr);
-    ~Dataspaciment();
+//class Dataspaciment: public QAbstractItemModel
+//{
+//    Q_OBJECT
+//public:
+//    explicit Dataspaciment(QObject *parent = nullptr);
+//    ~Dataspaciment();
 
-    bool access();
-    void setpararms(QString name, float height, float diametr);
+//    bool access();
+//    void setpararms(QString name, float height, float diametr);
 
-    float getheight(){return _height;}
-    float getdiametr(){return _diametr;}
-    QString getname(){return _name;}
+//    double getheight(){return _height;}
+//    double getdiametr(){return _diametr;}
+//    QString getname(){return _name;}
 
-private:
+//private:
 
-    QString _name;
-    float _height;
-    float _diametr;
-};
+//    QString _name;
+//    float _height;
+//    float _diametr;
+//};
 
 #endif // DATASAMPLE_H

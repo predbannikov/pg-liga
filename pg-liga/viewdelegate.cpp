@@ -279,7 +279,6 @@ void WeightedDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, 
 QString WeightedDelegate::displayText(const QVariant &value, const QLocale &locale) const
 {
     Q_UNUSED(locale)
-    qDebug() << "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<THIS IS YOUR SHEET "<< value.value<QPair<int, double>>();
     const auto data = value.value<QPair<int, double>>();
     const auto prec = m_decimals.value(data.first, 0);
 

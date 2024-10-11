@@ -14,21 +14,14 @@ Dialog::Dialog(QWidget *parent):
     ui->height->setRange(0, 1000);
     ui->diametr->setSingleStep(0.1);
     ui->height->setSingleStep(0.1);
+
+
 }
 
 Dialog::~Dialog(){
 
 }
 
-Dataspaciment::Dataspaciment(QObject *parent):
-    QAbstractItemModel(parent),
-    _diametr(-1.0),
-    _height(-1.0),
-    _name("")
-{}
-
-Dataspaciment::~Dataspaciment()
-{}
 
 void Dialog::pushData()
 {
@@ -43,6 +36,12 @@ void Dialog::pushData()
     {
         QMessageBox::warning(this, "Ошибка ввода данных", "Проверьте правильность ввода данных, попытайтесь еще раз");
     }
+}
+void Dialog::setDefault()
+{
+    _name = "Образец 101";
+    _diametr = 76.0;
+    _height = 38.0;
 }
 
 bool Dialog::valid()
@@ -71,8 +70,27 @@ void Dialog::setpararms(QString name, float height, float diametr)
 
 void Dialog::on_pushButton_clicked()
 {
-    ui->name->setText("Образец" + QString::number(rand()%10000));
+    ui->name->setText("Образец " + QString::number(rand()%10000));
     ui->diametr->setValue(38.0);
     ui->height->setValue(76);
     emit ui->buttonBox->accepted();
 }
+
+void Dialog::showEvent (QShowEvent * event)
+{
+    if(valid())
+    {
+        ui->name->setText(_name);
+        ui->height->setValue(_height);
+        ui->diametr->setValue(_diametr);
+    }
+}
+//Dataspaciment::Dataspaciment(QObject *parent):
+//    QAbstractItemModel(parent),
+//    _diametr(-1.0),
+//    _height(-1.0),
+//    _name("")
+//{}
+
+//Dataspaciment::~Dataspaciment()
+//{}
