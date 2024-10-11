@@ -3,8 +3,9 @@
 
 #include <QJsonDocument>
 
-OperationActions::OperationActions(int numberOperation, QWidget *parent) :
+OperationActions::OperationActions(int numberOperation, Dialog *dialogspacimen,QWidget *parent) :
     QWidget(parent),
+    dataspacimen(dialogspacimen),
     ui(new Ui::OperationActions),
     m_numOperation(numberOperation)
 {
@@ -75,7 +76,14 @@ void OperationActions::contextMenuEvent(QContextMenuEvent *event)
 
 void OperationActions::on_btnMenuActions_clicked()
 {
+    if (dataspacimen->valid())
+    {
     createMenu();
+    }
+    else
+    {
+        QMessageBox::warning(this, "Внимание", "Введите образца данные образца для дальнейшей работы");
+    }
 }
 
 void OperationActions::createMenu()

@@ -60,5 +60,6 @@
         <file>images/animation_loading.gif</file>
         <file>icons/reset_zero.png</file>
         <file>icons/set-zero.png</file>
+        <file>icons/set-data.png</file>
     </qresource>
 </RCC>

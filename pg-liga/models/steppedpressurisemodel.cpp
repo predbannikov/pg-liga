@@ -172,7 +172,6 @@ int SteppedPressuriseModel::addStep(const Step &step)
 {
     const auto row = m_steps.size();
     beginInsertRows(QModelIndex(), row, row);
-    //    Step newStep;
     m_steps.append(step);
     endInsertRows();
     emit dataChanged(QModelIndex(), QModelIndex());

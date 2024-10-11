@@ -8,6 +8,7 @@
 #include <QDebug>
 #include <QIcon>
 #include <QStyle>
+#include <QMessageBox>
 
 #include "steppedmodeleditor.h"
 #include "kinematicloadingmodeleditor.h"
@@ -16,6 +17,7 @@
 #include "steppedpressurisemodel.h"
 #include "kinematicpressurisedloadingmodel.h"
 
+#include "datacpacimen.h"
 
 /*
  *  Для добавления действия операции необходимо:
@@ -43,7 +45,7 @@ class OperationActions : public QWidget
     Q_OBJECT
 
 public:
-    explicit OperationActions(int numberOperation, QWidget *parent = nullptr);
+    explicit OperationActions(int numberOperation, Dialog *dialogspacimen,QWidget *parent = nullptr);
     ~OperationActions();
     int numberOperation() { return m_numOperation; }
     void setNumberOperation(int numberOperation);
@@ -65,7 +67,7 @@ signals:
     void dataChanged();
 private:
     void createMenu();
-
+    Dialog *dataspacimen;
     /**
      * @brief deleteWidget      Удаляет виджет, необходимо удалить виджет прежде чем
      *                          добавить его в операцию ( в операции должен быть только один виджет)

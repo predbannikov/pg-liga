@@ -1,5 +1,6 @@
 #include "experimentview.h"
 #include "ui_experimentview.h"
+#include "datacpacimen.h"
 #include "math.h"
 
 #include "steppedpressurisemodel.h"
@@ -12,7 +13,7 @@ ExperimentView::ExperimentView(QWidget *parent) :
     timerUpdateStatus(new QTimer(this))
 {
     ui->setupUi(this);
-
+    ui->namespacimen->setText("Нет данных образца");
     QMetaObject::invokeMethod(this, "initServicePanel", Qt::QueuedConnection);
     QMetaObject::invokeMethod(this, "initControlPanel", Qt::QueuedConnection);
     setupPlots();
@@ -47,12 +48,7 @@ ExperimentView::ExperimentView(QWidget *parent) :
     connect(timerUpdateStatus, &QTimer::timeout, this, &ExperimentView::onUpdateStatus);
     timerUpdateStatus->start(1000);
 
-
-
     addOperationActions();
-
-
-
 }
 
 void ExperimentView::initServicePanel()
@@ -132,7 +128,7 @@ void ExperimentView::addOperationActions()
 {
 
     QVBoxLayout *lay = qobject_cast<QVBoxLayout *>(ui->scrollAreaWidgetContents->layout());
-    OperationActions *opActions = new OperationActions(lay->count()+1, this);
+    OperationActions *opActions = new OperationActions(lay->count()+1, &dialog ,this);
     lay->insertWidget(-1, opActions);
 
     connect(opActions, &OperationActions::addOperationActions, this, &ExperimentView::addOperationActions);
@@ -237,6 +233,10 @@ void ExperimentView::serializExperiment()
     }
     jObj["CMD"] = "set_experiment";
     jObj["experiment"] = jOps;
+    jObj["name"] = namespaciment;
+    jObj["diametrs"] = QString::number(diametrs);
+    jObj["height"] = QString::number(height);
+    //---------------------------------------------------------------------------------------------------------------------------ТУТ ДОБАВИТЬ ДАННЫЕ О МОНОЛИТЕ ЭКСПЕРЕМЕНТА
     qDebug().noquote() << QJsonDocument(jObj).toJson(QJsonDocument::Indented);
     emit sendRequest(jObj);
 }
@@ -267,8 +267,8 @@ void ExperimentView::updateStatusView(QJsonObject jObj)
         }
         if (iter.key() == "LF_stepper_pos")
             ui->lblLoadFrameForceSensorPosition->setText(iter.value().toString());
-//        if (iter.key() == "LF_controller_status")
-//            ui->lblLoadFrameForceSensorPosition->setText(iter.value().toString());
+        //        if (iter.key() == "LF_controller_status")
+        //            ui->lblLoadFrameForceSensorPosition->setText(iter.value().toString());
 
 
         if (iter.key() == "Vol1_sensor_pressure")
@@ -287,8 +287,8 @@ void ExperimentView::updateStatusView(QJsonObject jObj)
         }
         if (iter.key() == "Vol1_stepper_pos")
             ui->lblVolumetr1SensorPosition->setText(iter.value().toString());
-//        if (iter.key() == "Vol1_controller_status")
-//            ui->grpManualMode->setEnabled(false);
+        //        if (iter.key() == "Vol1_controller_status")
+        //            ui->grpManualMode->setEnabled(false);
 
         if (iter.key() == "Vol2_sensor_pressure")
             ui->lblVolumetr2PressureSensor->setText(iter.value().toString());
@@ -306,8 +306,8 @@ void ExperimentView::updateStatusView(QJsonObject jObj)
         }
         if (iter.key() == "Vol2_stepper_pos")
             ui->lblVolumetr2SensorPosition->setText(iter.value().toString());
-//        if (iter.key() == "Vol2_controller_status")
-//            ui->grpManualMode->setEnabled(false);
+        //        if (iter.key() == "Vol2_controller_status")
+        //            ui->grpManualMode->setEnabled(false);
 
 
         out_to_lbl.append("\n");
@@ -503,16 +503,16 @@ void ExperimentView::on_btnSaveImage_clicked()
 void ExperimentView::on_btnSetSettings_clicked()
 {
     QJsonObject jconfig;
-//    jconfig["area"] = QString::number(M_PI * pow(ui->spinBoxDiameter->value() / 2., 2) / 100 / 10000);	// 100мм2=1см2, 1см2=10000м2
-//    jconfig["name_speciment"] = ui->leNameSpecimen->text();
+    //    jconfig["area"] = QString::number(M_PI * pow(ui->spinBoxDiameter->value() / 2., 2) / 100 / 10000);	// 100мм2=1см2, 1см2=10000м2
+    //    jconfig["name_speciment"] = ui->leNameSpecimen->text();
 
     QJsonObject jobj;
-//    jobj["CMD"] = "settings";
-//    jobj["config"] = jconfig;
+    //    jobj["CMD"] = "settings";
+    //    jobj["config"] = jconfig;
 
     ui->textEdit->clear();
     ui->textEdit->append(QJsonDocument(jobj).toJson());
-//    emit sendRequest(jobj);
+    //    emit sendRequest(jobj);
 }
 
 void ExperimentView::on_btnSetHz_clicked()
@@ -603,7 +603,7 @@ void ExperimentView::on_btnTest_clicked()
     for (int i = 0; i < 10; i+=2) {
         QJsonObject jAction;
         jAction["name"] = "move_of_time";
-//        jAction["speed"] = QString::number(10 * (i+1));
+        //        jAction["speed"] = QString::number(10 * (i+1));
         jAction["speed"] = QString::number(100);
         jAction["time_ms"] = "1500";
         jAction["status"] = "";
@@ -611,7 +611,7 @@ void ExperimentView::on_btnTest_clicked()
 
         QJsonObject jAction2;
         jAction2["name"] = "move_of_time";
-//        jAction2["speed"] = QString::number(-10 * (i+1));
+        //        jAction2["speed"] = QString::number(-10 * (i+1));
         jAction2["speed"] = QString::number(-100);
         jAction2["time_ms"] = "1500";
         jAction2["status"] = "";
@@ -852,3 +852,17 @@ void ExperimentView::on_btnClearTextEdit_clicked()
     ui->textEdit->clear();
 }
 
+
+void ExperimentView::on_pushButton_clicked()
+{
+    dialog.show();
+    dialog.exec();
+    if (dialog.access())
+    {
+        namespaciment = dialog.getname();
+        diametrs = dialog.getdiametr();
+        height = dialog.getheight();
+        ui->namespacimen->setText(namespaciment);
+    }
+
+}

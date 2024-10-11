@@ -67,7 +67,8 @@ SOURCES += \
     plotxyadapter.cpp \
     main.cpp \
     mainwindow.cpp \
-    viewdelegate.cpp
+    viewdelegate.cpp \
+    datacpacimen.cpp
 
 
 HEADERS += \
@@ -106,7 +107,8 @@ HEADERS += \
     plotadapter.h \
     plotxyadapter.h \
     mainwindow.h \
-    viewdelegate.h
+    viewdelegate.h \
+    datacpacimen.h
 
 FORMS += \
     clientwindow.ui \
@@ -117,7 +119,8 @@ FORMS += \
     Settings/settingsdialog.ui \
     modelEditors/kinematicloadingmodeleditor.ui \
     modelEditors/steppedmodeleditor.ui \
-    operationactions.ui
+    operationactions.ui \
+    dataspecimen.ui
 
 TRANSLATIONS += \
     pg-liga_ru_RU.ts
@@ -154,7 +157,8 @@ DISTFILES += \
     QtWaitingSpinner/LICENSE \
     QtWaitingSpinner/README.md \
     QtWaitingSpinner/qtwaitingspinner.pri \
-    resources/icons/duplicate.png
+    resources/icons/duplicate.png \
+    ../../../../Users/GoodBoy/Desktop/set-data.png
 
 SUBDIRS += \
     QtWaitingSpinner/qtwaitingspinner.pro

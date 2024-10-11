@@ -30,6 +30,7 @@
 #include "steppedmodeleditor.h"
 #include "operationactions.h"
 #include "controlpanelwgt.h"
+#include "datacpacimen.h"
 
 //#include "plotadapter.h"
 //#include "experimentdata.h"
@@ -208,6 +209,8 @@ private slots:
 
     void on_btnLoadFrameUnlockPid_clicked();
 
+    void on_pushButton_clicked();
+
 signals:
     void sendRequest(QJsonObject &jobj);
 
@@ -238,7 +241,14 @@ private:
 
     CustomGraph *customPlot = nullptr;
 
+//    Dataspaciment *paramsample = nullptr;
+    // Жорж тут кодил, передалает нормально
+    Dialog dialog;
+    QString namespaciment;
+    double diametrs, height;
 
+
+    // Жорж закончил тут кодить
     QList <QLineEdit*> steps;
     QJsonObject jRequest;
     Ui::ExperimentView *ui;
